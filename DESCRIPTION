@@ -1,0 +1,31 @@
+Package: swattools
+Type: Package
+Date: 2021-01-26
+Title: SWAT output assessment and visualising of modelling results
+Version: 0.0.1
+Author: Svajunas Plunge <svajunas.plunge@gmail.com>
+Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
+Description: Package is working with Lithuanian EPA SWAT model output data. Getting outputs from text files, cleaning, preparing in right tables, generating maps, tables and graphs from results.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Depends:
+    R (>= 4.0)
+VignetteBuilder: knitr
+Suggests: knitr
+Imports:
+    dplyr (>= 0.8.0.1),
+    lubridate (>= 1.7.4),
+    readr (>= 1.3.1),
+    tidyr (>= 0.8.0),
+    tidyselect,
+    tidyverse, 
+    sf,
+    scales,
+    ggplot2,
+    stringr,
+    cowplot
+URL: https://github.com/biopsichas/svatools
+BugReports: https://github.com/biopsichas/svatools/issues
+Roxygen: list(markdown = TRUE)
