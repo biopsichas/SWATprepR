@@ -1,0 +1,6 @@
+.gitignore
+R/test.R
+^.*\.Rproj$
+^\.Rproj\.user$
+^templates$
+^LICENSE\.md$
