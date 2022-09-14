@@ -1,2 +1,2 @@
-utils::globalVariables(c("DATE", "geometry"))
+utils::globalVariables(c("DATE", "geometry", "Station", "Values"))
 
