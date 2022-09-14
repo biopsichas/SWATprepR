@@ -9,7 +9,7 @@ plot_many(df, drop_st = c())
 \arguments{
 \item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed)}
 
-\item{drop_st}{option parameter of character vector, which stations should be excluded for figure.
+\item{drop_st}{optional parameter of character vector, which stations should be excluded for figure.
 Stations with a lot of data should be plotted with plot_one function.}
 }
 \value{
@@ -19,5 +19,5 @@ plotly object of interactive figure
 Plotting stations with few data points
 }
 \examples{
-## plot_many(df)
+## plot_many(df, drop_st = c("4"))
 }
