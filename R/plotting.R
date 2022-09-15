@@ -21,7 +21,7 @@ plot_many <- function(df, drop_st = c()){
                      geom_point()+
                      facet_wrap(~Variables, scales = "free_y")) %>% 
     subplot(shareX = FALSE, shareY=FALSE) %>% 
-    hide_show_print_graph()
+    hide_show()
 }
 
 #' Plotting single, data rich station
@@ -43,7 +43,7 @@ plot_one <- function(df, station){
     group_by(Variables) %>%
     group_map(~ plot_ly(data=., x = ~DATE, y = ~Values, color = ~Variables,  type = "scatter", mode =  "lines"), keep=TRUE) %>%
     subplot(nrows = 3, shareX = FALSE, shareY=FALSE) %>% 
-    hide_show_print_graph()
+    hide_show()
 }
 
 #' Function to prepare static time series figure for single station
@@ -102,7 +102,7 @@ plot_monthly_one <- function(df, station, drop_variables = c()){
     group_by(Variables) %>% 
     group_map(~ plot_ly(data=., x = ~Month, y = ~Values, color = ~Variables,  type = "box"), keep=TRUE) %>%
     subplot(nrows = 3, shareX = FALSE, shareY=FALSE) %>% 
-    hide_show_print_graph()
+    hide_show()
 }
 
 #' Plot N min to NT regression in each month and fraction Nmin of NT

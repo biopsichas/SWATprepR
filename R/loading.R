@@ -1,35 +1,49 @@
 
-# Loading functions --------------------------------------------------------------------
+# Template loading functions --------------------------------------------------------------------
 
-#' Function providing loading of calibration data templates
+#' Function providing loading for data templates (with single and multiple data sheets)
 #' (data should have been cleaned before).
 #'
 #' @param template_path path to *.xlsx file. 
 #' @param epsg_code EPSG code for station coordinates (default 4326 for WGS 84 coordinate system)  system
-#' @return list of two dataframes: stations dataframe contains station information,  
-#' data contains measurement data
+#' @return list of two: stations dataframe, which contains station information,  
+#' second member of list contains contains measurement data in dataframe (if data is in one sheet)
+#' or nested list of dataframes with each parameter in separate dataframe. 
 #' @importFrom dplyr mutate %>%
-#' @importFrom readxl read_xlsx
-#' @importFrom sf st_as_sf
-#' @importFrom purrr map
+#' @importFrom readxl read_xlsx excel_sheets
+#' @importFrom tidyr drop_na
 #' @export 
 #'
 #' @examples
-#' ##load_calibration_data_template("templates/calibration_data.xlsx")
-#' 
+#' ##load__template("templates/calibration_data.xlsx")
 
-load_calibration_data_template <- function(template_path, epsg_code = 4326){
+load_template <- function(template_path, epsg_code = 4326){
   print("Loading data from template.")
-  ##Loading station locations
-  st_location <- read_xlsx(template_path, "Stations") %>% 
-    st_as_sf(coords = c("long", "lat"), crs = epsg_code) %>% 
-    mutate(long = unlist(map(geometry,1)),
-           lat = unlist(map(geometry,2)))
-  df_comb <- read_xlsx(template_path, "Data") %>%
-    mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
-  print("Loading of data is finished. Dataframe stations has station info, data has measured values.")
-  
-  return(list(stations = st_location, data = df_comb))
+  ##Loading station location and other info
+  st <- read_stations(template_path, epsg_code)
+  ##Getting sheet names
+  ids <- excel_sheets(template_path) %>% 
+    .[!. %in% "Stations"]
+  ##Loading data with one data sheet
+  if(length(ids) == 1){
+    r <- read_xlsx(template_path, ids) %>%
+      mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
+  ##Loading data with many data sheets
+  }else if(length(ids) > 1){
+    r <- list()
+    for (id in ids){
+      print(paste("Reading station", id, "data."))
+      df <- read_xlsx(template_path, id) 
+      for (p in names(df)[-1]){
+        r[[id]][[p]] <- df[,c("DATE", p)] %>% 
+          drop_na() %>% 
+          mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
+      }
+    }
+  }else{
+    warning("Your template doesn't have data sheets to read.")
+    r <- NA
+  }
+  print("Loading of data is finished.")
+  return(list(stations = st, data = r))
 }
-
- 
