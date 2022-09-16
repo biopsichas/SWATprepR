@@ -22,5 +22,5 @@ Function providing loading for data templates (with single and multiple data she
 (data should have been cleaned before).
 }
 \examples{
-##load__template("templates/calibration_data.xlsx")
+##load_template("templates/calibration_data.xlsx")
 }
