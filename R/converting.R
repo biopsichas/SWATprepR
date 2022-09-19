@@ -6,11 +6,10 @@
 #' @param meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @param par is weather variable to extract (i.e. "PCP", "SLR", etc)
-#' @importFrom dplyr left_join select everything
+#' @importFrom dplyr left_join select everything %>%
 #' @importFrom tibble rownames_to_column
 #' @importFrom sf st_crs
-#' @importFrom sp coordinates proj4string
-#' @importFrom base <-
+#' @importFrom sp coordinates<- proj4string<- CRS
 #' @return SpatialPointsDataFrame with columns as days and rows as stations.
 #' @export
 #' @examples
@@ -33,13 +32,11 @@ get_data_to_interpolate <- function(meteo_lst, par){
   df <- as.data.frame(t(df[-1])) %>% 
     rownames_to_column(var = "ID") %>% 
     left_join(stations[-2], by = "ID") %>% 
-    select(Lat, Long, everything(), -ID) %>% 
-    `coordinates <-`(~Long + Lat) %>% 
-    `proj4string <-`(st_crs(stations)$proj4string)
+    select(Lat, Long, everything(), -ID)
 
-  # ## Converting df data to sp
-  # coordinates(df) <- ~Long + Lat
-  # ##Adding crs 
-  # proj4string(df) <- st_crs(stations)$proj4string
+  ## Converting df data to sp
+  coordinates(df) <-  ~Long + Lat
+  ##Adding crs
+  suppressWarnings(proj4string(df) <-  CRS(SRS_string = st_crs(stations)$input))
   return(df)
 }
