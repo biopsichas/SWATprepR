@@ -10,7 +10,7 @@ hide_show(graph)
 \item{graph}{plotly graph object}
 }
 \value{
-plotly graph object with option to romove or show all lines
+plotly graph object with option to remove or show all lines
 }
 \description{
 Function to put option remove hide or show all lines in chart and this function also print chart.

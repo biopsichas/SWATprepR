@@ -40,3 +40,38 @@ get_data_to_interpolate <- function(meteo_lst, par){
   suppressWarnings(proj4string(df) <-  CRS(SRS_string = st_crs(stations)$input))
   return(df)
 }
+
+#' Main interpolation function
+#'
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param par character representing weather variable to extract (i.e. "PCP", "SLR", etc).
+#' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
+#' @param dem_data DEM raster data in same projection as weather station.
+#' @param idw_exponent numeric value for exponent parameter to be used in interpolation 
+#' (optional, default value is 2).
+#' @importFrom sp coordinates<- proj4string<- CRS over
+#' @importFrom methods as
+#' @return SpatialPointsDataFrame with interpolated data.
+#' @export
+#'
+#' @examples
+#' ##get_interpolated_data(meteo_lst, "PCP", 2000, DEM, 2)
+
+get_interpolated_data <- function(meteo_lst, par, grid_spacing, dem_data, idw_exponent = 2){
+  df <- get_data_to_interpolate(meteo_lst, par)
+  grd <- get_grid(df, grid_spacing)
+  ##Defining DEM coordinate system
+  suppressWarnings(proj4string(DEM) <-  CRS(SRS_string = st_crs(meteo_lst$stations)$input))
+  ##extracting points from the grid for the catchment and saving results
+  meteo_pts <- as(as(grd, "SpatialPoints")[!is.na(over(as(grd, "SpatialPoints"), as(shp, 'Spatial'))[1]),], "SpatialPointsDataFrame")
+  meteo_pts@data <- data.frame(DEM = raster::extract(dem_data, meteo_pts))
+  ##Adding DEM values
+  nb <- dim(df)[[2]]
+  for (i in seq(1,nb)){
+    cat("\014")
+    print(paste0(format(round(100*i/nb, 2), nsmall = 2), "% ", par," finished."))
+    meteo_pts <- suppressMessages(get_interpolation(df[i], meteo_pts, i, idw_exponent))
+  }
+  return(meteo_pts)
+}
