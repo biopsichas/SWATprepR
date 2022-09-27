@@ -63,7 +63,7 @@ get_dates <- function(meteo_lst){
 #' @importFrom sf st_crs
 #' @importFrom sp coordinates<- proj4string<- gridded<- fullgrid<- CRS
 #' @return Grid needed for the interpolation. 
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #' ##get_grid(sp_sf, 2000)
@@ -84,17 +84,19 @@ get_grid <- function(sp_df, grid_spacing){
 #' @param sp_df SpatialPointsDataFrame with one column for one day and rows as stations.
 #' @param st SpatialPointsDataFrame with virtual stations from a grid. Should contain
 #' dataframe in data for station elevation from DEM  
+#' @param grd Grid for interpolation.
 #' @param i integer representing day number.
+#' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
 #' @importFrom gstat idw
 #' @importFrom raster raster extract
 #' @importFrom spatialEco sp.na.omit
 #' @return SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #' ##get_interpolation(sp_df, meteo_pts, 2, 2)
 
-get_interpolation <- function(sp_df, st, i, idw_exponent){
+get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
   if(sum(is.na(sp_df@data[1])) != dim(sp_df@data[1])[[1]]){
     if(sum(is.na(sp_df@data[1])) != 0){
       sp_df <- sp.na.omit(sp_df)
@@ -108,6 +110,25 @@ get_interpolation <- function(sp_df, st, i, idw_exponent){
     st@data[as.character(i)] <- NA
   }
   return(st)
+}
+
+
+#' Transforming sp dataframe to dataframe
+#'
+#' @param sp_df sp dataframe
+#' @importFrom dplyr %>% mutate_if
+#' @return Dataframe prepared for being written out. 
+#' @keywords internal
+#'
+#' @examples
+#' ##df_t(sp_df)
+
+df_t <- function(sp_df){
+  ##Preparing time series files and writing them into output folder
+  df <- sp_df@data[,-1]
+  df[is.na(df)] <- -99 ##Changing NA to -99 for weather generator
+  as.data.frame(t(df)) %>%
+    mutate_if(is.numeric, ~round(., 3))
 }
 
 

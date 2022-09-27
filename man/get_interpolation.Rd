@@ -4,7 +4,7 @@
 \alias{get_interpolation}
 \title{Get interpolation values for catchment}
 \usage{
-get_interpolation(sp_df, st, i, idw_exponent)
+get_interpolation(sp_df, st, grd, i, idw_exponent)
 }
 \arguments{
 \item{sp_df}{SpatialPointsDataFrame with one column for one day and rows as stations.}
@@ -12,7 +12,11 @@ get_interpolation(sp_df, st, i, idw_exponent)
 \item{st}{SpatialPointsDataFrame with virtual stations from a grid. Should contain
 dataframe in data for station elevation from DEM}
 
+\item{grd}{Grid for interpolation.}
+
 \item{i}{integer representing day number.}
+
+\item{idw_exponent}{numeric value for exponent parameter to be used in interpolation.}
 }
 \value{
 SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
@@ -23,4 +27,3 @@ Get interpolation values for catchment
 \examples{
 ##get_interpolation(sp_df, meteo_pts, 2, 2)
 }
-\keyword{internal}

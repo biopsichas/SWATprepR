@@ -4,7 +4,14 @@
 \alias{get_interpolated_data}
 \title{Main interpolation function}
 \usage{
-get_interpolated_data(meteo_lst, par, grid_spacing, dem_data, idw_exponent = 2)
+get_interpolated_data(
+  meteo_lst,
+  par,
+  catchment_boundary_path,
+  dem_data_path,
+  grid_spacing,
+  idw_exponent = 2
+)
 }
 \arguments{
 \item{meteo_lst}{nested list of lists with dataframes.
@@ -12,11 +19,13 @@ Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE
 
 \item{par}{character representing weather variable to extract (i.e. "PCP", "SLR", etc).}
 
+\item{catchment_boundary_path}{path to basin boundary shape file.}
+
+\item{dem_data_path}{path to DEM raster data in same projection as weather station.}
+
 \item{grid_spacing}{numeric value for distance in grid. Units of coordinate system should be used.}
 
-\item{dem_data}{DEM raster data in same projection as weather station.}
-
-\item{idw_exponent}{numeric value for exponent parameter to be used in interpolation
+\item{idw_exponent}{numeric value for exponent parameter to be used in interpolation.
 (optional, default value is 2).}
 }
 \value{
@@ -26,5 +35,5 @@ SpatialPointsDataFrame with interpolated data.
 Main interpolation function
 }
 \examples{
-##get_interpolated_data(meteo_lst, "PCP", 2000, DEM, 2)
+##get_interpolated_data(weather_data, "PCP", "basin.shp", "DEM.tif", 2000, 2)
 }

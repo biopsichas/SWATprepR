@@ -1,6 +1,8 @@
 .gitignore
-R/test.R
+^R/test.R
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^templates$
 ^LICENSE\.md$
+^test.R
+^README\.Rmd$
