@@ -57,9 +57,9 @@ plot_one <- function(df, station){
 #' @keywords internal
 #'
 #' @examples
-#' ##get_ts_fig("4", df)
+#' ##plot_ts_fig("4", df)
 
-get_ts_fig <- function(station, df){
+plot_ts_fig <- function(station, df){
   if(station %in% df$Station){
     ggplot(df %>% filter(Station == station) %>% group_by(Variables) %>% filter(n() > 1), aes(x = DATE, y = Values))+
       geom_point()+
@@ -210,8 +210,8 @@ plot_Pmin_PT <- function(df, station){
 #' @examples
 #' ##get_map(df, df_station, rch, shp)
 
-get_map <- function(df, df_station, rch, shp){
-  p_all <- lapply(df_station$ID, get_ts_fig, df = df)
+plot_map <- function(df, df_station, rch, shp){
+  p_all <- lapply(df_station$ID, plot_ts_fig, df = df)
   leaflet() %>%
     addProviderTiles("OpenStreetMap", group = "OSM") %>%
     addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
@@ -228,4 +228,110 @@ get_map <- function(df, df_station, rch, shp){
     addLayersControl(baseGroups = c("OSM", "Imagery", "Topography"),
                      overlayGroups = c("Basin", "Reaches", "Stations"),
                      options = layersControlOptions(collapsed = FALSE))
+}
+
+
+# Plotting weather data ---------------------------------------------------
+
+#' Prepare the plotly figure for weather data
+#'
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param par character marking weather variable to extract (i.e. "PCP", "SLR", etc).
+#' @param period character describing, which time interval to display (default is "day", 
+#' other examples are "week", "month", etc).
+#' @param fn_summarize function to recalculate to time interval (default is "mean", other examples 
+#' are "median", "sum", etc).
+#' @importFrom lubridate floor_date
+#' @importFrom plotly plot_ly layout
+#' @importFrom dplyr bind_rows %>% rename summarize mutate left_join arrange
+#' @return plotly figure object with displayed weather data
+#' @export
+#'
+#' @examples 
+#' ##get_weather_fig(meteo_lst, "PCP", "month", "sum")
+
+plot_weather_fig <- function(meteo_lst, par, period= "day", fn_summarize = "mean"){
+  meteo_lst <- meteo_lst$data
+  station <- meteo_lst$stations %>% 
+    st_set_geometry(NULL) %>% 
+    mutate(Name = paste0(str_to_title(Name), " (", Source, ")")) %>% 
+    select(ID, Name, Lat, Long)
+  ##Extracting data for the stations from the list 
+  df_r <- NULL
+  for (n in names(meteo_lst)){
+    if(par %in% names(meteo_lst[n][[1]])){
+      df <- meteo_lst[n][[1]][par][[1]] %>% mutate(Stations = n)
+      if (is.null(df_r)){
+        df_r <- df
+      } else {
+        df_r <- bind_rows(df_r, df)
+      }
+    }
+  }
+  ##Aggregating data by time step
+  df_r$DATE<- floor_date(df_r$DATE, period)
+  df_r <- df_r %>%
+    rename(Values = 2) %>% 
+    group_by(Stations, DATE) %>%
+    summarize(Values = get(fn_summarize)(Values))
+  if(length(meteo_lst) == 1){
+    df_r <- df_r %>%
+      mutate(Name = Stations)
+    legend_name <- "Names"
+  } else {
+    df_r <- df_r %>%
+      left_join(station, by = c("Stations" = "ID"))
+    legend_name <- "Stations"
+  }
+  ##Plotting
+  if (length(unique(df_r$Stations))>1){
+    fig <- plot_ly(df_r, x=~DATE, y=~Values, color=~Name, type = 'scatter', mode = 'lines', connectgaps = FALSE) 
+  } else {
+    fig <- plot_ly(df_r %>% arrange(DATE), x=~DATE, y=~Values, name = unique(df_r$Name), type = 'scatter', mode = 'lines', connectgaps = FALSE) %>% 
+      layout(showlegend = TRUE) 
+  }
+  
+  return(fig %>% layout(title = paste(par, "parameter"), yaxis = list(title = "Values"), 
+                        legend = list(title=list(text=paste('<b>', legend_name, '</b>')))) %>%
+           hide_show())
+}
+
+#' Plotting figure to comparing two datasets with weather data
+#'
+#' @param meteo_lst1 first nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param meteo_lst2 second nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param par character marking weather variable to extract (i.e. "PCP", "SLR", etc).
+#' @param period character describing, which time interval to display (default is "day", 
+#' other examples are "week", "month", etc).
+#' @param fn_summarize function to recalculate to time interval (default is "mean", other examples 
+#' are "median", "sum", etc).
+#' @param name_set1 character to name first dataset.
+#' @param name_set2 character to name second dataset.
+#' @importFrom plotly layout subplot
+#' @return plotly figure object with displayed weather data for two datasets.
+#' @export
+#'
+#' @examples
+#' ##plot_weather_fig_compare(meteo_lst1, meteo_lst2, "PCP", "month", "mean", "raw", "clean")
+
+plot_weather_fig_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn_summarize = "mean", name_set1 = "raw", name_set2 = "clean"){
+  ##Getting figure for set1 data
+  fig1 <- plot_weather_fig(meteo_lst1, par, period, fn_summarize) %>% 
+    layout(showlegend = TRUE,
+           annotations = list( 
+             list(x = 0.52 , y = 1.05, text = paste(str_to_title(name_set1), "data"), showarrow = F, xref='paper', yref='paper')))
+  ##Getting figure for set2 data
+  fig2 <- plot_weather_fig(meteo_lst2, par, period, fn_summarize) %>% 
+    layout(showlegend = TRUE,
+           annotations = list( 
+             list(x = 0.52 , y = 1.05, text = paste(str_to_title(name_set2), "data"), showarrow = F, xref='paper', yref='paper')))
+  
+  ##Adding both figures
+  fig <- subplot(fig1, fig2, shareX = TRUE, nrows = 2, margin = 0.07) %>% 
+    layout(title = paste(par, period, fn_summarize)) %>% 
+    hide_show()
+  return(fig)
 }

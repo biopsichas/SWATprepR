@@ -12,7 +12,8 @@
 #' @importFrom sp coordinates<- proj4string<- CRS
 #' @importFrom stringr str_to_title
 #' @return SpatialPointsDataFrame with columns as days and rows as stations.
-#' @export
+#' @keywords internal
+#' 
 #' @examples
 #' ##get_data_to_interpolate (meteo_lst, "PCP")
 

@@ -31,7 +31,7 @@ hide_show <- function(graph){
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @importFrom lubridate now
 #' @return list with 2 values: minimum and maximum value for all available data.
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' ##get_nx_date_full(meteo_lst)
@@ -54,7 +54,7 @@ get_dates <- function(meteo_lst){
   return(list(min_date = min_date, max_date = max_date))
 }
 
-# Interpolation helpers ---------------------------------------------------
+# Interpolation --------------------------------------------------------------------
 
 #' Prepare grid for interpolation
 #'
@@ -63,7 +63,7 @@ get_dates <- function(meteo_lst){
 #' @importFrom sf st_crs
 #' @importFrom sp coordinates<- proj4string<- gridded<- fullgrid<- CRS
 #' @return Grid needed for the interpolation. 
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' ##get_grid(sp_sf, 2000)
@@ -91,7 +91,7 @@ get_grid <- function(sp_df, grid_spacing){
 #' @importFrom raster raster extract
 #' @importFrom spatialEco sp.na.omit
 #' @return SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' ##get_interpolation(sp_df, meteo_pts, 2, 2)
@@ -113,6 +113,8 @@ get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
 }
 
 
+# Writing -----------------------------------------------------------------
+
 #' Transforming sp dataframe to dataframe
 #'
 #' @param sp_df sp dataframe
@@ -122,6 +124,7 @@ get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
 #'
 #' @examples
 #' ##df_t(sp_df)
+#' 
 
 df_t <- function(sp_df){
   ##Preparing time series files and writing them into output folder
