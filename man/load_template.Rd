@@ -22,5 +22,6 @@ Function providing loading for data templates (with single and multiple data she
 (data should have been cleaned before).
 }
 \examples{
-##load_template("templates/calibration_data.xlsx")
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+load_template(temp_path)
 }

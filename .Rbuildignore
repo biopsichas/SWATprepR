@@ -6,3 +6,6 @@
 ^LICENSE\.md$
 ^test.R
 ^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

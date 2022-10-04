@@ -15,7 +15,8 @@
 #' @export 
 #'
 #' @examples
-#' ##load_template("templates/calibration_data.xlsx")
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' load_template(temp_path)
 
 load_template <- function(template_path, epsg_code = 4326){
   print("Loading data from template.")
@@ -60,7 +61,8 @@ load_template <- function(template_path, epsg_code = 4326){
 #' @export 
 #'
 #' @examples
-#' ##read_stations("templates/weather_data.xlsx", 4326)
+#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' load_stations(temp_path, 4326)
 
 load_stations <- function(template_path, epsg_code){
   read_xlsx(template_path, "Stations") %>% 

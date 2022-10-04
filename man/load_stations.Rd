@@ -18,5 +18,6 @@ sf dataframe with station information.
 Reading station data from excel templates
 }
 \examples{
-##read_stations("templates/weather_data.xlsx", 4326)
+temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+load_stations(temp_path, 4326)
 }
