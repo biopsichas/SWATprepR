@@ -19,5 +19,7 @@ plotly object of interactive figure
 Plotting stations with few data points
 }
 \examples{
-## plot_many(df, drop_st = c("4"))
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_many(cal_data$data, drop_st = c("4"))
 }

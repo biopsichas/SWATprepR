@@ -20,6 +20,8 @@ plotly object of interactive figure
 Aggregating values of single station to interactive monthly box plots
 }
 \examples{
-## plot_monthly_one(df, station = "4", drop_variables = c("Q", "Q1h", "Q2h"))
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_monthly_one(cal_data$data, station = "4", drop_variables = c("Q", "Q1h", "Q2h"))
 
 }

@@ -18,5 +18,7 @@ ggplot object for monthly Pmin/PT fraction box plot
 Plot Pmin fraction of PT
 }
 \examples{
-## plot_Pmin_PT(df, station = unique(station$ID))
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_Pmin_PT(cal_data$data, station = unique(station$ID))
 }

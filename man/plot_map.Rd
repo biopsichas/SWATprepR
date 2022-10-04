@@ -22,5 +22,7 @@ leaflet object of interactive map with monitoring data opening while pressing on
 Preparing interactive map of monitoring points with data inside
 }
 \examples{
-##get_map(df, df_station, rch, shp)
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_map(cal_data$data, cal_data$stations, rch, shp)
 }

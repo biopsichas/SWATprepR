@@ -19,5 +19,7 @@ fraction - monthly fraction values Nmin/NT
 Plot N min to NT regression in each month and fraction Nmin of NT
 }
 \examples{
-## plot_Nmin_NT(df, station = c("4"))
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_Nmin_NT(cal_data$data, station = c("4"))
 }

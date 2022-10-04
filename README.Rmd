@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+options(options(max.print = 5))
 ```
 
 # svatools
@@ -18,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of svatools is to help with SWAT+ input data preparation, visualisation and model outpout data assessment.
+The goal of svatools is to help with SWAT+ input data preparation, visualization and model output data assessment.
 
 ## Installation
 
@@ -29,6 +30,10 @@ You can install the development version of svatools from [GitHub](https://github
 devtools::install_github("biopsichas/svatools")
 ```
 
+## VIn
+
+sdlksd jdfjld
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
@@ -37,6 +42,8 @@ This is a basic example which shows you how to solve a common problem:
 library(svatools)
 ## basic example code
 ```
+
+
 
 What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 

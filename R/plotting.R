@@ -13,7 +13,9 @@
 #' @export
 #'
 #' @examples
-#' ## plot_many(df, drop_st = c("4"))
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_many(cal_data$data, drop_st = c("4"))
 
 plot_many <- function(df, drop_st = c()){
   ggplotly(ggplot(df %>% filter(!Station %in% drop_st), aes(x = DATE, y = Values, color = Station))+
@@ -34,7 +36,9 @@ plot_many <- function(df, drop_st = c()){
 #' @export
 #'
 #' @examples
-#' ## plot_one(df, station = "4")
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_one(cal_data$data, station = "4")
 
 plot_one <- function(df, station){
   df %>%
@@ -57,7 +61,9 @@ plot_one <- function(df, station){
 #' @keywords internal
 #'
 #' @examples
-#' ##plot_ts_fig("4", df)
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_ts_fig("4", cal_data$data)
 
 plot_ts_fig <- function(station, df){
   if(station %in% df$Station){
@@ -91,7 +97,9 @@ plot_ts_fig <- function(station, df){
 #' @export
 #'
 #' @examples
-#' ## plot_monthly_one(df, station = "4", drop_variables = c("Q", "Q1h", "Q2h"))
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_monthly_one(cal_data$data, station = "4", drop_variables = c("Q", "Q1h", "Q2h"))
 #' 
 
 plot_monthly_one <- function(df, station, drop_variables = c()){
@@ -120,7 +128,9 @@ plot_monthly_one <- function(df, station, drop_variables = c()){
 #' @export
 #'
 #' @examples
-#' ## plot_Nmin_NT(df, station = c("4"))
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_Nmin_NT(cal_data$data, station = c("4"))
 
 plot_Nmin_NT <- function(df, station){
   ##Preparing df for regression
@@ -171,7 +181,9 @@ plot_Nmin_NT <- function(df, station){
 #' @export
 #'
 #' @examples
-#' ## plot_Pmin_PT(df, station = unique(station$ID))
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_Pmin_PT(cal_data$data, station = unique(station$ID))
 
 plot_Pmin_PT <- function(df, station){
   df <- df %>% 
@@ -208,7 +220,9 @@ plot_Pmin_PT <- function(df, station){
 #' @export
 #'
 #' @examples
-#' ##get_map(df, df_station, rch, shp)
+#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' plot_map(cal_data$data, cal_data$stations, rch, shp)
 
 plot_map <- function(df, df_station, rch, shp){
   p_all <- lapply(df_station$ID, plot_ts_fig, df = df)

@@ -90,4 +90,10 @@
   <url>
     <loc>/404.html</loc>
   </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/calibration.html</loc>
+  </url>
 </urlset>

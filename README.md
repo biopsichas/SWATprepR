@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 The goal of svatools is to help with SWAT+ input data preparation,
-visualisation and model outpout data assessment.
+visualization and model output data assessment.
 
 ## Installation
 
@@ -18,6 +18,10 @@ You can install the development version of svatools from
 # install.packages("devtools")
 devtools::install_github("biopsichas/svatools")
 ```
+
+## VIn
+
+sdlksd jdfjld
 
 ## Example
 

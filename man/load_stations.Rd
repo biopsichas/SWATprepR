@@ -19,5 +19,6 @@ Reading station data from excel templates
 }
 \examples{
 temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
-load_stations(temp_path, 4326)
+stations <- load_stations(temp_path, 4326)
+str(stations)
 }

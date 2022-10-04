@@ -18,5 +18,7 @@ plotly object of interactive figure.
 Plotting single, data rich station
 }
 \examples{
-## plot_one(df, station = "4")
+temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path)
+plot_one(cal_data$data, station = "4")
 }
