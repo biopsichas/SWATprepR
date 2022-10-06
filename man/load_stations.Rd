@@ -21,4 +21,6 @@ Reading station data from excel templates
 temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
 stations <- load_stations(temp_path, 4326)
 str(stations)
+library(mapview)
+mapview(stations)
 }

@@ -88,6 +88,27 @@
     <loc>/reference/get_soil_parameters.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_cal_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_monthly.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_NminTN.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_PminTP.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_fractions.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_compare.html</loc>
+  </url>
+  <url>
     <loc>/404.html</loc>
   </url>
   <url>
@@ -95,5 +116,8 @@
   </url>
   <url>
     <loc>/articles/calibration.html</loc>
+  </url>
+  <url>
+    <loc>/articles/weather.html</loc>
   </url>
 </urlset>

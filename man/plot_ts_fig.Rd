@@ -18,8 +18,10 @@ ggplot object of static figure.
 Function to prepare static time series figure for single station
 }
 \examples{
+\dontrun{
 temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
 cal_data <- load_template(temp_path)
 plot_ts_fig("4", cal_data$data)
+}
 }
 \keyword{internal}

@@ -65,6 +65,8 @@ load_template <- function(template_path, epsg_code = 4326){
 #' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
 #' stations <- load_stations(temp_path, 4326)
 #' str(stations)
+#' library(mapview)
+#' mapview(stations)
 
 load_stations <- function(template_path, epsg_code){
   read_xlsx(template_path, "Stations") %>% 

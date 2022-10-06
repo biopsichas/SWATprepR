@@ -21,5 +21,7 @@ in format usable by the SWAT model.
 Writing reference file for weather data
 }
 \examples{
-##write_ref_file("./output/", sp_df, "PCP")
+\dontrun{
+write_ref_file("./output/", sp_df, "PCP")
+}
 }

@@ -3,5 +3,7 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   calibration: calibration.html
-last_built: 2022-10-04T18:36Z
+  weather: weather.html
+  soil: soil.html
+last_built: 2022-10-06T19:49Z
 

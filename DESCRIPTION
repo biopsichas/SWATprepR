@@ -39,7 +39,8 @@ Imports:
 Suggests: 
     devtools,
     knitr,
-    rmarkdown
+    rmarkdown,
+    mapview
 VignetteBuilder: 
     knitr
 Remotes:

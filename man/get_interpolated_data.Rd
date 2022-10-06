@@ -35,5 +35,11 @@ SpatialPointsDataFrame with interpolated data.
 Main interpolation function
 }
 \examples{
-##get_interpolated_data(weather_data, "PCP", "basin.shp", "DEM.tif", 2000, 2)
+\dontrun{
+temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+DEM_path <- system.file("templates", "GIS/DEM.tif", package = "svatools")
+basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+met_lst <- load_template(temp_path, 3035)
+get_interpolated_data(met_lst, "PCP", basin_path, DEM_path, 2000, 2)
+}
 }

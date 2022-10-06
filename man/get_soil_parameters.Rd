@@ -17,5 +17,7 @@ dataframe with fully formatted and filled table of soil parameters for SWAT mode
 Function to fill soil parameters
 }
 \examples{
-##get_soil_pars("templates/soil_parameters.xlsx")
+temp_path <- system.file("templates", "soil_parameters.xlsx", package = "svatools")
+soil <- get_soil_pars(temp_path)
+str(soil)
 }

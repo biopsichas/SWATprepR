@@ -21,5 +21,7 @@ in format usable by the SWAT model.
 Writing input files (all except TMP)
 }
 \examples{
-##write_input_files("./output/", sp_df, "PCP")
+\dontrun{
+write_input_files("./output/", sp_df, "PCP")
+}
 }

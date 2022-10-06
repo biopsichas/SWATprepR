@@ -27,5 +27,7 @@ Preparing input files for WGNmaker. WGNmaker excel macro could be downloaded fro
 https://swat.tamu.edu/media/41583/wgen-excel.zip
 }
 \examples{
-##write_wgnmaker_files("./wgn/", meteo_lst, wgn_stations_lst, "Station1")
+\dontrun{
+write_wgnmaker_files("./wgn/", meteo_lst, wgn_stations_lst, "Station1")
+}
 }

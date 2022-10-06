@@ -65,7 +65,13 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @export
 #'
 #' @examples
-#' ##get_interpolated_data(weather_data, "PCP", "basin.shp", "DEM.tif", 2000, 2)
+#' \dontrun{
+#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' DEM_path <- system.file("templates", "GIS/DEM.tif", package = "svatools")
+#' basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+#' met_lst <- load_template(temp_path, 3035)
+#' get_interpolated_data(met_lst, "PCP", basin_path, DEM_path, 2000, 2)
+#' }
 
 get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent = 2){
   ##Preparing data for interpolation and grid
@@ -108,7 +114,9 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #' @export 
 #'
 #' @examples
-#' ##get_soil_pars("templates/soil_parameters.xlsx")
+#' temp_path <- system.file("templates", "soil_parameters.xlsx", package = "svatools")
+#' soil <- get_soil_pars(temp_path)
+#' str(soil)
 
 get_soil_parameters <- function(template_path){
   soilp <- read_excel(template_path)

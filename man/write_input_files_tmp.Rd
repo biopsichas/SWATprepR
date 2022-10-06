@@ -21,5 +21,7 @@ in format usable by the SWAT model.
 Writing input files for TMP data
 }
 \examples{
-##write_input_files_tmp("./output/", sp_df_mx, sp_df_mn)
+\dontrun{
+write_input_files_tmp("./output/", sp_df_mx, sp_df_mn)
+}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{plot_map}
 \alias{plot_map}
-\title{Preparing interactive map of monitoring points with data inside}
+\title{Preparing interactive map of monitoring points}
 \usage{
 plot_map(df, df_station, rch, shp)
 }
@@ -19,10 +19,15 @@ plot_map(df, df_station, rch, shp)
 leaflet object of interactive map with monitoring data opening while pressing on points.
 }
 \description{
-Preparing interactive map of monitoring points with data inside
+Preparing interactive map of monitoring points
 }
 \examples{
+library(sf)
 temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
-cal_data <- load_template(temp_path)
-plot_map(cal_data$data, cal_data$stations, rch, shp)
+reach_path <- system.file("templates", "GIS/reaches.shp", package = "svatools")
+basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+cal_data <- load_template(temp_path, 4326)
+reach <- st_transform(st_read(reach_path), 4326)
+basin <-st_transform(st_read(basin_path), 4326)
+plot_map(cal_data$data, cal_data$stations, reach, basin)
 }

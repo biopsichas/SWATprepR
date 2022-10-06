@@ -12,7 +12,9 @@
 #' @export
 #'
 #' @examples
-#' ##write_input_files("./output/", sp_df, "PCP")
+#' \dontrun{
+#' write_input_files("./output/", sp_df, "PCP")
+#' }
 
 write_input_files <- function(write_path, sp_df, par){
   ##Preparing time series files and writing them into output folder
@@ -40,7 +42,9 @@ write_input_files <- function(write_path, sp_df, par){
 #' @export
 #'
 #' @examples
-#' ##write_input_files_tmp("./output/", sp_df_mx, sp_df_mn)
+#' \dontrun{
+#' write_input_files_tmp("./output/", sp_df_mx, sp_df_mn)
+#' }
 
 write_input_files_tmp <- function(write_path, sp_df_mx, sp_df_mn){
   ##Preparing TMP_MAX and TMP_MIN time series files 
@@ -78,7 +82,9 @@ write_input_files_tmp <- function(write_path, sp_df_mx, sp_df_mn){
 #' @export
 #'
 #' @examples
-#' ##write_ref_file("./output/", sp_df, "PCP")
+#' \dontrun{
+#' write_ref_file("./output/", sp_df, "PCP")
+#' }
 
 write_ref_file <- function(write_path, sp_df, par){
   ##Prepare .txt reference df
@@ -99,10 +105,7 @@ write_ref_file <- function(write_path, sp_df, par){
   return(print(paste0(par, " reference file was was written successfully to ", write_path)))
 }
 
-
 # Input for WGNmaker ------------------------------------------------------
-
-
 
 #' Preparing input files for WGNmaker. WGNmaker excel macro could be downloaded from following link:
 #'  https://swat.tamu.edu/media/41583/wgen-excel.zip
@@ -120,7 +123,9 @@ write_ref_file <- function(write_path, sp_df, par){
 #' @export
 #'
 #' @examples
-#' ##write_wgnmaker_files("./wgn/", meteo_lst, wgn_stations_lst, "Station1")
+#' \dontrun{
+#' write_wgnmaker_files("./wgn/", meteo_lst, wgn_stations_lst, "Station1")
+#' }
 
 write_wgnmaker_files <- function(write_path, meteo_lst, wgn_stations_lst, station_name){
   print("Files for WGNmaker is being prepared")
