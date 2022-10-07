@@ -2,6 +2,7 @@
 
 export(get_interpolated_data)
 export(get_soil_parameters)
+export(interpolate)
 export(load_stations)
 export(load_template)
 export(plot_cal_data)

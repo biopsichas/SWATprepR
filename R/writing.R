@@ -72,7 +72,7 @@ write_input_files_tmp <- function(write_path, sp_df_mx, sp_df_mn){
 #' Writing reference file for weather data
 #'
 #' @param write_path path to folder where results should be written.
-#' @param sp_df path to folder where results should be written.
+#' @param sp_df SpatialPointsDataFrame with resulting interpolated data.
 #' @param par weather variable (i.e. "PCP", "SLR", etc).
 #' @importFrom sf st_as_sf st_transform st_coordinates st_drop_geometry
 #' @importFrom dplyr mutate bind_cols mutate_if row_number rename select
@@ -107,8 +107,9 @@ write_ref_file <- function(write_path, sp_df, par){
 
 # Input for WGNmaker ------------------------------------------------------
 
-#' Preparing input files for WGNmaker. WGNmaker excel macro could be downloaded from following link:
-#'  https://swat.tamu.edu/media/41583/wgen-excel.zip
+#' Preparing input files for WGNmaker. 
+#' 
+#' WGNmaker excel macro could be downloaded from following link: https://swat.tamu.edu/media/41583/wgen-excel.zip
 #'  
 #' @param write_path path to folder where results should be written.
 #' @param meteo_lst nested list of lists with dataframes. 

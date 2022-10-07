@@ -54,6 +54,29 @@ get_dates <- function(meteo_lst){
   return(list(min_date = min_date, max_date = max_date))
 }
 
+
+#' Getting number of stations with data for selected parameter
+#' 
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param par is weather variable to extract (i.e. "PCP", "SLR", etc)
+#' @return number of stations with data for this parameter. 
+#' @keywords internal
+#'
+#' @examples
+#' ##get_nb_st_with_data(meteo_lst, "PCP")
+#' 
+get_nb_st_with_data <- function(meteo_lst, par){
+  meteo_lst <- meteo_lst$data
+  i <- 0
+  for (n in names(meteo_lst)){
+    if(par %in% names(meteo_lst[n][[1]])){
+      i <- i+1
+    }
+  }
+  return(i)
+}
+
 # Interpolation --------------------------------------------------------------------
 
 #' Prepare grid for interpolation

@@ -114,9 +114,11 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #' @export 
 #'
 #' @examples
+#' \dontrun{
 #' temp_path <- system.file("templates", "soil_parameters.xlsx", package = "svatools")
-#' soil <- get_soil_pars(temp_path)
+#' soil <- get_soil_parameters(temp_path)
 #' str(soil)
+#' }
 
 get_soil_parameters <- function(template_path){
   soilp <- read_excel(template_path)
@@ -138,7 +140,10 @@ get_soil_parameters <- function(template_path){
       input[nrow(input)+1,] <- list(nrow(input)+1, 200, 1, 0.01, 1, 1, 98)
     }
     
-    pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions") 
+    pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
+    if ("suggested_PTF" %in% ls(envir = .GlobalEnv)) {
+      get("suggested_PTF", envir = .GlobalEnv)
+    }
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
     pred_VG <- merge(pred_VG1[c(1:nrow(pred_VG1)-d), c(1:6,8,10:14)], input[,c(1,2)], by="rownum", all.y=TRUE)
@@ -174,5 +179,60 @@ get_soil_parameters <- function(template_path){
   }
   return(soilpf)
 }
+
+#' Interpolating and writing results into model input files
+#'
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param write_path path to folder where results should be written.
+#' @param catchment_boundary_path path to basin boundary shape file.
+#' @param dem_data_path path to DEM raster data in same projection as weather station.
+#' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
+#' @param p_vector character vector representing weather variables to interpolate (optional, default all variables selected 
+#' c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ).
+#' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
+#' (optional, default value is 2).
+#' @return nested list of lists with dataframes for interpolation results.
+#' Nested structure lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER). 
+#' Function also writes all SWAT weather text input files from the interpolation results.
+#' @export
+#' @examples
+#' \dontrun{
+#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' DEM_path <- system.file("templates", "GIS/DEM.tif", package = "svatools")
+#' basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+#' met_lst <- load_template(temp_path, 3035)
+#' interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
+#' }
+
+interpolate <- function(meteo_lst, write_path, catchment_boundary_path, dem_data_path, grid_spacing, 
+                        p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN"), idw_exponent = 2){
+  ##List to save interpolation results for examining
+  results <- list()
+  p_lst <- list("PCP" = "pcp", "SLR" = "solar", "RELHUM" = "rh", "TMP_MAX" = "tmp", 
+                "TMP_MIN" = "tmp", "WNDSPD" = "wind")
+  ##Loop for all parameter
+  for (p in p_vector){
+    ##Interpolation case for which has data at more than 1 station and not TMP
+    if(get_nb_st_with_data(p)>1 & !startsWith(p, 'TMP')){
+      r <- get_interpolated_data(meteo_lst, p, catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
+      write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r, p)
+      write_input_files(write_path, r, p)
+      results[[p]] <- r
+      ##Interpolation for TMP data
+    } else if(p == 'TMP_MAX'){
+      r_tmx <- get_interpolated_data(meteo_lst, "TMP_MAX", catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
+      r_tmn <- get_interpolated_data(meteo_lst, "TMP_MIN", catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
+      results[['TMP_MAX']] <- r_tmx
+      results[['TMP_MIN']] <- r_tmn
+      write_input_files_tmp(write_path, r_tmx, r_tmn)
+      write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r_tmx, "TMP")
+    }
+  }
+  cat("\014") 
+  print("Interpolation is finished. Results are in results dataframe.")
+  return(results)
+}
+
 
 

@@ -9,7 +9,7 @@ write_ref_file(write_path, sp_df, par)
 \arguments{
 \item{write_path}{path to folder where results should be written.}
 
-\item{sp_df}{path to folder where results should be written.}
+\item{sp_df}{SpatialPointsDataFrame with resulting interpolated data.}
 
 \item{par}{weather variable (i.e. "PCP", "SLR", etc).}
 }

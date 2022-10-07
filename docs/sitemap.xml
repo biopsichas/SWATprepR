@@ -109,6 +109,12 @@
     <loc>/reference/plot_weather_compare.html</loc>
   </url>
   <url>
+    <loc>/reference/get_nb_st_with_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/interpolate.html</loc>
+  </url>
+  <url>
     <loc>/404.html</loc>
   </url>
   <url>
@@ -119,5 +125,8 @@
   </url>
   <url>
     <loc>/articles/weather.html</loc>
+  </url>
+  <url>
+    <loc>/articles/soil.html</loc>
   </url>
 </urlset>
