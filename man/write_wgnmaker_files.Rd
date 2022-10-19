@@ -2,8 +2,7 @@
 % Please edit documentation in R/writing.R
 \name{write_wgnmaker_files}
 \alias{write_wgnmaker_files}
-\title{Preparing input files for WGNmaker. WGNmaker excel macro could be downloaded from following link:
-https://swat.tamu.edu/media/41583/wgen-excel.zip}
+\title{Preparing input files for WGNmaker.}
 \usage{
 write_wgnmaker_files(write_path, meteo_lst, wgn_stations_lst, station_name)
 }
@@ -23,8 +22,7 @@ TMP_MIN = "ID12", WNDSPD = "ID12", MAXHHR = "ID12")}
 Excel files needed for WGNmaker
 }
 \description{
-Preparing input files for WGNmaker. WGNmaker excel macro could be downloaded from following link:
-https://swat.tamu.edu/media/41583/wgen-excel.zip
+WGNmaker excel macro could be downloaded from following link: https://swat.tamu.edu/media/41583/wgen-excel.zip
 }
 \examples{
 \dontrun{

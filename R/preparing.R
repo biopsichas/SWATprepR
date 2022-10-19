@@ -105,13 +105,13 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #'
 #' @param template_path path to *.xlsx file with at least SNAM	NLAYERS	columns and SOL_Z	CLAY	
 #' SILT	SAND	OC columns for each available soil layer.
-#' @importFrom euptf2 euptfFun
+#' @importFrom euptf2 euptfFun 
 #' @importFrom readxl read_excel
 #' @importFrom dplyr rename_at vars
 #' @importFrom tidyselect all_of
 #' @importFrom Rdpack reprompt
 #' @return dataframe with fully formatted and filled table of soil parameters for SWAT model.
-#' @export 
+#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -139,11 +139,13 @@ get_soil_parameters <- function(template_path){
       d <- 1
       input[nrow(input)+1,] <- list(nrow(input)+1, 200, 1, 0.01, 1, 1, 98)
     }
-    
+    ##Adding part of suggested_PTF table from euptf2
+    # suggested_PTF <- data.frame(Predictor_variables = "USSAND+USSILT+USCLAY+DEPTH_M+OC+BD", THS = "PTF03",
+    #                             FC_2 = "PTF03", FC = "PTF02", WP = "PTF02", AWC_2 = "PTF03", AWC = "PTF03", 
+    #                             KS = "PTF02", VG  = "PTF07", MVG = "PTF02")
+    # suggested_PTF <- euptf2::suggested_PTF
+    # VG_PTF07 <- euptf2::VG_PTF07
     pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
-    if ("suggested_PTF" %in% ls(envir = .GlobalEnv)) {
-      get("suggested_PTF", envir = .GlobalEnv)
-    }
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
     pred_VG <- merge(pred_VG1[c(1:nrow(pred_VG1)-d), c(1:6,8,10:14)], input[,c(1,2)], by="rownum", all.y=TRUE)
