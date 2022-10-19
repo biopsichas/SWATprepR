@@ -89,9 +89,72 @@ should be collected. All the rest will be filled by <a href="../reference/get_so
 function.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/svatools" class="external-link">svatools</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">euptf2</span><span class="op">)</span></span>
 <span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"templates"</span>, <span class="st">"soil_parameters.xlsx"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
 <span><span class="va">soil</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">temp_path</span><span class="op">)</span></span>
-<span><span class="co"># str(soil)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suggested_PTF</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">soil</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'data.frame':    6 obs. of  60 variables:</span></span>
+<span><span class="co">##  $ OBJECTID  : int  1 2 3 4 5 6</span></span>
+<span><span class="co">##  $ MUID      : chr  "" "" "" "" ...</span></span>
+<span><span class="co">##  $ SEQN      : num  1 1 1 1 1 1</span></span>
+<span><span class="co">##  $ SNAM      : chr  "pgl" "pglp" "pgm" "pgmp" ...</span></span>
+<span><span class="co">##  $ S5ID      : chr  "" "" "" "" ...</span></span>
+<span><span class="co">##  $ CMPPCT    : num  1 1 1 1 1 1</span></span>
+<span><span class="co">##  $ NLAYERS   : num  3 2 3 3 4 1</span></span>
+<span><span class="co">##  $ HYDGRP    : chr  "B" "B" "B" "B" ...</span></span>
+<span><span class="co">##  $ SOL_ZMX   : num  55 57.5 85.6 57.5 121.7 ...</span></span>
+<span><span class="co">##  $ ANION_EXCL: num  0.5 0.5 0.5 0.5 0.5 0.5</span></span>
+<span><span class="co">##  $ SOL_CRK   : num  0.5 0.5 0.5 0.5 0.5 0.5</span></span>
+<span><span class="co">##  $ TEXTURE   : chr  "" "" "" "" ...</span></span>
+<span><span class="co">##  $ SOL_Z1    : num  24.2 22.5 23 21.7 20 ...</span></span>
+<span><span class="co">##  $ SOL_BD1   : num  1.43 1.42 1.4 1.36 1.51 ...</span></span>
+<span><span class="co">##  $ SOL_AWC1  : num  0.171 0.187 0.193 0.198 0.104 ...</span></span>
+<span><span class="co">##  $ SOL_K1    : num  11 19 19.2 18.8 15.1 ...</span></span>
+<span><span class="co">##  $ SOL_CBN1  : num  0.97 1.03 1.21 1.47 0.49 1.39</span></span>
+<span><span class="co">##  $ CLAY1     : num  4.69 4.95 6.09 6.57 2 2.46</span></span>
+<span><span class="co">##  $ SILT1     : num  14.5 21.8 20.6 22.5 3 ...</span></span>
+<span><span class="co">##  $ SAND1     : num  80.8 73.3 73.3 71 95 ...</span></span>
+<span><span class="co">##  $ ROCK1     : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_ALB1  : num  0.166 0.161 0.16 0.159 0.19 ...</span></span>
+<span><span class="co">##  $ USLE_K1   : num  0.1585 0.2109 0.1965 0.1945 0.0855 ...</span></span>
+<span><span class="co">##  $ SOL_EC1   : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_Z2    : num  49.4 57.5 48.5 46.5 60 ...</span></span>
+<span><span class="co">##  $ SOL_BD2   : num  1.55 1.6 1.53 1.53 1.57 ...</span></span>
+<span><span class="co">##  $ SOL_AWC2  : num  0.1404 0.1383 0.1474 0.1565 0.0999 ...</span></span>
+<span><span class="co">##  $ SOL_K2    : num  7.36 6.14 11.05 8.8 20.82 ...</span></span>
+<span><span class="co">##  $ SOL_CBN2  : num  0.33 0.16 0.42 0.43 0.27 NA</span></span>
+<span><span class="co">##  $ CLAY2     : num  3.41 3.9 4.86 6.67 1.45 NA</span></span>
+<span><span class="co">##  $ SILT2     : num  16.25 16.58 19.83 20.74 2.89 ...</span></span>
+<span><span class="co">##  $ SAND2     : num  80.3 79.5 75.3 72.6 95.7 ...</span></span>
+<span><span class="co">##  $ ROCK2     : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_ALB2  : num  0.184 0.182 0.176 0.172 0.199 ...</span></span>
+<span><span class="co">##  $ USLE_K2   : num  0.1799 0.1858 0.2148 0.2256 0.0886 ...</span></span>
+<span><span class="co">##  $ SOL_EC2   : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_Z3    : num  55 NA 85.6 57.5 95.7 ...</span></span>
+<span><span class="co">##  $ SOL_BD3   : num  1.62 NA 1.61 1.61 1.61 ...</span></span>
+<span><span class="co">##  $ SOL_AWC3  : num  0.137 NA 0.155 0.154 0.119 ...</span></span>
+<span><span class="co">##  $ SOL_K3    : num  8.8 NA 14.59 9.32 18.28 ...</span></span>
+<span><span class="co">##  $ SOL_CBN3  : num  0.11 NA 0.13 0.14 0.13 NA</span></span>
+<span><span class="co">##  $ CLAY3     : num  3.92 NA 5.86 4.53 0.82 NA</span></span>
+<span><span class="co">##  $ SILT3     : num  20.59 NA 18.3 23.32 3.45 ...</span></span>
+<span><span class="co">##  $ SAND3     : num  75.5 NA 75.8 72.2 95.7 ...</span></span>
+<span><span class="co">##  $ ROCK3     : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_ALB3  : num  0.181 NA 0.175 0.171 0.199 ...</span></span>
+<span><span class="co">##  $ USLE_K3   : num  0.2191 NA 0.2081 0.2394 0.0942 ...</span></span>
+<span><span class="co">##  $ SOL_EC3   : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_Z4    : num  NA NA NA NA 122 ...</span></span>
+<span><span class="co">##  $ SOL_BD4   : num  NA NA NA NA 1.64 ...</span></span>
+<span><span class="co">##  $ SOL_AWC4  : num  NA NA NA NA 0.0935 ...</span></span>
+<span><span class="co">##  $ SOL_K4    : num  NA NA NA NA 10.8 ...</span></span>
+<span><span class="co">##  $ SOL_CBN4  : num  NA NA NA NA 0.07 NA</span></span>
+<span><span class="co">##  $ CLAY4     : num  NA NA NA NA 0.95 NA</span></span>
+<span><span class="co">##  $ SILT4     : num  NA NA NA NA 3.32 NA</span></span>
+<span><span class="co">##  $ SAND4     : num  NA NA NA NA 95.7 ...</span></span>
+<span><span class="co">##  $ ROCK4     : num  0 0 0 0 0 0</span></span>
+<span><span class="co">##  $ SOL_ALB4  : num  NA NA NA NA 0.211 ...</span></span>
+<span><span class="co">##  $ USLE_K4   : num  NA NA NA NA 0.0932 ...</span></span>
+<span><span class="co">##  $ SOL_EC4   : num  0 0 0 0 0 0</span></span></code></pre>
 </div>
   </main>
 </div>
