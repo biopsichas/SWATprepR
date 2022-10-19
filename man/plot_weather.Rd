@@ -25,7 +25,7 @@ plotly figure object with displayed weather data
 Prepare the plotly figure for weather data
 }
 \examples{
-temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 met_lst <- load_template(temp_path, 4326)
 plot_weather(met_lst, "PCP", "month", "sum")
 }

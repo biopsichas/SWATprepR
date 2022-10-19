@@ -15,7 +15,7 @@
 #' @export 
 #'
 #' @examples
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
 #' str(cal_data)
 
@@ -62,7 +62,7 @@ load_template <- function(template_path, epsg_code = 4326){
 #' @export 
 #'
 #' @examples
-#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' stations <- load_stations(temp_path, 3035)
 #' str(stations)
 #' library(sf)

@@ -20,7 +20,7 @@ plotly object of interactive figure
 Aggregating values of single station to interactive monthly box plots
 }
 \examples{
-temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 cal_data <- load_template(temp_path)
 plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
 

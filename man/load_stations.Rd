@@ -18,7 +18,7 @@ sf dataframe with station information.
 Reading station data from excel templates
 }
 \examples{
-temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 stations <- load_stations(temp_path, 3035)
 str(stations)
 library(sf)

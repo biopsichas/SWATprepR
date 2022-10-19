@@ -66,9 +66,9 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
-#' DEM_path <- system.file("templates", "GIS/DEM.tif", package = "svatools")
-#' basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 #' met_lst <- load_template(temp_path, 3035)
 #' get_interpolated_data(met_lst, "PCP", basin_path, DEM_path, 2000, 2)
 #' }
@@ -201,9 +201,9 @@ get_soil_parameters <- function(template_path){
 #' @export
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
-#' DEM_path <- system.file("templates", "GIS/DEM.tif", package = "svatools")
-#' basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 #' met_lst <- load_template(temp_path, 3035)
 #' interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
 #' }

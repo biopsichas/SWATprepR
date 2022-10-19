@@ -40,9 +40,9 @@ plotly figure object with displayed weather data for two datasets.
 Plotting figure to comparing two datasets with weather data
 }
 \examples{
-temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 met_lst1 <- load_template(temp_path, 4326)
-temp_path <- system.file("templates", "weather_data_raw.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data_raw.xlsx", package = "svatools")
 met_lst2 <- load_template(temp_path, 4326)
 plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
 }

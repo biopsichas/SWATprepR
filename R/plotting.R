@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
 #' plot_cal_data(cal_data$data, c("1", "2", "3","10"))
 
@@ -51,7 +51,7 @@ plot_cal_data <- function(df, stations){
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
 #' plot_ts_fig("4", cal_data$data)
 #' }
@@ -88,7 +88,7 @@ plot_ts_fig <- function(station, df){
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
 #' plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
 #' 
@@ -121,7 +121,7 @@ plot_monthly <- function(df, station, drop_variables = c()){
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
 #' plot_fractions(cal_data$data, c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 #' plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
@@ -184,9 +184,9 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #'
 #' @examples
 #' library(sf)
-#' temp_path <- system.file("templates", "calibration_data.xlsx", package = "svatools")
-#' reach_path <- system.file("templates", "GIS/reaches.shp", package = "svatools")
-#' basin_path <- system.file("templates", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' reach_path <- system.file("extdata", "GIS/reaches.shp", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 #' cal_data <- load_template(temp_path, 4326)
 #' reach <- st_transform(st_read(reach_path), 4326)
 #' basin <-st_transform(st_read(basin_path), 4326)
@@ -239,7 +239,7 @@ plot_map <- function(df, df_station, rch, shp){
 #' @export
 #'
 #' @examples 
-#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' met_lst <- load_template(temp_path, 4326)
 #' plot_weather(met_lst, "PCP", "month", "sum")
 
@@ -307,9 +307,9 @@ plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("templates", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' met_lst1 <- load_template(temp_path, 4326)
-#' temp_path <- system.file("templates", "weather_data_raw.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data_raw.xlsx", package = "svatools")
 #' met_lst2 <- load_template(temp_path, 4326)
 #' plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
 
