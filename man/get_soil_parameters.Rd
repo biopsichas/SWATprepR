@@ -19,6 +19,7 @@ Function to fill soil parameters
 \examples{
 \dontrun{
 temp_path <- system.file("templates", "soil_parameters.xlsx", package = "svatools")
+library(euptf2)
 soil <- get_soil_parameters(temp_path)
 str(soil)
 }
