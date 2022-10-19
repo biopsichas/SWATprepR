@@ -116,6 +116,7 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #' @examples
 #' \dontrun{
 #' temp_path <- system.file("templates", "soil_parameters.xlsx", package = "svatools")
+#' library(euptf2)
 #' soil <- get_soil_parameters(temp_path)
 #' str(soil)
 #' }
