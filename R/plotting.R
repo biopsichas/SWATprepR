@@ -150,7 +150,8 @@ plot_fractions <- function(df, station, total_var, min_vars){
     geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
     stat_poly_eq(formula = y~x, 
                  aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
-                 parse = TRUE) +         
+                 parse = TRUE, 
+                 size = 2.4) +         
     geom_point()+
     facet_wrap(~Month) +
     xlab(paste(min_vars, collapse = ' + ')) +
