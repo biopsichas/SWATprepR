@@ -140,12 +140,6 @@ get_soil_parameters <- function(template_path){
       d <- 1
       input[nrow(input)+1,] <- list(nrow(input)+1, 200, 1, 0.01, 1, 1, 98)
     }
-    ##Adding part of suggested_PTF table from euptf2
-    # suggested_PTF <- data.frame(Predictor_variables = "USSAND+USSILT+USCLAY+DEPTH_M+OC+BD", THS = "PTF03",
-    #                             FC_2 = "PTF03", FC = "PTF02", WP = "PTF02", AWC_2 = "PTF03", AWC = "PTF03", 
-    #                             KS = "PTF02", VG  = "PTF07", MVG = "PTF02")
-    # suggested_PTF <- euptf2::suggested_PTF
-    # VG_PTF07 <- euptf2::VG_PTF07
     pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
