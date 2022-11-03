@@ -1,0 +1,77 @@
+---
+title: "Calibration data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Loading
+
+If data are prepared according to given templates, they can be loaded directly with package function [load_template](../reference/load_template.html) function. Two data types are loaded. First is station information (location, name, ID). Second, is values monitoring values with IDs to relate to station, variable names, dates and values. 
+
+```{r cal_load, message = FALSE, warning = FALSE}
+library(svatools)
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+cal_data <- load_template(temp_path, 4326)
+str(cal_data)
+```
+
+## Plotting 
+
+Plotting is valuable tool to examine data and identify potential problems.
+
+### Timeseries
+
+There are several ways package could be used to plot loaded calibration data. Data for multiple stations could be plotted using [plot_cal_data](../reference/plot_cal_data.html) function. This way function should be used only for stations with relatively few data points to screen for data coverage and potential problems.
+
+```{r plot_cal_mult, message = FALSE, warning = FALSE}
+plot_cal_data(cal_data$data, c("3","10"))
+```
+
+For data rich monitoring station [plot_cal_data](../reference/plot_cal_data.html) function should be used only with single station selected. Such plotting allows better visualization. 
+
+```{r plot_cal_one, message = FALSE, warning = FALSE}
+plot_cal_data(cal_data$data, c("4"))
+
+```
+
+### Monthly summary
+
+Sometimes for the evaluation of data quality monthly plots can be useful. Such plots allow to see if monitoring results corresponds to other data sources and processes, which should be taking place in the monitored catchment. [plot_monthly](../reference/plot_monthly.html) function can be used to plot monthly aggregates. 
+
+```{r plot_cal_mon, message = FALSE, warning = FALSE}
+plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
+```
+
+### Fractions
+
+Possible problems could be observed plotting how mineral and total parts of nutrients changes. There is function for this. [plot_fractions](../reference/plot_fractions.html) could be used for nitrogen and for phosphorus. Function provides monthly regression and monthly fraction figures.
+
+Example of function use with nitrogen.
+
+```{r plot_cal_n, message = FALSE, warning = FALSE}
+plot_fractions(cal_data$data, station = c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
+```
+
+Example of function use with nitrogen.
+
+```{r plot_cal_p, message = FALSE, warning = FALSE}
+plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
+```
+
+### Maps
+
+The last function in the package for plotting calibration data is [plot_map](../reference/plot_map.html). This function allows to plot catchment boundary, all monitoring stations and monitoring data within those station (press on monitoring station). This allow examination of spatial and temporal dimensions of existing data at the same time. 
+
+```{r plot_map, message = FALSE, warning = FALSE}
+library(sf) 
+##Loading and converting coordinate system of GIS data. EPSG 4326 coordinate system should be used to get right plot. 
+reach_path <- system.file("extdata", "GIS/reaches.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+reach <- st_transform(st_read(reach_path), 4326)
+basin <-st_transform(st_read(basin_path), 4326)
+plot_map(cal_data$data, cal_data$stations, reach, basin)
+```

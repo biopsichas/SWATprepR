@@ -1,0 +1,22 @@
+---
+title: "Soil parameters"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Parameters
+
+Obtaining soil parameters for SWAT model can be difficult. Therefore package has function with allows automatic preparation of soil parameters. For this SOL_Z, CLAY, SAND, SILT and SOL_CNB parameters should be collected. All the rest will be filled by  [get_soil_parameters ](../reference/get_soil_parameters.html) function.
+
+```{r soil, message = FALSE, warning = FALSE}
+library(svatools)
+library(euptf2)
+temp_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
+soil <- get_soil_parameters(temp_path)
+rm(suggested_PTF)
+str(soil)
+```
+
