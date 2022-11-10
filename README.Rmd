@@ -1,17 +1,18 @@
+
 ---
-output: github_document
+title: "Introduction to svatools"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to svatools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = "#>"
 )
-options(options(max.print = 5))
 ```
 
 # svatools
@@ -64,5 +65,3 @@ temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools
 cal_data <- load_template(temp_path, 4326)
 plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
 ```
-
-

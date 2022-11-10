@@ -7,9 +7,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Loading
+## Loading {#load_weather}
 
-Loading weather data from templates could by done with the same [load_template](../reference/load_template.html) function as loading calibration data. However, data should for each station should be separated into different sheet. All data is loaded into nested list of list format, which could be used to other functions. 
+Loading weather data from templates could by done with the same [load_template](../reference/load_template.html) function as loading calibration data. However, data should for each meteorological station should be separated into different sheets. All data are loaded into nested list of list format, which could be used to run other functions. 
 
 ```{r met_load, message = FALSE, warning = FALSE}
 library(svatools)
@@ -19,13 +19,14 @@ met_lst <- load_template(temp_path, 3035)
 
 ## Plotting
 
-Function [plot_weather](../reference/plot_weather.html) allows to plot meteorological data by selecting variables and way of aggrerating them. All stations will be displayed. They only relevant could be selected interactively on the plot. 
+Function [plot_weather](../reference/plot_weather.html) allows to plot meteorological data by selecting variables, time period and way of aggregating them. Time period should be selected one of *"second","minute","hour","day", "week", "month", or "year"*. While aggregation functions could be selected from `dplyr` package [summarise function](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8/topics/summarise) available options.
+All provided meteorological stations` data will be displayed. Relevant stations could be selected interactively on generated plot by selecting or deselecting stations in legend. *show all* or *hide all* buttons allows to select or deselect all stations. Press *Shift* + left mouse bottom and drag to zoom specific area, or press left mouse button and grad to explore plot, or press *Shift* + left and right mouse buttons at same time to zoom out. Toolbox in top right corner of figure could be used for these operations as well.  
 
 ```{r met_plot, message = FALSE, warning = FALSE}
 plot_weather(met_lst, "PCP", "month", "sum")
 ```
 
-Another function [plot_weather_compare](../reference/plot_weather_compare.html) allows comparing two meteorological datasets. For example one for raw and other for already cleaned data, or one for climate model other for monitoring. This way of plotting allows comparing different data sets as well as the same data set before and after certain operations. 
+Another function [plot_weather_compare](../reference/plot_weather_compare.html) allows comparing two meteorological datasets of same time scale. Potential examples of its usage could be different. One could be comparing different datasets in order to decide, which one should be used in modeling. Another example might be to examine how cleaning operations improved original data. Moreover, this function could be helpful in examining climate data downscaling or bias-correction results comparing them with observed data. Same options for aggregation as in [plot_weather_compare](../reference/plot_weather_compare.html) function can be used. 
 
 ```{r met_plot_comp, message = FALSE, warning = FALSE}
 temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "svatools")
@@ -33,9 +34,9 @@ met_lst2 <- load_template(temp_path2, 3035)
 plot_weather_compare(met_lst, met_lst2, "PCP", "month", "mean", "clean", "raw")
 ```
 
-## Interpolation
+## Interpolating
 
-In cases where too few stations are available in a selected catchment or huge data gaps exists, interpolation could be used between stations to cover those gaps.
+In cases where too few stations are available in a selected catchment or huge data gaps exists, interpolation could be applied between stations to cover those gaps. Example below loads basin boundary to be used in the modeling and adds with already [loaded](#load_weather) meteorological stations to the map. It could be seen that basin has just one station inside it. However, in this case station has only very few observations with huge gaps. Therefore, it is highly recommended in such cases collect data from nearby stations. These data can help to fill gaps and also could be used to generate spatial distribution for variables, which could be employed to propagate time series data for any number of virtual stations. Therefore, any number of meteorological stations could be prepared with full time series data. 
 
 ```{r met_station, message = FALSE, warning = FALSE}
 library(mapview)
@@ -48,14 +49,22 @@ stations <- st_transform(met_lst$stations, 4326)
 mapview(stations) + mapview(basin)
 ```
 
-Function [interpolate](../reference/interpolate.html) allow to do such interpolation between data in presented stations. With function *grid_spacing* parameter one can control how dense spatial interpolation point will be. Interpolate function creates new grid spaced virtual stations. It also writes SWAT model input files into output folder for the virtual stations (grid points).
+For such need function [interpolate](../reference/interpolate.html) was prepared. It allows to do interpolation between data in presented stations. Function's *grid_spacing* parameter defines, how dense spatial interpolation points will be. Interpolate function creates virtual stations. It also writes SWAT model input files for virtual stations into output folder. Data needed for this function are [loaded](#load_weather) stations observations, basin boundary shape path, DEM raster path. It is important, that GIS data used in function would be of same coordinate system.
+
+Function parameters are *grid_spacing*, *p_vector* - character vector representing weather variables to interpolate (optional, default all variables selected c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ), *idw_exponent* - numeric value for exponent parameter to be used in interpolation  (optional, default value is 2). This function automatically writes inputs for SWAT model in defined output folder. Results could be also saved in R environment by assigning to an object. 
 
 ```{r met_interpolation, eval=FALSE, message = FALSE, warning = FALSE}
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
 ```
 
-## Weather generator
+## Writing
+
+### SWAT input
+
+*Coming soon*
+
+### Weather generator
 
 SWAT model also needs weather generator input, which could be prepared with  [WGNmaker excel macro](https://swat.tamu.edu/media/41583/wgen-excel.zip). However, this tool requires specifically formatted excel files. [write_wgnmaker_files](../reference/write_wgnmaker_files.html) function allows to prepare those files. 
 

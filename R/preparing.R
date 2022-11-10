@@ -187,7 +187,7 @@ get_soil_parameters <- function(template_path){
 #' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
 #' @param p_vector character vector representing weather variables to interpolate (optional, default all variables selected 
 #' c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ).
-#' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
+#' @param idw_exponent numeric value for exponent parameter to be used in interpolation 
 #' (optional, default value is 2).
 #' @return nested list of lists with dataframes for interpolation results.
 #' Nested structure lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER). 
