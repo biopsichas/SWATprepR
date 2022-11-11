@@ -3,6 +3,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^templates$
+^output$
 ^LICENSE\.md$
 ^test.R
 ^README\.Rmd$

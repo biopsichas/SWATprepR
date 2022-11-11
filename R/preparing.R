@@ -211,10 +211,10 @@ interpolate <- function(meteo_lst, write_path, catchment_boundary_path, dem_data
   ##Loop for all parameter
   for (p in p_vector){
     ##Interpolation case for which has data at more than 1 station and not TMP
-    if(get_nb_st_with_data(p)>1 & !startsWith(p, 'TMP')){
+    if(get_nb_st_with_data(meteo_lst, p)>1 & !startsWith(p, 'TMP')){
       r <- get_interpolated_data(meteo_lst, p, catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
       write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r, p)
-      write_input_files(write_path, r, p)
+      write_input_files(write_path, r, meteo_lst, p)
       results[[p]] <- r
       ##Interpolation for TMP data
     } else if(p == 'TMP_MAX'){
@@ -222,7 +222,7 @@ interpolate <- function(meteo_lst, write_path, catchment_boundary_path, dem_data
       r_tmn <- get_interpolated_data(meteo_lst, "TMP_MIN", catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
       results[['TMP_MAX']] <- r_tmx
       results[['TMP_MIN']] <- r_tmn
-      write_input_files_tmp(write_path, r_tmx, r_tmn)
+      write_input_files_tmp(write_path, r_tmx, r_tmn, meteo_lst)
       write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r_tmx, "TMP")
     }
   }

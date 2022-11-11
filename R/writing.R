@@ -5,6 +5,7 @@
 #'
 #' @param write_path path to folder where results should be written.
 #' @param sp_df SpatialPointsDataFrame with resulting interpolated data.
+#' @param meteo_lst nested list of lists with dataframes. 
 #' @param par weather variable (i.e. "PCP", "SLR", etc).
 #' @importFrom utils write.table
 #' @return weather data text files for virtual stations (created during interpolation) 
@@ -16,11 +17,11 @@
 #' write_input_files("./output/", sp_df, "PCP")
 #' }
 
-write_input_files <- function(write_path, sp_df, par){
+write_input_files <- function(write_path, sp_df, meteo_lst, par){
   ##Preparing time series files and writing them into output folder
   df <- df_t(sp_df)
   ##Getting starting date for time series
-  starting_date <- as.character(format(get_dates()$min_date, "%Y%m%d"))
+  starting_date <- as.character(format(get_dates(meteo_lst)$min_date, "%Y%m%d"))
   ##Loop to write all input files
   for(i in 1:ncol(df)){
     df_tmp <- df[i]
@@ -36,6 +37,7 @@ write_input_files <- function(write_path, sp_df, par){
 #' @param write_path path to folder where results should be written.
 #' @param sp_df_mx SpatialPointsDataFrame with resulting interpolated data for TMP_MAX variable.
 #' @param sp_df_mn SpatialPointsDataFrame with resulting interpolated data for TMP_MIN variable.
+#' @param meteo_lst nested list of lists with dataframes. 
 #' @importFrom utils write.table
 #' @return temperature weather data text files for virtual stations (created during interpolation) 
 #' in format usable by the SWAT model.
@@ -46,12 +48,12 @@ write_input_files <- function(write_path, sp_df, par){
 #' write_input_files_tmp("./output/", sp_df_mx, sp_df_mn)
 #' }
 
-write_input_files_tmp <- function(write_path, sp_df_mx, sp_df_mn){
+write_input_files_tmp <- function(write_path, sp_df_mx, sp_df_mn, meteo_lst){
   ##Preparing TMP_MAX and TMP_MIN time series files 
   df_mx <- df_t(sp_df_mx)
   df_mn <- df_t(sp_df_mn)
   # ##Getting starting date for time series
-  starting_date_mx <- as.character(format(get_dates()$min_date, "%Y%m%d"))
+  starting_date_mx <- as.character(format(get_dates(meteo_lst)$min_date, "%Y%m%d"))
   ##Checking if all data is OK
   if (dim(df_mx)[2] == dim(df_mn)[2]){
     ##Loop to write all input files
