@@ -16,7 +16,8 @@ Dataframe prepared for being written out.
 Transforming sp dataframe to dataframe
 }
 \examples{
-##df_t(sp_df)
-
+\dontrun{
+df_t(sp_df)
+}
 }
 \keyword{internal}

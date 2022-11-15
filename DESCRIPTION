@@ -35,7 +35,8 @@ Imports:
     tidyr (>= 1.2.0),
     tidyselect (>= 1.1.2),
     utils,
-    xlsx (>= 0.6.5)
+    xlsx (>= 0.6.5),
+    zoo (>= 1.8-10)
 Suggests: 
     devtools,
     knitr,

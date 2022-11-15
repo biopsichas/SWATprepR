@@ -16,6 +16,8 @@ plotly graph object with option to remove or show all lines
 Function to put option remove hide or show all lines in chart and this function also print chart.
 }
 \examples{
-##hide_show_print_graph(fig)
+\dontrun{
+hide_show_print_graph(fig)
+}
 }
 \keyword{internal}

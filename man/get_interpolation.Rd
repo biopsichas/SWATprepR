@@ -25,6 +25,8 @@ SpatialPointsDataFrame with virtual stations and interpolated data in data dataf
 Get interpolation values for catchment
 }
 \examples{
-##get_interpolation(sp_df, meteo_pts, 2, 2)
+\dontrun{
+get_interpolation(sp_df, meteo_pts, 2, 2)
+}
 }
 \keyword{internal}

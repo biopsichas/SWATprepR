@@ -35,7 +35,7 @@ load_template <- function(template_path, epsg_code = 4326){
     r <- list()
     for (id in ids){
       print(paste("Reading station", id, "data."))
-      df <- read_xlsx(template_path, id) 
+      df <- read_xlsx(template_path, id, guess_max = 10000) 
       for (p in names(df)[-1]){
         r[[id]][[p]] <- df[,c("DATE", p)] %>% 
           drop_na() %>% 

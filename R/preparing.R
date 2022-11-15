@@ -231,5 +231,133 @@ interpolate <- function(meteo_lst, write_path, catchment_boundary_path, dem_data
   return(results)
 }
 
+#' Function to generate wgn data for the model
+#'
+#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param TMP_MAX dataframe with two columns: DATE : POSIXct, TMP_MAX : num. Optional (default NULL).
+#' @param TMP_MIN dataframe with two columns: DATE : POSIXct, TMP_MIN : num. Optional (default NULL).
+#' @param PCP dataframe with two columns: DATE : POSIXct, PCP : num. Optional (default NULL).
+#' @param RELHUM dataframe with two columns: DATE : POSIXct, RELHUM : num. Optional (default NULL).
+#' @param WNDSPD dataframe with two columns: DATE : POSIXct, WNDSPD : num. Optional (default NULL).
+#' @param MAXHHR dataframe with two columns: DATE : POSIXct, MAXHHR : num. Optional (default NULL).
+#' @param SLR dataframe with two columns: DATE : POSIXct, SLR : num. Optional (default NULL).
+#' @importFrom stats aggregate sd
+#' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
+#' @importFrom dplyr %>% rename mutate bind_rows select
+#' @importFrom lubridate month
+#' @return list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data
+#' @export
+#' @examples
+#' \dontrun{
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' met_lst <- load_template(temp_path, 3035)
+#' TMP_MAX <- met_lst$data$ID10$TMP_MAX
+#' TMP_MIN <- met_lst$data$ID10$TMP_MIN
+#' PCP <- met_lst$data$ID9$PCP
+#' RELHUM = met_lst$data$ID9$RELHUM
+#' WNDSPD <- met_lst$data$ID12$WNDSPD
+#' MAXHHR <- met_lst$data$ID11$MAXHHR
+#' SLR <- met_lst$data$ID9$SLR
+#' ##Does the thing
+#' wgn <- prepare_wgn(met_lst, TMP_MAX, TMP_MIN, PCP, RELHUM, WNDSPD, MAXHHR, SLR)
+#' }
+
+prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, RELHUM = NULL, WNDSPD = NULL, MAXHHR = NULL, SLR = NULL){
+  ##Extracting relevant parts
+  data <- meteo_lst$data
+  st_df <- meteo_lst$stations
+  ##Checking and making sure coordinate system is correct
+  if(!grepl("4326", st_crs(st_df)$input)){
+    st_df <- st_transform(st_df, 4326)
+    print("Coordinate system checked and transformed to EPSG:4326.")
+  }
+  ##Converting station data to dataframe with needed columns
+  st_df <- st_df %>% 
+    rename(NAME = Name, ELEVATION = Elevation) %>% 
+    mutate(LONG = st_coordinates(.)[,1],
+           LAT = st_coordinates(.)[,2]) %>% 
+    st_drop_geometry() %>% 
+    select(ID, NAME, LAT, LONG, ELEVATION) 
+  ##Checking if variables are not missing 
+  stations <- names(data)
+  all_p <- c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "MAXHHR", "SLR")
+  c <- c()
+  ##Checking missing variables for every stations 
+  for(st in stations){
+    missing_p <- all_p[!all_p %in% as.vector(names(data[[st]]))]
+    c <- c(c, missing_p[!missing_p %in% c])
+  }
+  ##Checking if those variables have not been provided to function
+  c_f <- c()
+  for (c1 in c){
+    if(is.null(eval(parse(text=c1)))){
+      c_f <- c(c_f, c1)
+    }
+  }
+  ##Missing variables error (in case there are missing variables and they were not provided)
+  if (length(c_f) != 0){
+    stop(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations. 
+             Please add data on these variables to function, which should be used in case station is missing variable."))
+  }
+  ##Setting dataframes to save results
+  res_wgn_mon <- NULL
+  res_wgn_stat <- NULL
+  wgn_mon <- data.frame(matrix(data=NA, nrow=12, ncol=17))
+  names(wgn_mon) <- c("id","wgn_id","month","tmp_max_ave","tmp_min_ave","tmp_max_sd",
+                      "tmp_min_sd","pcp_ave","pcp_sd","pcp_skew","wet_dry","wet_wet",
+                      "pcp_days","pcp_hhr","slr_ave","dew_ave","wnd_ave")
+  wgn_mon$month <- rep(seq(1,12))
+  ##Loop to calculate all parameters for each station
+  for (j in 1:length(stations)){
+    print(paste0("Working on station ", stations[j], ":", st_df[st_df$ID == stations[j], "NAME"]))
+    ##Writing station data
+    nyears <- nyears(df, "PCP")
+    ##Adding station data
+    wgn_stat <- st_df[st_df$ID == stations[j],]
+    wgn_stat$ID <- j
+    wgn_stat$RAIN_YRS <- nyears
+    ##Filling list for particular station with missing variables (provided in function.)
+    df <- data[[stations[j]]]
+    for (p in all_p){
+      if(!p %in% names(df)){
+        df[[p]] <- eval(parse(text=p))
+      }
+    }
+    ##Transforming to dataframe
+    print(str(list_to_df(df)))
+    df <- list_to_df(df) %>% 
+      mutate(mon = month(DATE))
+    ##Filling weather generator data
+    wgn_mon$tmp_max_ave <- aggregate(TMP_MAX~mon, df, mean)[,2]
+    wgn_mon$tmp_min_ave <- aggregate(TMP_MIN~mon, df, mean)[,2]
+    wgn_mon$tmp_max_sd <- aggregate(TMP_MAX~mon, df, sd)[,2]
+    wgn_mon$tmp_min_sd <- aggregate(TMP_MIN~mon, df, sd)[,2]
+    wgn_mon$pcp_ave <- aggregate(PCP~mon, df, mean)[,2]
+    wgn_mon$pcp_hhr <- aggregate(MAXHHR~mon, df, max)[,2]
+    wgn_mon$pcp_days <- aggregate(PCP~mon, df[c("PCP", "mon")], my.pcpd)[,2]
+    wgn_mon$pcp_sd <- aggregate(PCP~mon, df, sd)[,2]
+    wgn_mon$pcp_skew <- aggregate(PCP~mon, df, my.skew)[,2]
+    wgn_mon$wet_dry <- aggregate(PCP~mon, df[c("PCP", "mon")], my.pwd)[,2]
+    wgn_mon$wet_wet <- aggregate(PCP~mon, df, my.pww)[,2]
+    wgn_mon$slr_ave <- aggregate(SLR~mon, df, mean)[,2]
+    wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]/100
+    wgn_mon$wnd_ave <- aggregate(WNDSPD~mon, df, mean)[,2]
+    wgn_mon$wgn_id <- j
+    ##Saving results
+    if(!is.null(res_wgn_mon)){
+      res_wgn_mon <- bind_rows(res_wgn_mon, wgn_mon)
+      res_wgn_stat <- bind_rows(res_wgn_stat, wgn_stat)
+    } else {
+      res_wgn_mon <- wgn_mon
+      res_wgn_stat <- wgn_stat
+    }
+  }
+  ##Just filing row numbers
+  res_wgn_mon$id <- c(1:dim(res_wgn_mon)[1])
+  return(list(wgn_st = res_wgn_stat, wgn_data = res_wgn_mon))
+}
+
 
 

@@ -1,0 +1,16 @@
+citHeader('To cite the svatools package in publications use:')
+
+citEntry(entry='Manual',
+         title = 'svatools - tools for SWAT+ input data preparation, visualization and model output assessment',
+         author= 'Svajunas Plunge',
+         year  = '2022',
+         note  = 'R package',
+	     url = 'https://biopsichas.github.io/svatools/',
+		 doi = '10.5281/zenodo.7296034',      
+
+         textVersion = paste('Svajunas Plunge (2020),',
+		 'R package of functions to aid with SWAT+ modeling process.',
+		 'R package.',
+		 'URL https://biopsichas.github.io/svatools/,',
+		 '10.5281/zenodo.7296034.')
+)
