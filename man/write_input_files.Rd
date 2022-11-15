@@ -4,12 +4,14 @@
 \alias{write_input_files}
 \title{Writing input files (all except TMP)}
 \usage{
-write_input_files(write_path, sp_df, par)
+write_input_files(write_path, sp_df, meteo_lst, par)
 }
 \arguments{
 \item{write_path}{path to folder where results should be written.}
 
 \item{sp_df}{SpatialPointsDataFrame with resulting interpolated data.}
+
+\item{meteo_lst}{nested list of lists with dataframes.}
 
 \item{par}{weather variable (i.e. "PCP", "SLR", etc).}
 }

@@ -4,7 +4,7 @@
 \alias{write_input_files_tmp}
 \title{Writing input files for TMP data}
 \usage{
-write_input_files_tmp(write_path, sp_df_mx, sp_df_mn)
+write_input_files_tmp(write_path, sp_df_mx, sp_df_mn, meteo_lst)
 }
 \arguments{
 \item{write_path}{path to folder where results should be written.}
@@ -12,6 +12,8 @@ write_input_files_tmp(write_path, sp_df_mx, sp_df_mn)
 \item{sp_df_mx}{SpatialPointsDataFrame with resulting interpolated data for TMP_MAX variable.}
 
 \item{sp_df_mn}{SpatialPointsDataFrame with resulting interpolated data for TMP_MIN variable.}
+
+\item{meteo_lst}{nested list of lists with dataframes.}
 }
 \value{
 temperature weather data text files for virtual stations (created during interpolation)

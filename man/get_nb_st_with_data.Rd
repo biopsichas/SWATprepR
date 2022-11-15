@@ -19,7 +19,8 @@ number of stations with data for this parameter.
 Getting number of stations with data for selected parameter
 }
 \examples{
-##get_nb_st_with_data(meteo_lst, "PCP")
-
+\dontrun{
+get_nb_st_with_data(meteo_lst, "PCP")
+}
 }
 \keyword{internal}

@@ -17,6 +17,8 @@ list with 2 values: minimum and maximum value for all available data.
 Function to get maximum min and max dates available for all time series data for all stations for all parameters.
 }
 \examples{
-##get_nx_date_full(meteo_lst)
+\dontrun{
+get_nx_date_full(meteo_lst)
+}
 }
 \keyword{internal}

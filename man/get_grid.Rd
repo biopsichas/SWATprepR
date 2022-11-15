@@ -18,6 +18,8 @@ Grid needed for the interpolation.
 Prepare grid for interpolation
 }
 \examples{
-##get_grid(sp_sf, 2000)
+\dontrun{
+get_grid(sp_sf, 2000)
+}
 }
 \keyword{internal}

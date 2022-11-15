@@ -9,7 +9,9 @@
 #' @keywords internal
 #'
 #' @examples
-#' ##hide_show_print_graph(fig)
+#' \dontrun{
+#' hide_show_print_graph(fig)
+#' }
 
 hide_show <- function(graph){
   plotly_build(graph) %>%
@@ -34,7 +36,9 @@ hide_show <- function(graph){
 #' @keywords internal
 #'
 #' @examples
-#' ##get_nx_date_full(meteo_lst)
+#' \dontrun{
+#' get_nx_date_full(meteo_lst)
+#' }
 
 get_dates <- function(meteo_lst){
   meteo_lst <- meteo_lst$data
@@ -64,8 +68,10 @@ get_dates <- function(meteo_lst){
 #' @keywords internal
 #'
 #' @examples
-#' ##get_nb_st_with_data(meteo_lst, "PCP")
-#' 
+#' \dontrun{
+#' get_nb_st_with_data(meteo_lst, "PCP")
+#' }
+
 get_nb_st_with_data <- function(meteo_lst, par){
   meteo_lst <- meteo_lst$data
   i <- 0
@@ -89,7 +95,9 @@ get_nb_st_with_data <- function(meteo_lst, par){
 #' @keywords internal
 #'
 #' @examples
-#' ##get_grid(sp_sf, 2000)
+#' \dontrun{
+#' get_grid(sp_sf, 2000)
+#' }
 
 get_grid <- function(sp_df, grid_spacing){
   x.range <- c(min(round(sp_df$Long,2)*0.999),max(round(sp_df$Long,2)*1.001))
@@ -117,7 +125,9 @@ get_grid <- function(sp_df, grid_spacing){
 #' @keywords internal
 #'
 #' @examples
-#' ##get_interpolation(sp_df, meteo_pts, 2, 2)
+#' \dontrun{
+#' get_interpolation(sp_df, meteo_pts, 2, 2)
+#' }
 
 get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
   if(sum(is.na(sp_df@data[1])) != dim(sp_df@data[1])[[1]]){
@@ -146,8 +156,9 @@ get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
 #' @keywords internal
 #'
 #' @examples
-#' ##df_t(sp_df)
-#' 
+#' \dontrun{
+#' df_t(sp_df)
+#' }
 
 df_t <- function(sp_df){
   ##Preparing time series files and writing them into output folder
@@ -157,4 +168,61 @@ df_t <- function(sp_df){
     mutate_if(is.numeric, ~round(., 3))
 }
 
+#' Transforming list of sp dataframes to list of list 
+#'
+#' @param list_sp a list of SpatialPointsDataFrames (for each weather variable) 
+#' prepared with  \code{\link{interpolate}} function.
+#' @param start_date time series starting date string. Example "1998-01-01".
+#' @param end_date time series ending date string. Example "2021-12-31".
+#' @importFrom dplyr %>% bind_cols
+#' @importFrom tibble as_tibble
+#' @importFrom sf st_as_sf
+#' @return meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @export
+#' @examples
+#' \dontrun{
+#' ###First step to get interpolation results
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' met_lst <- load_template(temp_path, 3035)
+#' result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
+#' 
+#' ###Second step converting interpolation results to list of list format.
+#' start_date <- svatools:::get_dates(met_lst)$min_date
+#' end_date <- svatools:::get_dates(met_lst)$max_date
+#' int_met_lst <- transform_to_list(result, start_date, end_date)
+#' }
+
+transform_to_list <- function(list_sp, start_date, end_date){
+  df <- data.frame(DATE = seq(as.POSIXct(start_date, "%Y-%m-%d", tz = "UTC"),
+                              as.POSIXct(end_date, "%Y-%m-%d", tz = "UTC"), by = "day"))
+  r <- list()
+  r[["stations"]] <- data.frame(ID = paste0("ID", 1:dim(list_sp[[1]]@data)[[1]]),
+                                Name = paste0("ID", 1:dim(list_sp[[1]]@data)[[1]]),
+                                Elevation = list_sp[[1]]$DEM,
+                                Source = "Interpolation",
+                                geometry = st_as_sf(list_sp[[1]]@coords %>% 
+                                                      as.data.frame, 
+                                                    coords = c("x", "y"), 
+                                                    crs = list_sp[[1]]@proj4string@projargs),
+                                Long = list_sp[[1]]@coords[,1],
+                                Lat = list_sp[[1]]@coords[,2]) %>% 
+    as_tibble() %>% 
+    st_as_sf()
+  for (p in c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN")){
+    if(p %in% names(list_sp)){
+      y <- df_t(list_sp[[p]])
+      names(y) <- rep(p, dim(y)[2])
+      for(i in 1:ncol(y)){
+        r[["data"]][[paste0("ID", i)]][[p]] <- bind_cols(df["DATE"], y[1])
+      }
+    } else {
+      warning(paste(p, "variable is missing. Please add it later."))
+    }
+  }
+  return(r)
+}
 
