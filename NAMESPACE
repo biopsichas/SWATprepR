@@ -11,10 +11,7 @@ export(plot_map)
 export(plot_monthly)
 export(plot_weather)
 export(plot_weather_compare)
-<<<<<<< HEAD
 export(prepare_wgn)
-=======
->>>>>>> 77b29af5e078488f340233c3e29574fda37fa37e
 export(transform_to_list)
 export(write_input_files)
 export(write_input_files_tmp)
