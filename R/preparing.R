@@ -312,23 +312,22 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
   ##Loop to calculate all parameters for each station
   for (j in 1:length(stations)){
     print(paste0("Working on station ", stations[j], ":", st_df[st_df$ID == stations[j], "NAME"]))
-    ##Writing station data
-    nyears <- nyears(df, "PCP")
     ##Adding station data
     wgn_stat <- st_df[st_df$ID == stations[j],]
     wgn_stat$ID <- j
-    wgn_stat$RAIN_YRS <- nyears
-    ##Filling list for particular station with missing variables (provided in function.)
+    ##Getting stations data
     df <- data[[stations[j]]]
+    ##Filling list for particular station with missing variables (provided in function.)
     for (p in all_p){
       if(!p %in% names(df)){
         df[[p]] <- eval(parse(text=p))
       }
     }
     ##Transforming to dataframe
-    print(str(list_to_df(df)))
     df <- list_to_df(df) %>% 
       mutate(mon = month(DATE))
+    ##Writing number of year data available for PCP
+    wgn_stat$RAIN_YRS <- nyears <- nyears(df, "PCP")
     ##Filling weather generator data
     wgn_mon$tmp_max_ave <- aggregate(TMP_MAX~mon, df, mean)[,2]
     wgn_mon$tmp_min_ave <- aggregate(TMP_MIN~mon, df, mean)[,2]
@@ -336,10 +335,10 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     wgn_mon$tmp_min_sd <- aggregate(TMP_MIN~mon, df, sd)[,2]
     wgn_mon$pcp_ave <- aggregate(PCP~mon, df, mean)[,2]
     wgn_mon$pcp_hhr <- aggregate(MAXHHR~mon, df, max)[,2]
-    wgn_mon$pcp_days <- aggregate(PCP~mon, df[c("PCP", "mon")], my.pcpd)[,2]
+    wgn_mon$pcp_days <- aggregate(PCP~mon, df, my.pcpd, nyears)[,2]
     wgn_mon$pcp_sd <- aggregate(PCP~mon, df, sd)[,2]
     wgn_mon$pcp_skew <- aggregate(PCP~mon, df, my.skew)[,2]
-    wgn_mon$wet_dry <- aggregate(PCP~mon, df[c("PCP", "mon")], my.pwd)[,2]
+    wgn_mon$wet_dry <- aggregate(PCP~mon, df, my.pwd)[,2]
     wgn_mon$wet_wet <- aggregate(PCP~mon, df, my.pww)[,2]
     wgn_mon$slr_ave <- aggregate(SLR~mon, df, mean)[,2]
     wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]/100

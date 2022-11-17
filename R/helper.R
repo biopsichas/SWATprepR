@@ -374,6 +374,7 @@ my.pww <- function(x, na.rm = FALSE){
 #' Function to calculate pcp_days parameter
 #'
 #' @param x vector of numbers 
+#' @param nyears numeric number of years available for PCP variable
 #' @param na.rm logical, if NA should be cleaned
 #' @return numeric result
 #' @keywords internal
@@ -382,13 +383,13 @@ my.pww <- function(x, na.rm = FALSE){
 #' my.pcpd(x)
 #' }
 
-my.pcpd <- function(x, na.rm = FALSE){
+my.pcpd <- function(x, nyears, na.rm = FALSE){
   if(na.rm)
     x <- x[!is.na(x)]
   else if (any(is.na(x)))
     return(NA)
   if(nyears == 0)
-    return(NA)  
+    return(NA)
   pcpd <- sum(x > 0) / nyears
   return(pcpd)
 }

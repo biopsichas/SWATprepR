@@ -4,10 +4,12 @@
 \alias{my.pcpd}
 \title{Function to calculate pcp_days parameter}
 \usage{
-my.pcpd(x, na.rm = FALSE)
+my.pcpd(x, nyears, na.rm = FALSE)
 }
 \arguments{
 \item{x}{vector of numbers}
+
+\item{nyears}{numeric number of years available for PCP variable}
 
 \item{na.rm}{logical, if NA should be cleaned}
 }
