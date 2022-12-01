@@ -1,7 +1,8 @@
 
 ---
 title: "Introduction to svatools"
-output: rmarkdown::html_vignette
+<!-- output: rmarkdown::html_vignette -->
+output: github_document
 vignette: >
   %\VignetteIndexEntry{Introduction to svatools}
   %\VignetteEngine{knitr::rmarkdown}
@@ -33,6 +34,7 @@ You can install the development version of svatools from [GitHub](https://github
 ``` r
 # install.packages("devtools")
 devtools::install_github("biopsichas/svatools")
+devtools::install_github("tkdweber/euptf2")
 ```
 
 ## Data

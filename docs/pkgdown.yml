@@ -1,9 +1,9 @@
-pandoc: '2.18'
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   calibration: calibration.html
   weather: weather.html
   soil: soil.html
-last_built: 2022-11-17T09:01Z
+last_built: 2022-12-01T10:50Z
 

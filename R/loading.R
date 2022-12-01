@@ -75,3 +75,36 @@ load_stations <- function(template_path, epsg_code){
     mutate(Long = unlist(map(geometry,1)),
            Lat = unlist(map(geometry,2)))
 }
+
+#' Function loading climate data csv files
+#'
+#' @param f_path character providing path to climate date folder (i.e. "inst/extdata/CORDEX-BC")
+#' @param f_lst list providing file name for each weather parameter (default list("PCP" = "prec-1", 
+#' "SLR" = "solarRad-1", "RELHUM" = "relHum-1", "TMP_MAX" = "Tmax-1", "TMP_MIN" = "Tmin-1", 
+#' "WNDSPD" = "windSpeed-1"))
+#' @return nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> RCM_MOD-> Parameter -> Dataframe (DATE, PARAMETER).
+#' @importFrom dplyr mutate
+#' @importFrom utils read.csv
+#' @export
+#'
+#' @examples
+#' temp_path <- paste0(system.file("extdata", package = "svatools"), "/CORDEX-BC")
+#' cli_lst <- load_climate(temp_path)
+#' str(cli_lst)
+
+load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRad-1", "RELHUM" = "relHum-1", "TMP_MAX" = "Tmax-1", 
+                                              "TMP_MIN" = "Tmin-1", "WNDSPD" = "windSpeed-1")){
+  r <- list()
+  for(c in sub(".*\\/", "", list.dirs(f_path, recursive = FALSE))){
+    for (m in sub(".*\\/", "", list.dirs(paste0(f_path, "/", c), recursive = FALSE))){
+      for(i in names(f_lst)){
+        r[[paste0(c, "_", m)]][[i]] <- read.csv(paste0(f_path, "/", c, "/", m, "/", f_lst[i][[1]], ".csv"), 
+                                                header = F, col.names = c("DATE", i)) %>% 
+          mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
+      }
+    }
+  }
+  print("Loading of data is finished.")
+  return(r)
+}

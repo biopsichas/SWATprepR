@@ -1,5 +1,5 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+Introduction to svatools
+================
 
 # svatools
 
@@ -15,12 +15,12 @@ fill the gaps in the SWAT+ workflow along side the main tools developed
 by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467).
 Therefore, we highly recommend trying&using these tools:
 
--   [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
-    preparing management schedules for SWAT model;
--   [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
-    R tool for sensitivity analyse, model calibration and validation;
--   [SWATbuilder](https://git.ufz.de/users/sign_in) - R tool for
-    building SWAT+ setups.
+- [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
+  preparing management schedules for SWAT model;
+- [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
+  R tool for sensitivity analyse, model calibration and validation;
+- [SWATbuilder](https://git.ufz.de/users/sign_in) - R tool for building
+  SWAT+ setups.
 
 ## Installation
 
@@ -30,6 +30,7 @@ You can install the development version of svatools from
 ``` r
 # install.packages("devtools")
 devtools::install_github("biopsichas/svatools")
+devtools::install_github("tkdweber/euptf2")
 ```
 
 ## Data
@@ -51,12 +52,12 @@ In order to use *svatools* package functions with your data you should
 prepare your data to be inline with templates we have provided in
 *extdata* folder. Such are:
 
--   **calibration_data.xlsx** - template for loading calibration (Q and
-    WQ variables) data.
--   **weather_data.xlsx** - template for loading weather variables.
--   **soil_parameters.xlsx** - template for loading soil parameters
-    dataset.
--   **GIS** - folder with GIS layers needed to run some functions.
+- **calibration_data.xlsx** - template for loading calibration (Q and WQ
+  variables) data.
+- **weather_data.xlsx** - template for loading weather variables.
+- **soil_parameters.xlsx** - template for loading soil parameters
+  dataset.
+- **GIS** - folder with GIS layers needed to run some functions.
 
 Data prepared according to templates can be directly loaded into R and
 all the functions applied as described.
@@ -75,9 +76,9 @@ plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
 #> $regretion
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+![](README_files/figure-gfm/example-1.png)<!-- -->
 
     #> 
     #> $fraction
 
-<img src="man/figures/README-example-2.png" width="100%" />
+![](README_files/figure-gfm/example-2.png)<!-- -->
