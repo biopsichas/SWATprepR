@@ -76,9 +76,13 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="svatools">svatools<a class="anchor" aria-label="anchor" href="#svatools"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="introduction-to-svatools">Introduction to svatools<a class="anchor" aria-label="anchor" href="#introduction-to-svatools"></a>
 </h1>
 </div>
+</div>
+<div class="section level1">
+<h1 id="svatools">svatools<a class="anchor" aria-label="anchor" href="#svatools"></a>
+</h1>
 <!-- badges: start -->
 <!-- badges: end -->
 <p>The goal of svatools is to help with <a href="https://swat.tamu.edu/software/plus/" class="external-link">SWAT+ model</a> input data preparation, visualization and model output assessment. There are mostly functions, which were developed for the implementation of modeling tasks in the <a href="https://www.optain.eu/" class="external-link">OPTAIN project</a>. These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by <a href="https://www.ufz.de/index.php?en=49467" class="external-link">Christoph Schuerz</a>. Therefore, we highly recommend trying&amp;using these tools:</p>
@@ -96,7 +100,8 @@
 <p>You can install the development version of svatools from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"biopsichas/svatools"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"biopsichas/svatools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"tkdweber/euptf2"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
@@ -135,12 +140,13 @@
 <span><span class="co">#&gt; [1] "Loading of data is finished."</span></span>
 <span><span class="fu"><a href="reference/plot_fractions.html">plot_fractions</a></span><span class="op">(</span><span class="va">cal_data</span><span class="op">$</span><span class="va">data</span>, station <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PT"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P-PO4"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $regretion</span></span></code></pre></div>
-<p><img src="reference/figures/README-example-1.png" width="100%"></p>
+<p><img src="README_files/figure-gfm/example-1.png"><!-- --></p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $fraction</span></span></code></pre></div>
-<p><img src="reference/figures/README-example-2.png" width="100%"></p>
+<p><img src="README_files/figure-gfm/example-2.png"><!-- --></p>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">

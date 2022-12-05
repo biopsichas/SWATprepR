@@ -9,14 +9,148 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Parameters
 
-Obtaining soil parameters for SWAT model can be difficult. Therefore package has function with allows automatic preparation of soil parameters. For this SOL_Z, CLAY, SAND, SILT and SOL_CNB parameters should be collected. All the rest will be filled by  [get_soil_parameters ](../reference/get_soil_parameters.html) function.
+Obtaining soil parameters for SWAT model can be difficult. Therefore package has functions with allows automatic preparation of soil parameters. For this SOL_Z (depth of layer), CLAY (percentage of clay defined as particles <2 $\mu m$), SAND (percentage of sand - 50–2000 $\mu m$), SILT (percentage of silt  - 2–50 $\mu m$) and OC (soil organic carbon content in %) parameters should be collected. Other parameters will be filled by [get_soil_parameters ](../reference/get_soil_parameters.html) and [get_hsg ](../reference/get_hsg.html). 
 
-```{r soil, message = FALSE, warning = FALSE}
+Preparation of soil data and parameters following could be done using following workflow. However, depending on available types of data, which workflow might need different steps. This is example of Polish case study of [Upper Zglowiaczka in OPTAIN project](https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka). 
+
+### Loading libraries and paths to data
+
+```{r soil_load, message = FALSE, warning = FALSE}
 library(svatools)
 library(euptf2)
-temp_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
-soil <- get_soil_parameters(temp_path)
-rm(suggested_PTF)
-str(soil)
+library(sf)
+library(readxl)
+library(tidyverse)
+library(stars)
+
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "svatools")
+drainage_path <- system.file("extdata", "GIS/drained.shp", package = "svatools")
+soil_path <- system.file("extdata", "GIS/soils.shp", package = "svatools")
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+lookup_path <- system.file("extdata", "soil_lookup.xlsx", package = "svatools")
 ```
+
+### Preparing input data
+
+```{r soil_prep, message = FALSE, warning = FALSE}
+##Reading granulometry lookup information for soil types into dataframe
+gran <- read_excel(lookup_path, sheet = "SandSiltClay") %>% 
+  rename(CLAY = Clay, SILT = Silt, SAND = Sand)
+##Adding missing information for organic soils
+gran[nrow(gran)+1,] <- list("ORG1", 20, 40, 40)
+gran[nrow(gran)+1,] <- list("ORG2", 20, 40, 40)
+gran[nrow(gran)+1,] <- list("ORG3", 20, 40, 40)
+gran[nrow(gran)+1,] <- list("ORG4", 20, 40, 40)
+
+##Reading humus lookup information in to dataframe and converting it into organic carbon %.
+humus <- read_excel(lookup_path, sheet = "Humus") %>% 
+  mutate(OC1 = `Humus 1st layer [%]`/1.72,
+         OC2 = `Humus 2nd layer [%]`/1.72,
+         OC3 = `Humus 3rd layer [%]`/1.72) %>% 
+  select(Humus, starts_with("OC"))
+
+##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Soil_code2" column here representing soil types).
+##All data should be in one coordinate system.
+bound <- st_read(basin_path) %>% 
+  st_transform(2180) %>% 
+  select()
+water_level <- st_read(water_l_path) %>% 
+  select(Depth)
+drainage <- st_read(drainage_path) %>% 
+  select(Drained)
+soils <- st_read(soil_path) %>% 
+  select(Soil_code2)
+
+
+```
+
+### Preparing final soil layer
+
+```{r soil_layer, message = FALSE, warning = FALSE}
+soils <- soils %>% 
+  st_intersection(bound) %>% 
+  st_intersection(bound %>% mutate(Impervious = ">100cm")) %>%
+  st_intersection(water_level) %>% 
+  st_intersection(drainage) %>% 
+  mutate(SNAM = paste0(Soil_code2, "_", Impervious, "_", Depth, "_", Drained)) %>% 
+  select(SNAM) 
+```
+
+### Preparing initial user soil table
+
+```{r soil_usert, message = FALSE, warning = FALSE}
+usertable <- soils %>% 
+  st_drop_geometry() %>% 
+  distinct() %>% 
+  separate(SNAM, c("Lyr1", "Lyr2", "Lyr3", "Humus", "Impervious", "Depth", "Drained"), "_", remove = FALSE) %>% 
+  mutate(NLAYERS = 3, 
+         SOL_Z1 = 250,
+         SOL_Z2 = 750,
+         SOL_Z3 = 1500,
+         Humus = as.numeric(Humus)) %>% 
+  left_join(gran %>% rename_with( ~ paste0(.x, "1")), by = c("Lyr1" = "Texture EN1")) %>% 
+  left_join(gran %>% rename_with( ~ paste0(.x, "2")), by = c("Lyr2" = "Texture EN2")) %>% 
+  left_join(gran %>% rename_with( ~ paste0(.x, "3")), by = c("Lyr3" = "Texture EN3")) %>% 
+  left_join(humus, by = c("Humus")) %>% 
+  select(SNAM, NLAYERS, ends_with("1"), ends_with("2"), ends_with("3"), -starts_with("Lyr")) 
+
+str(usertable)
+```
+
+### Preparing adding parameters to user table
+```{r soil_fusert, message = FALSE, warning = FALSE}
+##Adding all SWAT soil parameters for except HYDGRP  
+usertable <- get_soil_parameters(usertable)
+rm(suggested_PTF)
+##Adding HYDGRP in a look for each row
+c <- c()
+for(i in 1:nrow(usertable)){
+  c <- c(c, get_hsg(str_split(usertable$SNAM[i], "_")[[1]][5],
+                    str_split(usertable$SNAM[i], "_")[[1]][6], 
+                    str_split(usertable$SNAM[i], "_")[[1]][7], 
+                    usertable[i,c(paste0("SOL_Z", 1:usertable$NLAYERS[i]),
+                                  paste0("SOL_K", 1:usertable$NLAYERS[i]))]))
+}
+usertable$HYDGRP <- c
+head(usertable)
+```
+
+### Checking results on map
+```{r soil_maps, message = FALSE, warning = FALSE}
+soilp <- soils %>% left_join(usertable, by = "SNAM") 
+
+##Plot soil hydrologic groups
+plot(soilp["HYDGRP"])
+##Plot soil sol_k for the top layer
+plot(soilp["SOL_K1"])
+##Plot soil sol_k for the top layer
+plot(soilp["USLE_K1"])
+```
+
+### Write inputs for SWAT+
+
+```{r soil_output, message = FALSE, warning = FALSE, eval = FALSE}
+
+dem <- read_stars(DEM_path)
+soils_dis <- soils %>% 
+  group_by(SNAM) %>% 
+  summarise() %>% 
+  mutate(SOIL_ID = row_number(),
+         SNAME = SNAM)
+
+soils_raster <- soils_dis %>% 
+  st_transform(3035) %>% 
+  st_rasterize(dem)
+
+soil_link_table <- soils_dis %>% 
+  st_drop_geometry() %>% 
+  select(SOIL_ID, SNAME)
+
+write_stars(soils_raster , "../output/SoilmapSWAT.tif")
+write.csv(soil_link_table, "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
+write.csv(usertable, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)
+
+```
+
 

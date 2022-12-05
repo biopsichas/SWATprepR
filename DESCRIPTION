@@ -41,7 +41,8 @@ Suggests:
     devtools,
     knitr,
     rmarkdown,
-    mapview
+    mapview,
+    stars
 VignetteBuilder: 
     knitr
 Remotes:

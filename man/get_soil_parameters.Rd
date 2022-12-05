@@ -4,10 +4,10 @@
 \alias{get_soil_parameters}
 \title{Function to fill soil parameters}
 \usage{
-get_soil_parameters(template_path)
+get_soil_parameters(soilp)
 }
 \arguments{
-\item{template_path}{path to *.xlsx file with at least SNAM    NLAYERS    columns and SOL_Z    CLAY
+\item{soilp}{dataframe with at least SNAM    NLAYERS    columns and SOL_Z    CLAY
 SILT    SAND    OC columns for each available soil layer.}
 }
 \value{

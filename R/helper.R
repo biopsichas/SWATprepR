@@ -101,6 +101,23 @@ nyears <- function(df, col){
   max(year(ts))-min(year(ts))+1
 }
 
+#' Get min Ks within depth range from SOL_K and SOL_Z
+#'
+#' @param df one row dataframe of soil parameters with all SOL_K and SOL_Z columns
+#' @param max_depth numeric value for depth range from 0.  
+#' @return numeric min Ks parameter value within depth range
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_K3 = 2, 
+#'                  SOL_Z1 = 250, SOL_Z2 = 700, SOL_Z3 = 1000)
+#' min_ks(df, 800)
+#' }
+
+min_ks <- function(df, max_depth){
+  min(df[,grep("SOL_K", colnames(df))[df[,grep("SOL_Z", colnames(df))] < max_depth]])/0.4167
+}
 
 # Interpolation --------------------------------------------------------------------
 

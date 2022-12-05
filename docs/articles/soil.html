@@ -90,80 +90,260 @@
 <h2 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
 </h2>
 <p>Obtaining soil parameters for SWAT model can be difficult. Therefore
-package has function with allows automatic preparation of soil
-parameters. For this SOL_Z, CLAY, SAND, SILT and SOL_CNB parameters
-should be collected. All the rest will be filled by <a href="../reference/get_soil_parameters.html">get_soil_parameters</a>
-function.</p>
+package has functions with allows automatic preparation of soil
+parameters. For this SOL_Z (depth of layer), CLAY (percentage of clay
+defined as particles &lt;2 <span class="math inline">\(\mu m\)</span>),
+SAND (percentage of sand - 50–2000 <span class="math inline">\(\mu
+m\)</span>), SILT (percentage of silt - 2–50 <span class="math inline">\(\mu m\)</span>) and OC (soil organic carbon
+content in %) parameters should be collected. Other parameters will be
+filled by <a href="../reference/get_soil_parameters.html">get_soil_parameters</a> and
+<a href="../reference/get_hsg.html">get_hsg</a>.</p>
+<p>Preparation of soil data and parameters following could be done using
+following workflow. However, depending on available types of data, which
+workflow might need different steps. This is example of Polish case
+study of <a href="https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka" class="external-link">Upper
+Zglowiaczka in OPTAIN project</a>.</p>
+<div class="section level3">
+<h3 id="loading-libraries-and-paths-to-data">Loading libraries and paths to data<a class="anchor" aria-label="anchor" href="#loading-libraries-and-paths-to-data"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/svatools" class="external-link">svatools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">euptf2</span><span class="op">)</span></span>
-<span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"soil_parameters.xlsx"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
-<span><span class="va">soil</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">temp_path</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suggested_PTF</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">soil</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 'data.frame':    6 obs. of  60 variables:</span></span>
-<span><span class="co">##  $ OBJECTID  : int  1 2 3 4 5 6</span></span>
-<span><span class="co">##  $ MUID      : chr  "" "" "" "" ...</span></span>
-<span><span class="co">##  $ SEQN      : num  1 1 1 1 1 1</span></span>
-<span><span class="co">##  $ SNAM      : chr  "pgl" "pglp" "pgm" "pgmp" ...</span></span>
-<span><span class="co">##  $ S5ID      : chr  "" "" "" "" ...</span></span>
-<span><span class="co">##  $ CMPPCT    : num  1 1 1 1 1 1</span></span>
-<span><span class="co">##  $ NLAYERS   : num  3 2 3 3 4 1</span></span>
-<span><span class="co">##  $ HYDGRP    : chr  "B" "B" "B" "B" ...</span></span>
-<span><span class="co">##  $ SOL_ZMX   : num  55 57.5 85.6 57.5 121.7 ...</span></span>
-<span><span class="co">##  $ ANION_EXCL: num  0.5 0.5 0.5 0.5 0.5 0.5</span></span>
-<span><span class="co">##  $ SOL_CRK   : num  0.5 0.5 0.5 0.5 0.5 0.5</span></span>
-<span><span class="co">##  $ TEXTURE   : chr  "" "" "" "" ...</span></span>
-<span><span class="co">##  $ SOL_Z1    : num  24.2 22.5 23 21.7 20 ...</span></span>
-<span><span class="co">##  $ SOL_BD1   : num  1.43 1.42 1.4 1.36 1.51 ...</span></span>
-<span><span class="co">##  $ SOL_AWC1  : num  0.171 0.187 0.193 0.198 0.104 ...</span></span>
-<span><span class="co">##  $ SOL_K1    : num  11 19 19.2 18.8 15.1 ...</span></span>
-<span><span class="co">##  $ SOL_CBN1  : num  0.97 1.03 1.21 1.47 0.49 1.39</span></span>
-<span><span class="co">##  $ CLAY1     : num  4.69 4.95 6.09 6.57 2 2.46</span></span>
-<span><span class="co">##  $ SILT1     : num  14.5 21.8 20.6 22.5 3 ...</span></span>
-<span><span class="co">##  $ SAND1     : num  80.8 73.3 73.3 71 95 ...</span></span>
-<span><span class="co">##  $ ROCK1     : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_ALB1  : num  0.166 0.161 0.16 0.159 0.19 ...</span></span>
-<span><span class="co">##  $ USLE_K1   : num  0.1585 0.2109 0.1965 0.1945 0.0855 ...</span></span>
-<span><span class="co">##  $ SOL_EC1   : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_Z2    : num  49.4 57.5 48.5 46.5 60 ...</span></span>
-<span><span class="co">##  $ SOL_BD2   : num  1.55 1.6 1.53 1.53 1.57 ...</span></span>
-<span><span class="co">##  $ SOL_AWC2  : num  0.1404 0.1383 0.1474 0.1565 0.0999 ...</span></span>
-<span><span class="co">##  $ SOL_K2    : num  7.36 6.14 11.05 8.8 20.82 ...</span></span>
-<span><span class="co">##  $ SOL_CBN2  : num  0.33 0.16 0.42 0.43 0.27 NA</span></span>
-<span><span class="co">##  $ CLAY2     : num  3.41 3.9 4.86 6.67 1.45 NA</span></span>
-<span><span class="co">##  $ SILT2     : num  16.25 16.58 19.83 20.74 2.89 ...</span></span>
-<span><span class="co">##  $ SAND2     : num  80.3 79.5 75.3 72.6 95.7 ...</span></span>
-<span><span class="co">##  $ ROCK2     : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_ALB2  : num  0.184 0.182 0.176 0.172 0.199 ...</span></span>
-<span><span class="co">##  $ USLE_K2   : num  0.1799 0.1858 0.2148 0.2256 0.0886 ...</span></span>
-<span><span class="co">##  $ SOL_EC2   : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_Z3    : num  55 NA 85.6 57.5 95.7 ...</span></span>
-<span><span class="co">##  $ SOL_BD3   : num  1.62 NA 1.61 1.61 1.61 ...</span></span>
-<span><span class="co">##  $ SOL_AWC3  : num  0.137 NA 0.155 0.154 0.119 ...</span></span>
-<span><span class="co">##  $ SOL_K3    : num  8.8 NA 14.59 9.32 18.28 ...</span></span>
-<span><span class="co">##  $ SOL_CBN3  : num  0.11 NA 0.13 0.14 0.13 NA</span></span>
-<span><span class="co">##  $ CLAY3     : num  3.92 NA 5.86 4.53 0.82 NA</span></span>
-<span><span class="co">##  $ SILT3     : num  20.59 NA 18.3 23.32 3.45 ...</span></span>
-<span><span class="co">##  $ SAND3     : num  75.5 NA 75.8 72.2 95.7 ...</span></span>
-<span><span class="co">##  $ ROCK3     : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_ALB3  : num  0.181 NA 0.175 0.171 0.199 ...</span></span>
-<span><span class="co">##  $ USLE_K3   : num  0.2191 NA 0.2081 0.2394 0.0942 ...</span></span>
-<span><span class="co">##  $ SOL_EC3   : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_Z4    : num  NA NA NA NA 122 ...</span></span>
-<span><span class="co">##  $ SOL_BD4   : num  NA NA NA NA 1.64 ...</span></span>
-<span><span class="co">##  $ SOL_AWC4  : num  NA NA NA NA 0.0935 ...</span></span>
-<span><span class="co">##  $ SOL_K4    : num  NA NA NA NA 10.8 ...</span></span>
-<span><span class="co">##  $ SOL_CBN4  : num  NA NA NA NA 0.07 NA</span></span>
-<span><span class="co">##  $ CLAY4     : num  NA NA NA NA 0.95 NA</span></span>
-<span><span class="co">##  $ SILT4     : num  NA NA NA NA 3.32 NA</span></span>
-<span><span class="co">##  $ SAND4     : num  NA NA NA NA 95.7 ...</span></span>
-<span><span class="co">##  $ ROCK4     : num  0 0 0 0 0 0</span></span>
-<span><span class="co">##  $ SOL_ALB4  : num  NA NA NA NA 0.211 ...</span></span>
-<span><span class="co">##  $ USLE_K4   : num  NA NA NA NA 0.0932 ...</span></span>
-<span><span class="co">##  $ SOL_EC4   : num  0 0 0 0 0 0</span></span></code></pre>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org" class="external-link">readxl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/basin.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">water_l_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/water_level.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">drainage_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/drained.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">soil_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/soils.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">DEM_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/DEM.tif"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">lookup_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"soil_lookup.xlsx"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span></code></pre></div>
 </div>
-  </main>
+<div class="section level3">
+<h3 id="preparing-input-data">Preparing input data<a class="anchor" aria-label="anchor" href="#preparing-input-data"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Reading granulometry lookup information for soil types into dataframe</span></span>
+<span><span class="va">gran</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">lookup_path</span>, sheet <span class="op">=</span> <span class="st">"SandSiltClay"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>CLAY <span class="op">=</span> <span class="va">Clay</span>, SILT <span class="op">=</span> <span class="va">Silt</span>, SAND <span class="op">=</span> <span class="va">Sand</span><span class="op">)</span></span>
+<span><span class="co">##Adding missing information for organic soils</span></span>
+<span><span class="va">gran</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gran</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ORG1"</span>, <span class="fl">20</span>, <span class="fl">40</span>, <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="va">gran</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gran</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ORG2"</span>, <span class="fl">20</span>, <span class="fl">40</span>, <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="va">gran</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gran</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ORG3"</span>, <span class="fl">20</span>, <span class="fl">40</span>, <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="va">gran</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gran</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ORG4"</span>, <span class="fl">20</span>, <span class="fl">40</span>, <span class="fl">40</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##Reading humus lookup information in to dataframe and converting it into organic carbon %.</span></span>
+<span><span class="va">humus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">lookup_path</span>, sheet <span class="op">=</span> <span class="st">"Humus"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>OC1 <span class="op">=</span> <span class="va">`Humus 1st layer [%]`</span><span class="op">/</span><span class="fl">1.72</span>,</span>
+<span>         OC2 <span class="op">=</span> <span class="va">`Humus 2nd layer [%]`</span><span class="op">/</span><span class="fl">1.72</span>,</span>
+<span>         OC3 <span class="op">=</span> <span class="va">`Humus 3rd layer [%]`</span><span class="op">/</span><span class="fl">1.72</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Humus</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"OC"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Soil_code2" column here representing soil types).</span></span>
+<span><span class="co">##All data should be in one coordinate system.</span></span>
+<span><span class="va">bound</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">basin_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">2180</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Reading layer `basin' from data source </span></span>
+<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\basin.shp' </span></span>
+<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
+<span><span class="co">## Simple feature collection with 1 feature and 1 field</span></span>
+<span><span class="co">## Geometry type: POLYGON</span></span>
+<span><span class="co">## Dimension:     XY</span></span>
+<span><span class="co">## Bounding box:  xmin: 4898668 ymin: 3304508 xmax: 4915266 ymax: 3319644</span></span>
+<span><span class="co">## Projected CRS: ETRS89-extended / LAEA Europe</span></span></code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">water_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">water_l_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Depth</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Reading layer `water_level' from data source </span></span>
+<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\water_level.shp' </span></span>
+<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
+<span><span class="co">## Simple feature collection with 3 features and 4 fields</span></span>
+<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">## Dimension:     XY</span></span>
+<span><span class="co">## Bounding box:  xmin: 469543 ymin: 518053 xmax: 485455 ymax: 534435</span></span>
+<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">drainage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">drainage_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Drained</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Reading layer `drained' from data source </span></span>
+<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\drained.shp' </span></span>
+<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
+<span><span class="co">## Simple feature collection with 2 features and 4 fields</span></span>
+<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">## Dimension:     XY</span></span>
+<span><span class="co">## Bounding box:  xmin: 469543 ymin: 518053 xmax: 485455 ymax: 534435</span></span>
+<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">soil_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Soil_code2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Reading layer `soils' from data source </span></span>
+<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\soils.shp' </span></span>
+<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
+<span><span class="co">## Simple feature collection with 1347 features and 21 fields</span></span>
+<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">## Dimension:     XY</span></span>
+<span><span class="co">## Bounding box:  xmin: 469393 ymin: 517903 xmax: 485605 ymax: 534585</span></span>
+<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="preparing-final-soil-layer">Preparing final soil layer<a class="anchor" aria-label="anchor" href="#preparing-final-soil-layer"></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">bound</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">bound</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Impervious <span class="op">=</span> <span class="st">"&gt;100cm"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">water_level</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">drainage</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>SNAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">Soil_code2</span>, <span class="st">"_"</span>, <span class="va">Impervious</span>, <span class="st">"_"</span>, <span class="va">Depth</span>, <span class="st">"_"</span>, <span class="va">Drained</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> </span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="preparing-initial-user-soil-table">Preparing initial user soil table<a class="anchor" aria-label="anchor" href="#preparing-initial-user-soil-table"></a>
+</h3>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html" class="external-link">separate</a></span><span class="op">(</span><span class="va">SNAM</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr1"</span>, <span class="st">"Lyr2"</span>, <span class="st">"Lyr3"</span>, <span class="st">"Humus"</span>, <span class="st">"Impervious"</span>, <span class="st">"Depth"</span>, <span class="st">"Drained"</span><span class="op">)</span>, <span class="st">"_"</span>, remove <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NLAYERS <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>         SOL_Z1 <span class="op">=</span> <span class="fl">250</span>,</span>
+<span>         SOL_Z2 <span class="op">=</span> <span class="fl">750</span>,</span>
+<span>         SOL_Z3 <span class="op">=</span> <span class="fl">1500</span>,</span>
+<span>         Humus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">Humus</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gran</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"1"</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr1"</span> <span class="op">=</span> <span class="st">"Texture EN1"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gran</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"2"</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr2"</span> <span class="op">=</span> <span class="st">"Texture EN2"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gran</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"3"</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr3"</span> <span class="op">=</span> <span class="st">"Texture EN3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">humus</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Humus"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span>, <span class="va">NLAYERS</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">)</span>, <span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Lyr"</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'data.frame':    546 obs. of  17 variables:</span></span>
+<span><span class="co">##  $ SNAM   : chr  "SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N" "SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N" "SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N" "SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N" ...</span></span>
+<span><span class="co">##  $ NLAYERS: num  3 3 3 3 3 3 3 3 3 3 ...</span></span>
+<span><span class="co">##  $ SOL_Z1 : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
+<span><span class="co">##  $ SAND1  : num  62.5 60.5 62.5 71.7 80.7 ...</span></span>
+<span><span class="co">##  $ SILT1  : num  25.4 27.8 25.4 22.1 14.8 ...</span></span>
+<span><span class="co">##  $ CLAY1  : num  12.07 11.69 12.07 6.11 4.45 ...</span></span>
+<span><span class="co">##  $ OC1    : num  1.88 1.26 1.63 1.63 1.63 ...</span></span>
+<span><span class="co">##  $ SOL_Z2 : num  750 750 750 750 750 750 750 750 750 750 ...</span></span>
+<span><span class="co">##  $ SAND2  : num  62.5 60.5 62.5 60.5 80.7 ...</span></span>
+<span><span class="co">##  $ SILT2  : num  25.4 27.8 25.4 27.8 14.8 ...</span></span>
+<span><span class="co">##  $ CLAY2  : num  12.07 11.69 12.07 11.69 4.45 ...</span></span>
+<span><span class="co">##  $ OC2    : num  0.942 0.628 0.814 0.814 0.814 ...</span></span>
+<span><span class="co">##  $ SOL_Z3 : num  1500 1500 1500 1500 1500 1500 1500 1500 1500 1500 ...</span></span>
+<span><span class="co">##  $ SAND3  : num  62.5 60.5 62.5 60.5 62.5 ...</span></span>
+<span><span class="co">##  $ SILT3  : num  25.4 27.8 25.4 27.8 25.4 ...</span></span>
+<span><span class="co">##  $ CLAY3  : num  12.1 11.7 12.1 11.7 12.1 ...</span></span>
+<span><span class="co">##  $ OC3    : num  0.174 0.116 0.151 0.151 0.151 ...</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="preparing-adding-parameters-to-user-table">Preparing adding parameters to user table<a class="anchor" aria-label="anchor" href="#preparing-adding-parameters-to-user-table"></a>
+</h3>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Adding all SWAT soil parameters for except HYDGRP  </span></span>
+<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suggested_PTF</span><span class="op">)</span></span>
+<span><span class="co">##Adding HYDGRP in a look for each row</span></span>
+<span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">c</span>, <span class="fu"><a href="../reference/get_hsg.html">get_hsg</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">$</span><span class="va">SNAM</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>,</span>
+<span>                    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">$</span><span class="va">SNAM</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>, </span>
+<span>                    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">$</span><span class="va">SNAM</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, </span>
+<span>                    <span class="va">usertable</span><span class="op">[</span><span class="va">i</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SOL_Z"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">usertable</span><span class="op">$</span><span class="va">NLAYERS</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>                                  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SOL_K"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">usertable</span><span class="op">$</span><span class="va">NLAYERS</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">usertable</span><span class="op">$</span><span class="va">HYDGRP</span> <span class="op">&lt;-</span> <span class="va">c</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   OBJECTID MUID SEQN                          SNAM S5ID CMPPCT NLAYERS HYDGRP</span></span>
+<span><span class="co">## 1        1         1 SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 2        2         1 SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 3        3         1 SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 4        4         1 SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 5        5         1 LS2_LS2_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 6        6         1 SL1_SL1_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">##   SOL_ZMX ANION_EXCL SOL_CRK TEXTURE SOL_Z1  SOL_BD1  SOL_AWC1   SOL_K1</span></span>
+<span><span class="co">## 1    1500        0.5     0.5            250 1.316489 0.2058487 2.711296</span></span>
+<span><span class="co">## 2    1500        0.5     0.5            250 1.390534 0.2017229 2.703229</span></span>
+<span><span class="co">## 3    1500        0.5     0.5            250 1.344218 0.2017320 1.867750</span></span>
+<span><span class="co">## 4    1500        0.5     0.5            250 1.344218 0.1998905 2.712900</span></span>
+<span><span class="co">## 5    1500        0.5     0.5            250 1.344218 0.1752919 2.873305</span></span>
+<span><span class="co">## 6    1500        0.5     0.5            250 1.344218 0.1979513 2.996104</span></span>
+<span><span class="co">##   SOL_CBN1     CLAY1    SILT1    SAND1 ROCK1  SOL_ALB1   USLE_K1 SOL_EC1 SOL_Z2</span></span>
+<span><span class="co">## 1 1.883721 12.066406 25.39312 62.54047     0 0.1577595 0.1967866       0    750</span></span>
+<span><span class="co">## 2 1.255814 11.691250 27.84219 60.46656     0 0.1595772 0.2294801       0    750</span></span>
+<span><span class="co">## 3 1.633721 12.066406 25.39312 62.54047     0 0.1581390 0.2026279       0    750</span></span>
+<span><span class="co">## 4 1.633721  6.110556 22.14278 71.74667     0 0.1595668 0.1864893       0    750</span></span>
+<span><span class="co">## 5 1.633721  4.445294 14.84059 80.71412     0 0.1677712 0.1371717       0    750</span></span>
+<span><span class="co">## 6 1.633721  5.863889 19.61500 74.52111     0 0.1623638 0.1728151       0    750</span></span>
+<span><span class="co">##    SOL_BD2  SOL_AWC2   SOL_K2  SOL_CBN2     CLAY2    SILT2    SAND2 ROCK2</span></span>
+<span><span class="co">## 1 1.434674 0.1967611 2.651367 0.9418605 12.066406 25.39312 62.54047     0</span></span>
+<span><span class="co">## 2 1.487033 0.1817453 2.025492 0.6279070 11.691250 27.84219 60.46656     0</span></span>
+<span><span class="co">## 3 1.454755 0.1893802 2.040409 0.8139535 12.066406 25.39312 62.54047     0</span></span>
+<span><span class="co">## 4 1.454755 0.1877344 2.006925 0.8139535 11.691250 27.84219 60.46656     0</span></span>
+<span><span class="co">## 5 1.454755 0.1809856 2.222706 0.8139535  4.445294 14.84059 80.71412     0</span></span>
+<span><span class="co">## 6 1.454755 0.1873755 2.287417 0.8139535  5.863889 19.61500 74.52111     0</span></span>
+<span><span class="co">##    SOL_ALB2   USLE_K2 SOL_EC2 SOL_Z3  SOL_BD3  SOL_AWC3   SOL_K3  SOL_CBN3</span></span>
+<span><span class="co">## 1 0.1623806 0.2385587       0   1500 1.597215 0.1524066 1.258814 0.1744186</span></span>
+<span><span class="co">## 2 0.1635455 0.2604019       0   1500 1.619747 0.1467356 2.485255 0.1162791</span></span>
+<span><span class="co">## 3 0.1641407 0.2443058       0   1500 1.605694 0.1487330 1.300517 0.1511628</span></span>
+<span><span class="co">## 4 0.1627266 0.2543872       0   1500 1.605694 0.1497210 1.954095 0.1511628</span></span>
+<span><span class="co">## 5 0.1695455 0.1653861       0   1500 1.605694 0.1487330 1.300517 0.1511628</span></span>
+<span><span class="co">## 6 0.1652321 0.2083610       0   1500 1.605694 0.1487330 1.300517 0.1511628</span></span>
+<span><span class="co">##      CLAY3    SILT3    SAND3 ROCK3  SOL_ALB3   USLE_K3 SOL_EC3</span></span>
+<span><span class="co">## 1 12.06641 25.39312 62.54047     0 0.1710281 0.2552865       0</span></span>
+<span><span class="co">## 2 11.69125 27.84219 60.46656     0 0.1695425 0.2660251       0</span></span>
+<span><span class="co">## 3 12.06641 25.39312 62.54047     0 0.1716554 0.2553717       0</span></span>
+<span><span class="co">## 4 11.69125 27.84219 60.46656     0 0.1695052 0.2659097       0</span></span>
+<span><span class="co">## 5 12.06641 25.39312 62.54047     0 0.1716554 0.2553717       0</span></span>
+<span><span class="co">## 6 12.06641 25.39312 62.54047     0 0.1716554 0.2553717       0</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="checking-results-on-map">Checking results on map<a class="anchor" aria-label="anchor" href="#checking-results-on-map"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">soilp</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">usertable</span>, by <span class="op">=</span> <span class="st">"SNAM"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co">##Plot soil hydrologic groups</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"HYDGRP"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><img src="soil_files/figure-html/soil_maps-1.png" width="700"></p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"SOL_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><img src="soil_files/figure-html/soil_maps-2.png" width="700"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"USLE_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><img src="soil_files/figure-html/soil_maps-3.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="write-inputs-for-swat">Write inputs for SWAT+<a class="anchor" aria-label="anchor" href="#write-inputs-for-swat"></a>
+</h3>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/read_stars.html" class="external-link">read_stars</a></span><span class="op">(</span><span class="va">DEM_path</span><span class="op">)</span></span>
+<span><span class="va">soils_dis</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>SOIL_ID <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>         SNAME <span class="op">=</span> <span class="va">SNAM</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">soils_raster</span> <span class="op">&lt;-</span> <span class="va">soils_dis</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html" class="external-link">st_rasterize</a></span><span class="op">(</span><span class="va">dem</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">soil_link_table</span> <span class="op">&lt;-</span> <span class="va">soils_dis</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SOIL_ID</span>, <span class="va">SNAME</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html" class="external-link">write_stars</a></span><span class="op">(</span><span class="va">soils_raster</span> , <span class="st">"../output/SoilmapSWAT.tif"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">soil_link_table</span>, <span class="st">"../output/Soil_SWAT_cod.csv"</span>, row.names<span class="op">=</span><span class="cn">FALSE</span>, quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="st">"../output/usersoil_lrew.csv"</span>, row.names<span class="op">=</span><span class="cn">FALSE</span>, quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
