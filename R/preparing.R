@@ -377,7 +377,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
   ##Case Depth to water impermeable layer <50cm
   if (d_imp == "<50cm"){
     r <- "D"
-  ##Case Depth to water impermeable layer 50-100cm
+    ##Case Depth to water impermeable layer 50-100cm
   } else if (d_imp == "50-100cm"){
     ##Water table <60cm
     if (d_wtr == "<60cm"){
@@ -403,7 +403,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
         r <- "D"
       }
       ##Water table 60-100cm
-    } else if (d_wtr == "60-100cm"){
+    } else {
       if (min_ks(t, 500) > 40){
         r <- "A"
       } else if (min_ks(t, 500) > 10 & min_ks(t, 500) <= 40){
@@ -465,5 +465,6 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
   }
   return(r)
 }
+
 
 

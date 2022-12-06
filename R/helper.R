@@ -116,7 +116,15 @@ nyears <- function(df, col){
 #' }
 
 min_ks <- function(df, max_depth){
-  min(df[,grep("SOL_K", colnames(df))[df[,grep("SOL_Z", colnames(df))] < max_depth]])/0.4167
+  ind <- as.vector(grep("SOL_K", colnames(df))[df[,grep("SOL_Z", colnames(df))] < max_depth])
+  if(length(ind) > 1){
+    ind <- c(ind, ind[-1] + 1)
+  } else if (length(ind) == 1){
+    ind <- c(ind, ind + 1)
+  } else if (max_depth > 0){
+    ind <- 1
+  }
+  return(min(df[,ind])/0.4167)
 }
 
 # Interpolation --------------------------------------------------------------------

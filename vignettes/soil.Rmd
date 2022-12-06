@@ -52,14 +52,14 @@ humus <- read_excel(lookup_path, sheet = "Humus") %>%
 
 ##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Soil_code2" column here representing soil types).
 ##All data should be in one coordinate system.
-bound <- st_read(basin_path) %>% 
+bound <- st_read(basin_path, quiet = TRUE) %>% 
   st_transform(2180) %>% 
   select()
-water_level <- st_read(water_l_path) %>% 
+water_level <- st_read(water_l_path, quiet = TRUE) %>% 
   select(Depth)
-drainage <- st_read(drainage_path) %>% 
+drainage <- st_read(drainage_path, quiet = TRUE) %>% 
   select(Drained)
-soils <- st_read(soil_path) %>% 
+soils <- st_read(soil_path, quiet = TRUE) %>% 
   select(Soil_code2)
 
 

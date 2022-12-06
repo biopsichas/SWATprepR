@@ -143,55 +143,20 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <span></span>
 <span><span class="co">##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Soil_code2" column here representing soil types).</span></span>
 <span><span class="co">##All data should be in one coordinate system.</span></span>
-<span><span class="va">bound</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">basin_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">bound</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">basin_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">2180</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Reading layer `basin' from data source </span></span>
-<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\basin.shp' </span></span>
-<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
-<span><span class="co">## Simple feature collection with 1 feature and 1 field</span></span>
-<span><span class="co">## Geometry type: POLYGON</span></span>
-<span><span class="co">## Dimension:     XY</span></span>
-<span><span class="co">## Bounding box:  xmin: 4898668 ymin: 3304508 xmax: 4915266 ymax: 3319644</span></span>
-<span><span class="co">## Projected CRS: ETRS89-extended / LAEA Europe</span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">water_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">water_l_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Depth</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Reading layer `water_level' from data source </span></span>
-<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\water_level.shp' </span></span>
-<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
-<span><span class="co">## Simple feature collection with 3 features and 4 fields</span></span>
-<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
-<span><span class="co">## Dimension:     XY</span></span>
-<span><span class="co">## Bounding box:  xmin: 469543 ymin: 518053 xmax: 485455 ymax: 534435</span></span>
-<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">drainage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">drainage_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Drained</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Reading layer `drained' from data source </span></span>
-<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\drained.shp' </span></span>
-<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
-<span><span class="co">## Simple feature collection with 2 features and 4 fields</span></span>
-<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
-<span><span class="co">## Dimension:     XY</span></span>
-<span><span class="co">## Bounding box:  xmin: 469543 ymin: 518053 xmax: 485455 ymax: 534435</span></span>
-<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">soil_path</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">water_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">water_l_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Depth</span><span class="op">)</span></span>
+<span><span class="va">drainage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">drainage_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Drained</span><span class="op">)</span></span>
+<span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">soil_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Soil_code2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Reading layer `soils' from data source </span></span>
-<span><span class="co">##   `C:\Users\laptop\AppData\Local\R\win-library\4.2\svatools\extdata\GIS\soils.shp' </span></span>
-<span><span class="co">##   using driver `ESRI Shapefile'</span></span>
-<span><span class="co">## Simple feature collection with 1347 features and 21 fields</span></span>
-<span><span class="co">## Geometry type: MULTIPOLYGON</span></span>
-<span><span class="co">## Dimension:     XY</span></span>
-<span><span class="co">## Bounding box:  xmin: 469393 ymin: 517903 xmax: 485605 ymax: 534585</span></span>
-<span><span class="co">## Projected CRS: ETRS89 / Poland CS92</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="preparing-final-soil-layer">Preparing final soil layer<a class="anchor" aria-label="anchor" href="#preparing-final-soil-layer"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">bound</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">bound</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Impervious <span class="op">=</span> <span class="st">"&gt;100cm"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -203,7 +168,7 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <div class="section level3">
 <h3 id="preparing-initial-user-soil-table">Preparing initial user soil table<a class="anchor" aria-label="anchor" href="#preparing-initial-user-soil-table"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -242,7 +207,7 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <div class="section level3">
 <h3 id="preparing-adding-parameters-to-user-table">Preparing adding parameters to user table<a class="anchor" aria-label="anchor" href="#preparing-adding-parameters-to-user-table"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Adding all SWAT soil parameters for except HYDGRP  </span></span>
 <span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suggested_PTF</span><span class="op">)</span></span>
@@ -258,12 +223,12 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <span><span class="va">usertable</span><span class="op">$</span><span class="va">HYDGRP</span> <span class="op">&lt;-</span> <span class="va">c</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   OBJECTID MUID SEQN                          SNAM S5ID CMPPCT NLAYERS HYDGRP</span></span>
-<span><span class="co">## 1        1         1 SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 1        1         1 SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N           1       3      C</span></span>
 <span><span class="co">## 2        2         1 SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
-<span><span class="co">## 3        3         1 SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 3        3         1 SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N           1       3      C</span></span>
 <span><span class="co">## 4        4         1 SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
-<span><span class="co">## 5        5         1 LS2_LS2_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
-<span><span class="co">## 6        6         1 SL1_SL1_SL3_2_&gt;100cm_&gt;100cm_N           1       3      B</span></span>
+<span><span class="co">## 5        5         1 LS2_LS2_SL3_2_&gt;100cm_&gt;100cm_N           1       3      C</span></span>
+<span><span class="co">## 6        6         1 SL1_SL1_SL3_2_&gt;100cm_&gt;100cm_N           1       3      C</span></span>
 <span><span class="co">##   SOL_ZMX ANION_EXCL SOL_CRK TEXTURE SOL_Z1  SOL_BD1  SOL_AWC1   SOL_K1</span></span>
 <span><span class="co">## 1    1500        0.5     0.5            250 1.316489 0.2058487 2.711296</span></span>
 <span><span class="co">## 2    1500        0.5     0.5            250 1.390534 0.2017229 2.703229</span></span>
@@ -303,17 +268,17 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <div class="section level3">
 <h3 id="checking-results-on-map">Checking results on map<a class="anchor" aria-label="anchor" href="#checking-results-on-map"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">soilp</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">usertable</span>, by <span class="op">=</span> <span class="st">"SNAM"</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co">##Plot soil hydrologic groups</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"HYDGRP"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-1.png" width="700"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"SOL_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-2.png" width="700"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"USLE_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-3.png" width="700"></p>
@@ -321,7 +286,7 @@ Zglowiaczka in OPTAIN project</a>.</p>
 <div class="section level3">
 <h3 id="write-inputs-for-swat">Write inputs for SWAT+<a class="anchor" aria-label="anchor" href="#write-inputs-for-swat"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/read_stars.html" class="external-link">read_stars</a></span><span class="op">(</span><span class="va">DEM_path</span><span class="op">)</span></span>
 <span><span class="va">soils_dis</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
