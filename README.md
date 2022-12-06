@@ -76,9 +76,9 @@ plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
 #> $regretion
 ```
 
-![](README_files/figure-gfm/example-1.png)<!-- -->
+![](man/figures/README-example-1.png)<!-- -->
 
     #> 
     #> $fraction
 
-![](README_files/figure-gfm/example-2.png)<!-- -->
+![](man/figures/README-example-2.png)<!-- -->
