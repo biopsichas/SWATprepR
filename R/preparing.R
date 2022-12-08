@@ -466,5 +466,126 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
   return(r)
 }
 
+# Updating .sqlite database -----------------------------------------------
 
+#' Update sqlite database with weather data
+#'
+#' @param db_path character to sqlite database (example "./output/project.sqlite")
+#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param wgn_lst list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by prepare_wgn funtion)
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+
+add_weather <- function(db_path, meteo_lst, wgn_lst){
+  ##Path to the folder to write weather files (same as sql db)
+  write_path <- sub("[^/]+$", "", db_path)
+  ##Dictionary for parameters
+  p_lst <- list("PCP" = c("pcp", "Precipitation"), 
+                "SLR" = c("slr", "Solar radiation"), 
+                "RELHUM" = c("hmd", "Relative humidity"), 
+                "TMP_MAX" = c("tmp", "Temperature"), 
+                "TMP_MIN" =  c("tmp", "Temperature"), 
+                "WNDSPD" = c("wnd", "Wind speed"), 
+                "WND_DIR" = c("wnd_dir", "Wind direction"), 
+                "ATMO_DEP" = c("atmo_dep", "Atmospheric deposition"))
+  ##Converting station coordinates (if not correct already) 
+  st <-  meteo_lst[["stations"]]
+  if (!grepl("4326", st_crs(st)$input)){
+    st <- st_transform(st, 4326)
+    st$Long = st_coordinates(st)[,1]
+    st$Lat = st_coordinates(st)[,2]
+    print("Coordinate system checked and transformed to EPSG:4326.")
+  }
+  st <- st_drop_geometry(st)
+  ##Initiating tables to be filled in loop
+  weather_file <- data.frame(id=integer(), filename=character(), type=character(), lat=numeric(), lon=numeric())
+  weather_sta_cli <- data.frame(id=integer(), name=character(), wgn_id=integer(), 
+                                pcp=character(), tmp=character(), slr = character(), hmd = character(),
+                                wnd = character(), wnd_dir = character(), atmo_dep = character(),
+                                lat=numeric(), lon=numeric())
+  ##Setting up counters for ids
+  id <- 1
+  id_st <- 1
+  ##Main loop to write weather files and fill 'weather_file' and 'weather_sta_cli' tables
+  for (n in names(int_met_lst[["data"]])){
+    ##Initial information to weather file 2 and 3 lines
+    df1 <- data.frame(nbyr = 0, 
+                      tstep = 0, 
+                      lat = round(as.numeric(st[st$ID == n,"Lat"]), 3), 
+                      lon = round(as.numeric(st[st$ID == n,"Long"]), 3), 
+                      elev = round(as.numeric(st[st$ID == n,"Elevation"]), 3))
+    pars <- names(int_met_lst[["data"]][[n]])
+    ##Initial information to 'weather_sta_cli'
+    weather_sta_cli[id_st, c("id", "name", "wgn_id", "lat", "lon")] <- 
+      list(as.integer(id_st), paste0("s", gsub("\\.", "", as.character(df1$lat)), "n", gsub("\\.", "", as.character(df1$lon)), "e"),
+           wgn$wgn_st$ID[wgn$wgn_st$NAME == st$Name[st$ID == n]],
+           df1$lat, df1$lon)
+    ##Writing and filling data for temperature
+    if(all(c("TMP_MAX", "TMP_MIN") %in% pars)){
+      df <- int_met_lst[["data"]][[n]][["TMP_MAX"]] %>% 
+        full_join(int_met_lst[["data"]][[n]][["TMP_MIN"]], by = "DATE") %>% 
+        mutate(year = year(DATE), day = yday(DATE)) %>% 
+        select(year, day, TMP_MAX, TMP_MIN, DATE)
+      df1$nbyr <- round(interval(df[1,"DATE"], df[nrow(df),"DATE"]) / years(1), 0)
+      file_n <- paste0("sta_", tolower(n), ".", p_lst[["TMP_MAX"]][[1]])
+      ##Head line in file
+      text_l <- paste0(file_n, ": ", p_lst[["TMP_MAX"]][[2]], " data - file written by svatools R package ", Sys.time())
+      ##Writing temperature file per station
+      write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
+      write.table(df[c(1:4)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Taking out temperature from parameter
+      pars <- pars[which(!pars %in% c("TMP_MAX", "TMP_MIN"))]
+      weather_file[id,] <- list(id, file_n, p_lst[["TMP_MAX"]][[1]], as.numeric(df1$lat), as.numeric(df1$lon))
+      weather_sta_cli[id_st, "tmp"] <- file_n
+      id <- id + 1
+    } 
+    ##Looping for all other parameters (except of temperature)
+    for(p in pars){
+      df <- int_met_lst[["data"]][[n]][[p]] %>% 
+        mutate(year = year(DATE), day = yday(DATE)) 
+      df1$nbyr <- round(interval(df[1,"DATE"], df[nrow(df),"DATE"]) / years(1), 0)
+      file_n <- paste0("sta_", tolower(n), ".", p_lst[[p]][[1]])
+      text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by svatools R package ", Sys.time())
+      ##Writing file per parametrer for each station
+      write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
+      write.table(df[c("year", "day", p)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      weather_file[nrow(weather_file)+1,] <- c(id, file_n, p_lst[[p]][[1]], df1$lat, df1$lon)
+      weather_sta_cli[id_st, p_lst[[p]][[1]]] <- file_n
+      id <- id + 1
+    }
+    print(paste0("Finished writing data for station ", n))
+    id_st <- id_st + 1
+  }
+  ##Preparing weather generator tables:'weather_wgn_cli', 'weather_wgn_cli_mon'
+  weather_wgn_cli <- wgn_lst$wgn_st %>% 
+    rename(id = ID, name = NAME, lat = LAT, lon = LONG, elev = ELEVATION, rain_yrs = RAIN_YRS) %>% 
+    mutate(lat = round(as.numeric(lat), 2),
+           lon = round(as.numeric(lon), 2),
+           elev = round(elev, 1),
+           rain_yrs = as.integer(rain_yrs))
+  weather_wgn_cli_mon <- wgn_lst$wgn_data %>% 
+    rename(weather_wgn_cli_id = wgn_id)
+  ##Database part
+  ##Opening database to write 
+  db <- dbConnect(RSQLite::SQLite(), db_path)
+  ##Appending by prepared table (db tables should be empty)
+  dbWriteTable(db, 'weather_file',weather_file, append = TRUE)
+  dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, append = TRUE)
+  dbWriteTable(db, 'weather_wgn_cli', weather_wgn_cli, append = TRUE)
+  dbWriteTable(db, 'weather_wgn_cli_mon', weather_wgn_cli_mon, append = TRUE)
+  dbDisconnect(db)
+  ##Updating tables with nearest weather station id (wst_id)
+  ##Reading tables to update
+  for (t in c("hru_con", "rout_unit_con", "chandeg_con", "aquifer_con", "reservoir_con")){
+    update_wst_id(t, db_path, weather_sta_cli)
+  }
+  return(print(paste("Weather data was successfuly added to", gsub(".*/","",db_path))))
+}
 

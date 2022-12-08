@@ -295,6 +295,31 @@ list_to_df <- function(lst){
   arrange(df, DATE)
 }
 
+
+#' Updating sqlite database table with wst_id information
+#'
+#' @param tname character of table name (example "hru_con")
+#' @param db_path character to sqlite database (example "./output/project.sqlite")
+#' @param wst_cli data.frame weather_sta_cli table
+#' @return updates sql database with table amended with wst_id (id of closest weather station)
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#' update_wst_id("hru_con", "./output/project.sqlite", weather_sta_cli)
+#' }
+
+update_wst_id <- function(tname, db_path, wst_cli){
+  db <- dbConnect(RSQLite::SQLite(), db_path)
+  t <- dbReadTable(db, tname)
+  t_sf <- st_as_sf(t, coords = c("lon", "lat"), crs = 4326)
+  wst_sf <- st_as_sf(wst_cli, coords = c("lon", "lat"), crs = 4326)
+  ##Finding wst_id of nearest station
+  t$wst_id <- wst_cli[st_nearest_feature(t_sf, wst_sf),"id"]
+  dbWriteTable(db, tname, t, overwrite = TRUE)
+  dbDisconnect(db)
+  return(print(paste(tname, "updated with wst_id and rewritten into database.")))
+}
+
 # WGN helpers -----------------------------------------------------------------
 
 #' Function to calculate pcp_skew parameter
