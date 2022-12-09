@@ -301,6 +301,9 @@ list_to_df <- function(lst){
 #' @param tname character of table name (example "hru_con")
 #' @param db_path character to sqlite database (example "./output/project.sqlite")
 #' @param wst_cli data.frame weather_sta_cli table
+#' @importFrom DBI dbConnect dbReadTable dbWriteTable dbDisconnect
+#' @importFrom RSQLite SQLite
+#' @importFrom sf st_as_sf st_nearest_feature
 #' @return updates sql database with table amended with wst_id (id of closest weather station)
 #' @keywords internal
 #' @examples

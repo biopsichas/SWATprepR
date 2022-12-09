@@ -13,6 +13,7 @@ BugReports: https://github.com/biopsichas/svatools/issues
 Depends:
     R (>= 4.2)
 Imports:
+    DBI (>= 1.1.3),
     dplyr (>= 0.8.0.1),
     euptf2,
     ggplot2 (>= 3.3.6),
@@ -27,6 +28,7 @@ Imports:
     raster (>= 3.5-21),
     Rdpack (>= 2.4),
     readxl (>= 1.4.0),
+    RSQLite (>= 2.2.15),
     sf (>= 1.0-8),
     sp (>= 1.5-0),
     spatialEco (>= 1.3-7),

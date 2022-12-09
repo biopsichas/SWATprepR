@@ -58,12 +58,6 @@ DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
 ```
 
-## Writing
-
-### SWAT input
-
-*Coming soon...*
-
 ### Weather generator
 
 #### WGNmaker excel macro
@@ -93,3 +87,14 @@ write.csv(wgn$wgn_st, "wgn_st.csv")
 write.csv(wgn$wgn_data, "wgn_data.csv")
 ```
 
+## Writing
+
+### SWAT+ input and updating .sqlite database 
+
+[add_weather](../reference/add_weather.html) function can be used to write all weather files into project's folder and update tables in project's sqlite database with weather, weather generator and relation to weather station information.  
+
+```{r update, eval=FALSE, message = FALSE, warning = FALSE}
+##Path to .sqlite
+db_path <- "./output/test/project.sqlite"
+add_weather(db_path, met_lst, wgn)
+```
