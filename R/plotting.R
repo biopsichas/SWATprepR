@@ -129,7 +129,7 @@ plot_monthly <- function(df, station, drop_variables = c()){
 plot_fractions <- function(df, station, total_var, min_vars){
   ##Preparing df for regression
   df <- df %>%
-    filter(Station %in% c("4") & Variables %in% c(total_var, min_vars)) %>% 
+    filter(Station %in% c(station) & Variables %in% c(total_var, min_vars)) %>% 
     select(DATE, Variables, Values) %>% 
     group_by(DATE, Variables) %>% 
     summarise_all(mean) %>% 

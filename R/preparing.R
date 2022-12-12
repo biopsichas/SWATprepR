@@ -480,6 +480,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect
 #' @importFrom lubridate yday interval years
 #' @importFrom RSQLite SQLite
+#' @importFrom stringr sort
 #' @return updated sqlite database with weather data
 #' @export
 #'
@@ -525,7 +526,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
   id <- 1
   id_st <- 1
   ##Main loop to write weather files and fill 'weather_file' and 'weather_sta_cli' tables
-  for (n in names(meteo_lst[["data"]])){
+  for (n in sort(names(meteo_lst[["data"]]))){
     ##Initial information to weather file 2 and 3 lines
     df1 <- data.frame(nbyr = 0, 
                       tstep = 0, 
@@ -552,6 +553,13 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
       write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
       write.table(df[c(1:4)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Writing .cli files
+      if(!file.exists(paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"))){
+        text_l <- paste0(p_lst[["TMP_MAX"]][[1]], ".cli", ": ", p_lst[["TMP_MAX"]][[2]], " file names - file written by svatools R package ", Sys.time())
+        write.table(text_l, paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        write.table("filename", paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      }
+      write.table(file_n, paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       ##Taking out temperature from parameter
       pars <- pars[which(!pars %in% c("TMP_MAX", "TMP_MIN"))]
       weather_file[id,] <- list(id, file_n, p_lst[["TMP_MAX"]][[1]], as.numeric(df1$lat), as.numeric(df1$lon))
@@ -565,10 +573,18 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
       df1$nbyr <- round(interval(df[1,"DATE"], df[nrow(df),"DATE"]) / years(1), 0)
       file_n <- paste0("sta_", tolower(n), ".", p_lst[[p]][[1]])
       text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by svatools R package ", Sys.time())
-      ##Writing file per parametrer for each station
+      ##Writing file per parameter for each station
       write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
       write.table(df[c("year", "day", p)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Writing .cli files
+      if(!file.exists(paste0(write_path, p_lst[[p]][[1]], ".cli"))){
+        text_l <- paste0(p_lst[[p]][[1]], ".cli", ": ", p_lst[[p]][[2]], " file names - file written by svatools R package ", Sys.time())
+        write.table(text_l, paste0(write_path, p_lst[[p]][[1]], ".cli"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        write.table("filename", paste0(write_path, p_lst[[p]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      }
+      write.table(file_n, paste0(write_path, p_lst[[p]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Filling sqlite tables
       weather_file[nrow(weather_file)+1,] <- c(id, file_n, p_lst[[p]][[1]], df1$lat, df1$lon)
       weather_sta_cli[id_st, p_lst[[p]][[1]]] <- file_n
       id <- id + 1
