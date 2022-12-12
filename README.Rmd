@@ -7,6 +7,8 @@ vignette: >
   %\VignetteIndexEntry{Introduction to svatools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+development:
+  mode: auto
 ---
 
 ```{r setup, include = FALSE}
@@ -19,8 +21,9 @@ knitr::opts_chunk$set(
 
 # svatools
 
-<!-- badges: start -->
-<!-- badges: end -->
+![GitHub License](https://img.shields.io/github/license/biopsichas/svatools)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/biopsichas/svatools?display_name=tag&label=last%20release&logo=github&sort=semver)
+![GitHub Release Date](https://img.shields.io/github/release-date/biopsichas/svatools?label=last%20release%20date&logo=github)
 
 The goal of svatools is to help with [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation, visualization and model output assessment. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying&using these tools:
 

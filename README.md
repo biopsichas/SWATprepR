@@ -3,8 +3,12 @@ Introduction to svatools
 
 # svatools
 
-<!-- badges: start -->
-<!-- badges: end -->
+![GitHub
+License](https://img.shields.io/github/license/biopsichas/svatools)
+![GitHub release (latest
+SemVer)](https://img.shields.io/github/v/release/biopsichas/svatools?display_name=tag&label=last%20release&logo=github&sort=semver)
+![GitHub Release
+Date](https://img.shields.io/github/release-date/biopsichas/svatools?label=last%20release%20date&logo=github)
 
 The goal of svatools is to help with [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation,
