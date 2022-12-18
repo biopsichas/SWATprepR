@@ -166,7 +166,7 @@ plot_fractions <- function(df, station, total_var, min_vars){
     theme_bw()+
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
   
-  return(list(regretion = plot_reg, fraction = plot_frac))
+  return(list(regression = plot_reg, fraction = plot_frac))
 }
 
 # Plotting maps -----------------------------------------------------------

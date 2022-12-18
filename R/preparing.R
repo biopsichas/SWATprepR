@@ -480,7 +480,6 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect
 #' @importFrom lubridate yday interval years
 #' @importFrom RSQLite SQLite
-#' @importFrom stringr sort
 #' @return updated sqlite database with weather data
 #' @export
 #'

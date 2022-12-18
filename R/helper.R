@@ -447,3 +447,87 @@ my.pcpd <- function(x, nyears, na.rm = FALSE){
   return(pcpd)
 }
 
+
+# Cleaning data ----------------------------------------------------------------
+
+#' Function to clean outliers outside by some standard deviations
+#'
+#' @param df dataframe with columns c("Station", "DATE", "Variables", "Values", "Source").
+#' @param times_sd numeric value representing multiplication factor for standard deviation. 
+#' Values outside mean - sd X times_sd, mean + sd X times_sd are identified as outliers. 
+#' Optional with default value 3.  
+#' @return list of two dataframes. *newdf* dataframe contains dataframe cleaned from outliers.
+#' *dropped*  dataframe contains data, which was removed from *newdf* dataframe.
+#' @importFrom dplyr mutate %>% group_by summarise left_join
+#' @importFrom lubridate month 
+#' @export
+#'
+#' @examples
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' lst <- clean_outliers(cal_data$data)
+#' ##Looking at data to be removed
+#' print(head(lst$dropped))
+#' ##Updating data
+#' cal_data$data <- lst$newdf
+
+clean_outliers <- function(df, times_sd = 3){
+  ##Calculating monthly min, max values
+  ref_values <- df %>% 
+    mutate(Month = month(DATE)) %>% 
+    group_by(Station, Variables, Month) %>% 
+    summarise(mean = mean(Values), sd = sd(Values), .groups = 'drop') %>% 
+    mutate(min_value = ifelse(mean - sd * times_sd < 0, 0, mean - sd * times_sd),
+           max_value = mean + sd * times_sd)
+  ##Identifying outliers and splitting into two dfs
+  df <- df %>% 
+    mutate(Month = month(DATE)) %>% 
+    left_join(ref_values, by = c("Station", "Variables", "Month")) %>% 
+    mutate(P = ifelse(Values >= min_value & Values <= max_value, T, F))
+  
+  return(list(newdf =  df[df$P == T, c("Station", "DATE", "Variables", "Values", "Source")], 
+              dropped = df[df$P == F, c("Station", "DATE", "Variables", "Values", "Source")]))
+}
+
+#' Clean water quality data from most typical issues
+#'
+#' @param df dataframe with water quality data with  with columns c("Station", "DATE", "Variables", "Values", "Source").
+#' @param zero_to_min numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 1. 
+#' @return cleaned dataframe
+#' @export
+#' @importFrom dplyr mutate left_join distinct filter summarise select group_by
+#' @examples
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' cal_data$data <- clean_wq(cal_data$data)
+
+clean_wq <- function(df, zero_to_min = 1){
+  ##Cleaning common problems
+  if(inherits(df$Values, "character")){
+    df <- df %>% 
+      mutate(Values = gsub(",", ".", Values)) %>% 
+      mutate(Values = ifelse(grepl("<", Values), as.numeric(gsub("<", "", Values))/2, Values)) %>%  ##Below LOD/LOQ, leaving half value.
+      mutate(Values = ifelse(grepl("^[0-9]", Values), Values, NA)) %>%  ##From here should be starting with number, if not - NA
+      mutate(Values = as.numeric(Values)) 
+  } else if (!inherits(df$Values, "numeric")){
+    stop("'Values' column data type should be 'numeric' or 'character'!!!")
+  }
+  ##Negative to positive
+  df[df$Values < 0, c("Values")] <- abs(df[df$Values < 0, c("Values")])
+  ##Fixing N and P units
+  df[df$Variables == "NH4", c("Variables", "Values")] <- c("N-NH4", df[df$Variables == "NH4", c("Values")] * 0.776490)
+  df[df$Variables == "NO3", c("Variables", "Values")] <- c("N-NO3", df[df$Variables == "NO3", c("Values")] * 0.225897)
+  df[df$Variables == "NO2", c("Variables", "Values")] <- c("N-NO2", df[df$Variables == "NO2", c("Values")] * 0.304457)
+  df[df$Variables == "PO4", c("Variables", "Values")] <- c("P-PO4", df[df$Variables == "PO4", c("Values")] * 0.326138)
+  ##Replacing zeros with min values, dropping NAs and duplicates
+  df <- df %>%
+    left_join(df %>%
+                filter(Values > 0) %>%
+                group_by(Variables) %>%
+                summarise(min_value = min(Values), .groups = 'drop'), by = c("Variables")) %>%
+    mutate(Values = ifelse(Values == 0 & !grepl("^Q", Variables), min_value * zero_to_min, Values)) %>%
+    select(Station, DATE, Variables, Values, Source) %>%
+    filter(!is.na(Values)) %>%
+    distinct()
+  return(df)
+}

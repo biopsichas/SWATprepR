@@ -19,6 +19,25 @@ cal_data <- load_template(temp_path, 4326)
 str(cal_data)
 ```
 
+## Cleaning
+
+Two functions could be applied for data cleaning. First is [clean_wq](../reference/clean_wq.html) function, which could be applied for fixing most common water data issues as fixing data formats, units (e.g. NO~3~, to N-NO~3~), instead of LOD/LOQ values using LOD or LOQ divided by 2, replacing zeros from water quality variables with minimum value (multiplied by selected coefficient) for variable.
+
+```{r cal_clean_zero, message = FALSE, warning = FALSE}
+##Zeros is replaced with min(Value)/2
+cal_data$data <- clean_wq(cal_data$data, 0.5)
+```
+
+Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation).
+
+```{r cal_clean_outlier, message = FALSE, warning = FALSE}
+lst <- clean_outliers(cal_data$data)
+##Looking at data to be removed
+print(head(lst$dropped))
+##Updating data
+cal_data$data <- lst$newdf
+```
+
 ## Plotting 
 
 Plotting is valuable tool to examine data and identify potential problems.
