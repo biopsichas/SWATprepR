@@ -17,19 +17,27 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/"
 )
+library(badger)
 ```
 
 # svatools
 
-![GitHub License](https://img.shields.io/github/license/biopsichas/svatools)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/biopsichas/svatools?display_name=tag&label=last%20release&logo=github&sort=semver)
-![GitHub Release Date](https://img.shields.io/github/release-date/biopsichas/svatools?label=last%20release%20date&logo=github)
+`r badge_devel("biopsichas/svatools", "gold")`
+`r badge_last_commit("biopsichas/svatools", "green")`
+`r badge_lifecycle(stage = "stable")`
+`r badge_repostatus("active")`
+`r badge_code_size("biopsichas/svatools")`
+`r badge_license("MIT")`
+`r badge_doi("10.5281/zenodo.7436013", "yellow")`
 
-The goal of svatools is to help with [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation, visualization and model output assessment. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying&using these tools:
+The goal of svatools is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation, visualization and model output assessment. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for preparing management schedules for SWAT model;
 - [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) - R tool for sensitivity analyse, model calibration and validation;
-- [SWATbuilder](https://git.ufz.de/users/sign_in) - R tool for building SWAT+ setups. 
+- [SWATbuilder](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[Currently requires access to OPTAIN https://git.ufz.de/optain] - R tool for building SWAT+ setups;
+- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr)^[Currently requires access to OPTAIN https://git.ufz.de/optain] - A collection of functions in R and routines for SWAT model calibration and model diagnostics.
+
+Detailed information about packages, workflow steps, input data, SWAT+ parameters, model calibration, validation, etc., could be found in the [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395).
 
 ## Installation
 
@@ -38,6 +46,7 @@ You can install the development version of svatools from [GitHub](https://github
 ``` r
 # install.packages("devtools")
 devtools::install_github("biopsichas/svatools")
+# euptf2 package is needed and used for soil parameter functions
 devtools::install_github("tkdweber/euptf2")
 ```
 
@@ -55,10 +64,11 @@ print(temp_path)
 
 In order to use *svatools* package functions with your data you should prepare your data to be inline with templates we have provided in *extdata* folder. Such are:
 
-- **calibration_data.xlsx** - template for loading calibration (Q and WQ variables) data.
+- **calibration_data.xlsx** - template for loading calibration (water flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
 - **soil_parameters.xlsx** - template for loading soil parameters dataset. 
-- **GIS** - folder with GIS layers needed to run some functions.
+- **GIS/** - folder with GIS layers needed to run some functions.
+- **CORDEX-BC/** - folder with example climate data.
 
 Data prepared according to templates can be directly loaded into R and all the functions applied as described. 
 
