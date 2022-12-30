@@ -91,8 +91,9 @@ p4 <- ggplot(soils) +
   geom_sf(mapping = aes(fill = Code), show.legend = F) +
   theme_void()
 ##Combining into one
-cowplot::plot_grid(p1, p2, p3, p4, ncol = 2,  labels = c('Impervious depth', 'Water level', 'Drainage status', 'Soil types'), label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
-
+cowplot::plot_grid(p1, p2, p3, p4, ncol = 2,  
+                   labels = c('Impervious depth', 'Water level', 'Drainage status', 'Soil types'), 
+                   label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
 ```
 
 ### Preparing final soil layer
@@ -123,7 +124,9 @@ print(head(soils %>% st_drop_geometry(), 3))
 p5 <- ggplot(soils) + 
   geom_sf(mapping = aes(fill = SNAM), show.legend = F) +
   theme_void()
-cowplot::plot_grid(p4, p5, ncol = 2,  labels = c('Original soil map', 'New soil map'), label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
+cowplot::plot_grid(p4, p5, ncol = 2,  
+                   labels = c('Original soil map', 'New soil map'), 
+                   label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
 ```
 
 ### Preparing initial user soil table

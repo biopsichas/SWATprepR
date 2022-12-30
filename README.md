@@ -12,7 +12,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![](https://img.shields.io/github/languages/code-size/biopsichas/svatools.svg)](https://github.com/biopsichas/svatools)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
-[![](https://img.shields.io/badge/doi-10.5281/zenodo.7436013-yellow.svg)](https://doi.org/10.5281/zenodo.7436013)
+[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7436013-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7436013)
 
 The goal of svatools is to help with the [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation,
