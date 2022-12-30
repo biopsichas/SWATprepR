@@ -362,7 +362,7 @@ get_soil_parameters <- function(soilp){
 #'
 #' @param d_imp character for depth to impervious layer. Only three entry options possible: "<50cm", "50-100cm", ">100cm".
 #' @param d_wtr character for water table high. Only three entry options possible: "<60cm", "60-100cm", ">100cm".
-#' @param drn character for tile drainage status. Only two entry options possible: "Y" for drained areas, "N" for areas without working tile drains., ">100cm".
+#' @param drn character for tile drainage status. Only two entry options possible: "Y" for drained areas, "N" for areas without working tile drains.
 #' @param t one row dataframe with all SOL_Z and SOL_K values for soil type.
 #' @return character of soil hydrologic group A, B, C or D
 #' @export

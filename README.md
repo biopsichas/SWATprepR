@@ -71,8 +71,7 @@ prepare your data to be inline with templates we have provided in
 - **calibration_data.xlsx** - template for loading calibration (water
   flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
-- **soil_parameters.xlsx** - template for loading soil parameters
-  dataset.
+- **soil_lookup.xlsx** - example of loading soil parameters dataset.
 - **GIS/** - folder with GIS layers needed to run some functions.
 - **CORDEX-BC/** - folder with example climate data.
 

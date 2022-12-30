@@ -11,7 +11,7 @@ get_hsg(d_imp, d_wtr, drn, t)
 
 \item{d_wtr}{character for water table high. Only three entry options possible: "<60cm", "60-100cm", ">100cm".}
 
-\item{drn}{character for tile drainage status. Only two entry options possible: "Y" for drained areas, "N" for areas without working tile drains., ">100cm".}
+\item{drn}{character for tile drainage status. Only two entry options possible: "Y" for drained areas, "N" for areas without working tile drains.}
 
 \item{t}{one row dataframe with all SOL_Z and SOL_K values for soil type.}
 }

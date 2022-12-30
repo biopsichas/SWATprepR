@@ -7,41 +7,53 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Parameters
+### Introduction
 
-Obtaining soil parameters for SWAT model can be difficult. Therefore package has functions with allows automatic preparation of soil parameters. For this SOL_Z (depth of layer), CLAY (percentage of clay defined as particles <2 $\mu m$), SAND (percentage of sand - 50–2000 $\mu m$), SILT (percentage of silt  - 2–50 $\mu m$) and OC (soil organic carbon content in %) parameters should be collected. Other parameters will be filled by [get_soil_parameters ](../reference/get_soil_parameters.html) and [get_hsg ](../reference/get_hsg.html). 
+Obtaining soil parameters for [SWAT+ model](https://swatplus.gitbook.io/docs/user/editor/inputs/soils) can be difficult. Therefore package has functions with allows automatic preparation of soil parameters. Important theoretical documentation for the equations is presented in the section 3.4 of [SWAT+ modelling protocol](https://doi.org/10.5281/zenodo.7463395). 
 
-Preparation of soil data and parameters following could be done using following workflow. However, depending on available types of data, which workflow might need different steps. This is example of Polish case study of [Upper Zglowiaczka in OPTAIN project](https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka). 
+For populating SWAT+ *usersoil* parameter table *SOL_Z* (depth of layer), *CLAY* (percentage of clay defined as particles <2 $\mu m$), *SAND* (percentage of sand - 50–2000 $\mu m$), *SILT* (percentage of silt  - 2–50 $\mu m$) and *OC* (same as *SOL_CBN*, soil organic carbon content in %) parameters should be collected per each separate soil type profile's layer. Other parameters will be filled by [get_soil_parameters](../reference/get_soil_parameters.html) and [get_hsg](../reference/get_hsg.html) functions. For assigning Hydrologic Soil Groups tile drainage, water level and impervious layer depth data are needed.   
 
+The preparation of soil data and parameters could be done using following workflow. However, depending on available types of data, different steps might needed. This is an example of Polish case study of [Upper Zglowiaczka in OPTAIN project](https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka). 
 ### Loading libraries and paths to data
 
+Workflow presented here needs 6 R packages. However, only `svatools` and `euptf2` libraries are required for the population of soil parameter's table with [get_soil_parameters ](../reference/get_soil_parameters.html) and [get_hsg ](../reference/get_hsg.html) functions presented in [Adding soil parameters to user table](#par_make) step. Input for this step could be prepared in various ways. Here is presented just one of the way to understand better all work process to develop soil parameters table.  
+
 ```{r soil_load, message = FALSE, warning = FALSE}
+##Required
 library(svatools)
 library(euptf2)
+##Optional
 library(sf)
 library(readxl)
 library(tidyverse)
 library(stars)
 
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
-water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "svatools")
-drainage_path <- system.file("extdata", "GIS/drained.shp", package = "svatools")
+##Required
+##Path to soil distribution shape file
 soil_path <- system.file("extdata", "GIS/soils.shp", package = "svatools")
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+##Path to soil lookup initial parameters with SOL_Z, CLAY, SILT, OC parameters filled.
 lookup_path <- system.file("extdata", "soil_lookup.xlsx", package = "svatools")
+##Path to tile drainage shape file
+drainage_path <- system.file("extdata", "GIS/drained.shp", package = "svatools")
+
+##Optional
+##Path to water level depth shape file
+water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "svatools")
+##Path to DEM raster file
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+##Path to catchment boundary shape file (which in this case used as impervious layer data)
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 ```
 
 ### Preparing input data
 
+Lookup table contains two sheets. One about granulometry (*SAND*, *SILT*, *CLAY* content) of each soil texture class. Second about humus content in different humus class soils (distributed through layers), which could be easily recalculated to organic carbon content (with division by *1.72* coefficient).  
+
 ```{r soil_prep, message = FALSE, warning = FALSE}
 ##Reading granulometry lookup information for soil types into dataframe
-gran <- read_excel(lookup_path, sheet = "SandSiltClay") %>% 
-  rename(CLAY = Clay, SILT = Silt, SAND = Sand)
-##Adding missing information for organic soils
-gran[nrow(gran)+1,] <- list("ORG1", 20, 40, 40)
-gran[nrow(gran)+1,] <- list("ORG2", 20, 40, 40)
-gran[nrow(gran)+1,] <- list("ORG3", 20, 40, 40)
-gran[nrow(gran)+1,] <- list("ORG4", 20, 40, 40)
+gran <- read_excel(lookup_path, sheet = "SandSiltClay") 
+##Print example of gran table
+print(head(gran, 3))
 
 ##Reading humus lookup information in to dataframe and converting it into organic carbon %.
 humus <- read_excel(lookup_path, sheet = "Humus") %>% 
@@ -49,35 +61,85 @@ humus <- read_excel(lookup_path, sheet = "Humus") %>%
          OC2 = `Humus 2nd layer [%]`/1.72,
          OC3 = `Humus 3rd layer [%]`/1.72) %>% 
   select(Humus, starts_with("OC"))
+##Print example of humus table
+print(head(humus, 3))
 
-##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Soil_code2" column here representing soil types).
+##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Code" column here representing soil types).
 ##All data should be in one coordinate system.
-bound <- st_read(basin_path, quiet = TRUE) %>% 
-  st_transform(2180) %>% 
-  select()
-water_level <- st_read(water_l_path, quiet = TRUE) %>% 
-  select(Depth)
-drainage <- st_read(drainage_path, quiet = TRUE) %>% 
-  select(Drained)
-soils <- st_read(soil_path, quiet = TRUE) %>% 
-  select(Soil_code2)
+##Impervious layer is prepared from basin layer as it is below 1 m whole catchment falls into one category. 
+impervious<- st_read(basin_path, quiet = TRUE) %>% 
+  mutate(Impervious = ">100cm")
+water_level <- st_read(water_l_path, quiet = TRUE) 
+drainage <- st_read(drainage_path, quiet = TRUE) 
+soils <- st_read(soil_path, quiet = TRUE)
+```
 
+All required GIS input data are presented in the maps below. Polygons in the impervious layer should have one of three possible categories:  "<50cm", "50-100cm" and ">100cm". If no information is available impervious layer depth could be assumed to be the depth of last soil layer and then reclassified into one of the three categories. Water level depth also should have only three categories: "<60cm", "60-100cm" and ">100cm". If information is not available soil types and land use could serve as a good proxy for this information. For instance wet areas as wetlands could probably be assigned with "<60cm" class, areas with dominant organic soils with "60-100cm", etc. Drainage status should be divided into two: "Y" for drained areas, "N" for areas without working tile drains. If no database available, information about existence of drains might be available in drainage installation plans.  
+
+```{r soil_print, message = FALSE, warning = FALSE}
+##Preparing maps for each GIS data
+p1 <- ggplot(impervious) + 
+  geom_sf(mapping = aes(fill = Impervious)) +
+  theme_void()
+p2 <- ggplot(water_level) + 
+  geom_sf(mapping = aes(fill = Depth)) +
+  theme_void()
+p3 <- ggplot(drainage) + 
+  geom_sf(mapping = aes(fill = Drained)) +
+  theme_void()
+p4 <- ggplot(soils) + 
+  geom_sf(mapping = aes(fill = Code), show.legend = F) +
+  theme_void()
+##Combining into one
+cowplot::plot_grid(p1, p2, p3, p4, ncol = 2,  labels = c('Impervious depth', 'Water level', 'Drainage status', 'Soil types'), label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
 
 ```
 
 ### Preparing final soil layer
 
-```{r soil_layer, message = FALSE, warning = FALSE}
+The final soil layer should have information added from GIS layers to soil types. For instance in our example initial soil type code has 4 elements separated by "_". So it looks as *S3_S3_SL3_3*. First three shows texture class of soil granulometry three layers and the last number humus class. 
+
+```{r soil_layer1, message = FALSE, warning = FALSE}
+##Printing example of soil codes before intersection
+print(head(soils %>% st_drop_geometry(), 3))
+##Counting number of unique soil types in input soil data
+soils_n1 <- dim(soils %>% st_drop_geometry() %>% select(Code) %>% unique)[1]
 soils <- soils %>% 
-  st_intersection(bound) %>% 
-  st_intersection(bound %>% mutate(Impervious = ">100cm")) %>%
+  st_intersection(impervious) %>%
   st_intersection(water_level) %>% 
   st_intersection(drainage) %>% 
-  mutate(SNAM = paste0(Soil_code2, "_", Impervious, "_", Depth, "_", Drained)) %>% 
+  mutate(SNAM = paste0(Code, "_", Impervious, "_", Depth, "_", Drained)) %>% 
   select(SNAM) 
+##Counting number of unique soil types in generated soil data
+soils_n2 <- dim(soils %>% st_drop_geometry() %>% select(SNAM) %>% unique)[1]
+```
+
+After intersection with other GIS layers information for them is added to the soil code. Thus generating new soil type, which have information about water, impervious layer depth, drainage status as well. For instance a new code is *S3_S3_SL3_3_>100cm_60-100cm_Y*. So the first four elements stay the same and the last three added should be depth to impervious layers, depth to water level and drainage status classes. It is important to point out that intersection with GIS layers in this example increased number of unique soil types from `r soils_n1 ` to `r soils_n2` and a new soil type distribution GIS data have been created. 
+
+```{r soil_layer2, message = FALSE, warning = FALSE}
+##Example of new soil codes
+print(head(soils %>% st_drop_geometry(), 3))
+##Praparing figure of new soil data
+p5 <- ggplot(soils) + 
+  geom_sf(mapping = aes(fill = SNAM), show.legend = F) +
+  theme_void()
+cowplot::plot_grid(p4, p5, ncol = 2,  labels = c('Original soil map', 'New soil map'), label_x = 0, label_y = 0, hjust = -0.1, vjust = -0.5, label_size = 10)
 ```
 
 ### Preparing initial user soil table
+
+This part prepares input for the following [parameter generation part](#par_make), which actually uses `svatools` package functions to populate usersoil table. Workflow provided up to here was done to form input to *usertable*, which could be used with [get_soil_parameters](../reference/get_soil_parameters.html) and [get_hsg](../reference/get_hsg.html) functions. However, such this information could be prepared with other means than R, which might be more convenient to user and then loaded into R environment. The only requirements for table to have these parameters filled:
+
+- *SNAM* soil type text with last three parts separated by **_** representing impervious layer, water level and drainage classes;
+- *NLAYERS* numeric value for soil type representing number of soil layers;
+- For each layer in soil type profile:
+  + *SOL_Z* numeric value for soil layer to represent max depth of soil layer;
+  + *SAND* numeric sand content in %;
+  + *SILT* numeric silt content in %; 
+  + *CLAY* numeric clay content in %; 
+  + *OC* numeric organic content in %.
+
+The example below demonstrates how data from lookup tables could be used to populate initial *usertable* and how it should look before generating other parameters. In our case all soil types had three layers with same depth. So this information added with `mutate` function. Then according textural classes lookup information was added to table with `left_join` functions.
 
 ```{r soil_usert, message = FALSE, warning = FALSE}
 usertable <- soils %>% 
@@ -94,15 +156,19 @@ usertable <- soils %>%
   left_join(gran %>% rename_with( ~ paste0(.x, "3")), by = c("Lyr3" = "Texture EN3")) %>% 
   left_join(humus, by = c("Humus")) %>% 
   select(SNAM, NLAYERS, ends_with("1"), ends_with("2"), ends_with("3"), -starts_with("Lyr")) 
-
+##Printing structure example of the required table
 str(usertable)
 ```
 
-### Preparing adding parameters to user table
+### Adding soil parameters to user table {#par_make}
+
+This section is the only required part and is the essence of the workflow. In it [get_soil_parameters](../reference/get_soil_parameters.html) is filling all required SWAT+ parameters for exception of Hydrologic Soil Groups, which is added in a loop with [get_hsg](../reference/get_hsg.html) function. [get_soil_parameters](../reference/get_soil_parameters.html) function is very straightforward, if input data is formatted correctly. However, [get_hsg](../reference/get_hsg.html) function require an assemblance of information per each soil type. A simple example 
+*get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_Z1 = 250, SOL_Z2 = 700))*. The first three class values (impervious layer, water level and drainage status) extracted from soil name (SNAM) and the last is one line dataframe extracted from *usertable* with all *SOL_K* and *SOL_Z* parameters available for a soil type. 
+If case of some generated parameters are available (i.e. from field measurements or local databases), they can be used by overwriting generated parameters in the *usertable*. In our example we didn't have such data.
+
 ```{r soil_fusert, message = FALSE, warning = FALSE}
 ##Adding all SWAT soil parameters for except HYDGRP  
 usertable <- get_soil_parameters(usertable)
-rm(suggested_PTF)
 ##Adding HYDGRP in a look for each row
 c <- c()
 for(i in 1:nrow(usertable)){
@@ -113,10 +179,14 @@ for(i in 1:nrow(usertable)){
                                   paste0("SOL_K", 1:usertable$NLAYERS[i]))]))
 }
 usertable$HYDGRP <- c
-head(usertable)
+##Printing example of results.
+print(head(usertable, 3))
 ```
 
-### Checking results on map
+### Checking results on a map
+
+After generation of all required soil parameters, one could join them with soil type GIS data and check the results on a map. Below are just few examples. 
+
 ```{r soil_maps, message = FALSE, warning = FALSE}
 soilp <- soils %>% left_join(usertable, by = "SNAM") 
 
@@ -130,27 +200,34 @@ plot(soilp["USLE_K1"])
 
 ### Write inputs for SWAT+
 
-```{r soil_output, message = FALSE, warning = FALSE, eval = FALSE}
+The very last step is to write SWAT+ input data: raster layer (in our case named as *'SoilmapSWAT.tif'*), linkage table between raster codes and soil type codes (*'Soil_SWAT_cod.csv'*) and *usersoil* table (*'usersoil_lrew.csv'*). DEM data in this step is used to help rastarize soil types distribution to grid, which will be used by setup preparation algorithms. 
 
+```{r soil_output, message = FALSE, warning = FALSE}
+##Reading catchment DEM raster data
 dem <- read_stars(DEM_path)
+plot(dem)
+##Merging unique soil types into one row and multipolygon
 soils_dis <- soils %>% 
   group_by(SNAM) %>% 
   summarise() %>% 
   mutate(SOIL_ID = row_number(),
          SNAME = SNAM)
-
+##Rasterizing soil type data
 soils_raster <- soils_dis %>% 
   st_transform(3035) %>% 
   st_rasterize(dem)
-
+plot(soils_raster)
+##Preparing linkage table
 soil_link_table <- soils_dis %>% 
   st_drop_geometry() %>% 
   select(SOIL_ID, SNAME)
+print(head(soil_link_table, 3))
+```
 
+`write_stars` function from `stars` package could be used to write raster file and `write.csv` R base function to write *.csv* files. 
+
+```{r soil_write, message = FALSE, warning = FALSE, eval = FALSE}
 write_stars(soils_raster , "../output/SoilmapSWAT.tif")
 write.csv(soil_link_table, "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
 write.csv(usertable, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)
-
 ```
-
-
