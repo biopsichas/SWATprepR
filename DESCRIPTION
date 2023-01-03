@@ -28,6 +28,7 @@ Imports:
     raster (>= 3.5-21),
     Rdpack (>= 2.4),
     readxl (>= 1.4.0),
+    RNetCDF (>= 2.6-1),
     RSQLite (>= 2.2.15),
     sf (>= 1.0-9),
     sp (>= 1.5-0),

@@ -281,6 +281,96 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
   return(list(wgn_st = res_wgn_stat, wgn_data = res_wgn_mon))
 }
 
+#' Extract EMEP atmospheric deposition data for a catchment
+#'
+#' @param catchment_boundary_path path to basin boundary shape file.
+#' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages,
+#''day' for daily averages and 'hour' - hourly. Optional (default - "year").
+#' @param start_year integer year to start data extraction. Optional (default - 1990).
+#' @param end_year integer year to end data extraction. Optional (default - 2020).
+#' @importFrom sf st_transform st_read st_bbox
+#' @importFrom RNetCDF open.nc var.get.nc
+#' @importFrom dplyr bind_rows
+#' @return dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns. Values in SWAT+ units.
+#' "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in rainfall (mg/l), 
+#' NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha.yr)
+#' @export
+#' @examples
+#' \dontrun{
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' df <- get_atmo_dep(basin_path)
+#' ##Plot results
+#' ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+
+#' geom_line()+
+#' facet_wrap(~par, scales = "free_y")+
+#' theme_bw()
+#' }
+
+get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2020){
+  ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
+  url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2022_Reporting/EMEP01_rv4.45_"
+  ##Getting borders of the catchment
+  basin <-st_transform(st_read(catchment_boundary_path, quiet = TRUE), 4326)
+  bb <- st_bbox(basin)
+  ##Setting dataframe for results
+  df <- data.frame(YR = integer(), MO = integer(), DAY = integer(), 
+                   NH4_RF = numeric(), NO3_RF = numeric(), 
+                   NH4_DRY = numeric(), NO3_DRY = numeric())
+  ##Loop to extract data
+  for(u in seq(start_year, end_year)){
+    print(paste("Working on year", u))
+    if(u != 2020){
+      uu <- "_rep2022.nc"
+    } else {
+      uu <- ".nc"
+    }
+    ##Assembling URL for each year
+    url <- paste0(url_prt, t_ext, ".", u, "met_", u, "emis", uu)
+    ##Opening file and getting indexes for data.
+    r <- open.nc(url)
+    lon <- var.get.nc(r, "lon")
+    lat <- var.get.nc(r, "lat")
+    ilon <- which(lon>bb[1] & lon<bb[3])
+    ilat <- which(lat>bb[2] & lat<bb[4])
+    ##Reading parameters and converting to right units and averaging them over extracted grid.
+    if(t_ext == "year"){
+      prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat]
+      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]/100)
+      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]/prec)
+      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]/100)
+      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]/prec)
+      ##Saving results
+      df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
+    } else if(t_ext %in% c("month", "day")){
+      prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat,]
+      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]/100, 3, mean)
+      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]/prec, 3, mean)
+      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]/100, 3, mean)
+      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]/prec, 3, mean)
+      ##Saving results
+      if(t_ext == "month"){
+        df<- bind_rows(df, data.frame(YR = u, MO = seq(1, length(dry_oxn)), DAY = 1, 
+                                      NH4_RF = wet_rdn, NO3_RF = wet_oxn, 
+                                      NH4_DRY = dry_rdn, NO3_DRY =dry_oxn))
+      } else {
+        df<- bind_rows(df, data.frame(YR = u, MO = 0, DAY = seq(1, length(dry_oxn)), 
+                                      NH4_RF = wet_rdn, NO3_RF = wet_oxn, 
+                                      NH4_DRY = dry_rdn, NO3_DRY =dry_oxn))
+      }
+    } else {
+      stop("Wrong t_ext!!! Should be one of these strings: 'year', 'month' or 'day'.")
+    }
+    print(paste("Finished working on year", u))
+  }
+  ##Adding DATE
+  if(t_ext != "day"){
+    df$DATE <- as.Date(paste(df$YR, df$MO, df$DAY), format="%Y %m %j")
+  } else {
+    df$DATE <- as.Date(paste(df$YR, df$DAY), format="%Y %j")
+  }
+  return(df[c("DATE", "NH4_RF", "NO3_RF" , "NH4_DRY", "NO3_DRY")])
+}
+
 # Preparing soils -----------------------------------------------
 
 #' Function to fill soil parameters
