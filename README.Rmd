@@ -71,7 +71,6 @@ In order to use *svatools* package functions with your data you should prepare y
 - **CORDEX-BC/** - folder with example climate data.
 
 Data prepared according to templates can be directly loaded into R and all the functions applied as described. 
-
 ## Example
 
 Simple example to load and display data on one stations indented to be used in calibration. 

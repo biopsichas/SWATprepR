@@ -1,3 +1,7 @@
+# svatools 0.0.3
+
+* Atmospheric deposition data functions added `get_atmo_dep()`, `write_atmo_cli()` and `add_atmo_dep()` as well as *Atmospheric deposition* article page to explain how to use them.
+
 # svatools 0.0.2
 
 * `add_weather()`, `clean_wq()`, `clean_outliers()` and `get_hsg()` functions were added. 

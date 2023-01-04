@@ -1,8 +1,8 @@
 Type: Package
 Package: svatools
 Title: SWAT+ protocol tools
-Version: 0.0.2
-Date: 2022-12-18
+Version: 0.0.3
+Date: 2023-01-04
 Author: Svajunas Plunge <svajunas.plunge@gmail.com>
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
 Description: Tool is designed to help with SWAT+ input data preparation,

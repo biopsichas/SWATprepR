@@ -293,8 +293,8 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' @importFrom dplyr bind_rows
 #' @return dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns. Values in SWAT+ units.
 #' "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in rainfall (mg/l), 
-#' NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha.yr)
-#' @export
+#' NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha/yr)
+#' @export 
 #' @examples
 #' \dontrun{
 #' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
@@ -332,21 +332,28 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     lat <- var.get.nc(r, "lat")
     ilon <- which(lon>bb[1] & lon<bb[3])
     ilat <- which(lat>bb[2] & lat<bb[4])
+    ##For small catchments (data grid size is 50X50 km2). Smaller than EMEP model grid.
+    if(length(ilon) == 0){
+      ilon <- which.min(abs(lon - (bb[1]+bb[3])/2))
+    }
+    if(length(ilat) == 0){
+      ilat <- which.min(abs(lat - (bb[2]+bb[4])/2))
+    }
     ##Reading parameters and converting to right units and averaging them over extracted grid.
     if(t_ext == "year"){
       prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat]
-      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]/100)
-      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]/prec)
-      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]/100)
-      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]/prec)
+      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]*4.4268/100)
+      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]*4.4268/prec)
+      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]*1.2878/100)
+      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]*1.2878/prec)
       ##Saving results
       df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
     } else if(t_ext %in% c("month", "day")){
       prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat,]
-      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]/100, 3, mean)
-      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]/prec, 3, mean)
-      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]/100, 3, mean)
-      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]/prec, 3, mean)
+      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]*4.4268/100, 3, mean)
+      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]*4.4268/prec, 3, mean)
+      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]*1.2878/100, 3, mean)
+      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]*1.2878/prec, 3, mean)
       ##Saving results
       if(t_ext == "month"){
         df<- bind_rows(df, data.frame(YR = u, MO = seq(1, length(dry_oxn)), DAY = 1, 
@@ -360,7 +367,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     } else {
       stop("Wrong t_ext!!! Should be one of these strings: 'year', 'month' or 'day'.")
     }
-    print(paste("Finished working on year", u))
+    print(paste("Finished data extraction for year", u))
   }
   ##Adding DATE
   if(t_ext != "day"){
@@ -694,7 +701,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
   ##Opening database to write 
   db <- dbConnect(RSQLite::SQLite(), db_path)
   ##Appending by prepared table (db tables should be empty)
-  dbWriteTable(db, 'weather_file',weather_file, append = TRUE)
+  dbWriteTable(db, 'weather_file', weather_file, append = TRUE)
   dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli', weather_wgn_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli_mon', weather_wgn_cli_mon, append = TRUE)
@@ -707,3 +714,40 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
   return(print(paste("Weather data was successfuly added to", gsub(".*/","",db_path))))
 }
 
+#' Update sqlite database with atmospheric deposition data
+#'
+#' @param db_path character to sqlite database (example "./output/project.sqlite")
+#' @param t_ext string, 'year' for yearly averages, 'month' - monthly averages
+#' and 'annual' for average of all period. Optional (default - "year"). 
+#' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
+#' @importFrom RSQLite SQLite
+#' @return updated sqlite database with codes and connection to atmospheric deposition  data in 'atmo.cli' file
+#' @export 
+#' @examples
+#' \dontrun{
+#' db_path <- "./output/test/project.sqlite"
+#' add_atmo_dep(db_path)
+#' }
+
+add_atmo_dep <- function(db_path,  t_ext = 'year'){
+  ##Preparing code for codes_bsn table
+  if (t_ext == 'year'){
+    atmo_dep <- 'y'
+  } else if (t_ext == 'month'){
+    atmo_dep <- 'm'
+  } else if (t_ext == 'annual'){
+    atmo_dep <- 'a'
+  } else {
+    stop("Wrong input t_ext should be 'year', 'month' or 'annual'")
+  }
+  ##Adding info to database tables
+  db <- dbConnect(RSQLite::SQLite(), db_path)
+  weather_sta_cli <- dbReadTable(db, 'weather_sta_cli')
+  codes_bsn <- dbReadTable(db, 'codes_bsn')
+  weather_sta_cli$atmo_dep <- "atmo.cli"
+  codes_bsn$atmo_dep <- atmo_dep
+  dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, overwrite = TRUE)
+  dbWriteTable(db, 'codes_bsn', codes_bsn, overwrite = TRUE)
+  dbDisconnect(db)
+  return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
+}

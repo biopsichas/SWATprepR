@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{get_atmo_dep}
 \alias{get_atmo_dep}
-\title{Extract EMEP atmospheric deposition data fro the catchment}
+\title{Extract EMEP atmospheric deposition data for a catchment}
 \usage{
 get_atmo_dep(
   catchment_boundary_path,
@@ -24,10 +24,10 @@ get_atmo_dep(
 \value{
 dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns. Values in SWAT+ units.
 "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in rainfall (mg/l),
-NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha.yr)
+NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha/yr)
 }
 \description{
-Extract EMEP atmospheric deposition data fro the catchment
+Extract EMEP atmospheric deposition data for a catchment
 }
 \examples{
 \dontrun{
