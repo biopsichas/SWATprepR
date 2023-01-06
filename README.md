@@ -27,7 +27,7 @@ Therefore, we highly recommend trying and using these tools:
   preparing management schedules for SWAT model;
 - [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
   R tool for sensitivity analyse, model calibration and validation;
-- [SWATbuilder](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)[^1] -
+- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)[^1] -
   R tool for building SWAT+ setups;
 - [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr)[^2] - A collection
   of functions in R and routines for SWAT model calibration and model
@@ -76,30 +76,7 @@ prepare your data to be inline with templates we have provided in
 - **CORDEX-BC/** - folder with example climate data.
 
 Data prepared according to templates can be directly loaded into R and
-all the functions applied as described. \## Example
-
-Simple example to load and display data on one stations indented to be
-used in calibration.
-
-``` r
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
-cal_data <- load_template(temp_path, 4326)
-#> [1] "Loading data from template."
-#> [1] "Loading of data is finished."
-plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
-#> $regression
-#> Warning: The dot-dot notation (`..eq.label..`) was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `after_stat(eq.label)` instead.
-#> ℹ The deprecated feature was likely used in the svatools package.
-#>   Please report the issue at <]8;;https://github.com/biopsichas/svatools/issueshttps://github.com/biopsichas/svatools/issues]8;;>.
-```
-
-![](man/figures/example-1.png)<!-- -->
-
-    #> 
-    #> $fraction
-
-![](man/figures/example-2.png)<!-- -->
+all the functions applied as described.
 
 [^1]: Currently requires access to OPTAIN <https://git.ufz.de/optain>
 

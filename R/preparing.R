@@ -751,3 +751,37 @@ add_atmo_dep <- function(db_path,  t_ext = 'year'){
   dbDisconnect(db)
   return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
 }
+
+# Land use and management -----------------------------------------------
+
+#' Title
+#'
+#' @param df_sf sf data.frame with land use. "type" column should be present. 
+#' @param year numeric value, year of land use.
+#' @param lookup dataframe with "lc1" column for numeric codes and "type" column 
+#' for text.
+#' @param lu_constant vector of strings with land uses to be kept constant in 
+#' land use (i.e. water, urban areas, etc.)
+#' @param nb_pts numeric, number of points per land use/crop class. Optional, default 100. 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+
+get_lu_points <- function(df_sf, year, lookup, lu_constant = c(), nb_pts = 100){
+  df_sf <- df_sf["type"] %>%
+    mutate(year = year) %>%
+    left_join(lookup, by = "type") %>%
+    select(lc1, year) %>% 
+    filter(lc1 %in% c(lookup[!lookup$type %in% lu_constant,"lc1"]))
+  pts <- st_as_sf(st_sample(df_sf, length(c(lookup[!lookup$type %in% lu_constant,"lc1"]))*2*nb_pts))
+  pts_crops <- st_join(pts, left = FALSE, df_sf[c("lc1","year")]) %>%
+    group_by(lc1, year) %>%
+    sample_n(size = nb_pts, replace = TRUE) %>%
+    ungroup %>%
+    filter(!is.na(lc1)) %>%
+    st_transform(4326)
+  return(pts_crops)
+}

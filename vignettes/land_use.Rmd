@@ -1,0 +1,55 @@
+---
+title: "Land use"
+output: html_document
+bibliography: REFERENCES.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Preparation of land use data for the [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[Currently requires access to OPTAIN https://git.ufz.de/optain] is among the most difficult tasks as it requires collection and combination of multiple GIS datasets (crop land, tile drain extent, pollution abatement sites, etc.). Moreover, it also requires putting a lot of efforts into cleaning topological issues from prepared layer. However, even more difficult task is to prepare land use time series data required for the preparation of [management schedules](https://swatplus.gitbook.io/docs/user/editor/inputs/land-use-management#management-schedules) necessary for [SWAT+ model](https://swat.tamu.edu/software/plus/). This page will provide tools (or links to them) and workflow to help with this task. Particular focus is paid for preparing land use time series data (when local data are not available) from remote sensing sources required for [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) tool. 
+
+## Land use layer
+
+Merging different data sets, cleaning topological errors and preparing the final layer directly usable in `SWATbuildR` very time consuming task. It can be done with Python script we prepared for such task. This script with example data is available on [zenodo page](https://doi.org/10.5281/zenodo.7509101). `arcpy` library is required with ArcGIS *Advanced* license. 
+
+In order to run scrip following GIS datasets should be collected/available:
+
+- General land cover covering all area (raster);
+- Catchment boundary (polygon);
+- Crop fields (polygon);
+- River channels (line);
+- Tile drain extent (polygon);
+- Measure extent (polygon)^[Any number of these layers can be used].
+
+These GIS layers should adjusted to fit structure of example data or script changed to fit input data structure. After successfully running script resulting data layer should be inline with `SWATbuildR` requirements (please see [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395) sections 2.2 and 2.3). Example of data structure is provided below.
+
+```{r lu, message = FALSE, warning = FALSE}
+library(svatools)
+library(sf)
+lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+lu <- st_read(lu_path,  quiet = TRUE)
+str(lu)
+```
+
+## Remote sensing 
+
+SWAT+ model has important capabilities to simulate impacts of agriculture on water flows and water quality in water bodies. However, this requires information about agricultural activities in an analized area. Probably One of the most important is crop rotation data. Yet, such information rarely is available or freely accessible. In such cases remote sensing data could be used to generate information about crops for some time period. More information about this is provided in [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395) section 4.1.1). 
+
+### Google Earth script
+
+In the framework of the [OPTAIN project](https://www.optain.eu/) deliverable 3.2 [@szabo-2022], a [Google Earth Engine-based](https://code.earthengine.google.com/) script [@meszaros2022] was developed to predict crop types with the random forest method based on time series reflectance data of Sentinel 1A and 1B satellite radar images. Output of the script is a series of crop maps starting from the year 2015 to latest available year. Required input data are:
+
+- Catchment boundary;
+- Training points;
+- Parcel/field boundaries (optional).
+
+### Training data
+
+Remote sensing script requires training points with information about year and land use/crop type. for this point. Such data can be prepared with 
+
+
+
