@@ -754,34 +754,52 @@ add_atmo_dep <- function(db_path,  t_ext = 'year'){
 
 # Land use and management -----------------------------------------------
 
-#' Title
+#' Preparing training points for remote sensing algorithm
 #'
-#' @param df_sf sf data.frame with land use. "type" column should be present. 
+#' @param df sf data.frame with land use. "type" column should be present. 
 #' @param year numeric value, year of land use.
 #' @param lookup dataframe with "lc1" column for numeric codes and "type" column 
 #' for text.
 #' @param lu_constant vector of strings with land uses to be kept constant in 
 #' land use (i.e. water, urban areas, etc.)
 #' @param nb_pts numeric, number of points per land use/crop class. Optional, default 100. 
-#'
-#' @return
+#' @param col_name string with name of column to be used representing type of crops/land use. 
+#' Optional, default "type".
+#' @importFrom sf st_as_sf st_join st_transform st_sample
+#' @importFrom dplyr rename mutate left_join select filter sample_n ungroup
+#' @return sf data.frame with point input for remote sensing training algorithm.
 #' @export
-#'
 #' @examples
-#' 
+#' \dontrun{
+#' library(sf)
+#' ##Loading land use/crop layer
+#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+#' lu <- st_read(lu_path,  quiet = TRUE)
+#' ##Preparing lookup table
+#' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
+#' type = unique(c(lu$type)))
+#' lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
+#' "wetl", "past", "watr", "agrl")
+#' ##Getting training points
+#' pts <- get_lu_points(lu, 2021, lookup, lu_constant)
+#' }
 
-get_lu_points <- function(df_sf, year, lookup, lu_constant = c(), nb_pts = 100){
-  df_sf <- df_sf["type"] %>%
+get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, col_name = "type"){
+  df <- df[col_name] %>%
+    rename(type = 1) %>%
     mutate(year = year) %>%
     left_join(lookup, by = "type") %>%
     select(lc1, year) %>% 
     filter(lc1 %in% c(lookup[!lookup$type %in% lu_constant,"lc1"]))
-  pts <- st_as_sf(st_sample(df_sf, length(c(lookup[!lookup$type %in% lu_constant,"lc1"]))*2*nb_pts))
-  pts_crops <- st_join(pts, left = FALSE, df_sf[c("lc1","year")]) %>%
+  pts <- st_as_sf(st_sample(df, length(c(lookup[!lookup$type %in% lu_constant,"lc1"]))*2*nb_pts))
+  pts <- st_join(pts, left = FALSE, df[c("lc1","year")]) %>%
     group_by(lc1, year) %>%
     sample_n(size = nb_pts, replace = TRUE) %>%
     ungroup %>%
     filter(!is.na(lc1)) %>%
     st_transform(4326)
-  return(pts_crops)
+  return(pts)
 }
+
+
+

@@ -5,5 +5,5 @@ utils::globalVariables(c("DATE", "geometry", "Station", "Values", "Variables",
                          "DWP", "Ea", "Es", "Esmn", "Esmx", "RELHUM", "TMP_MAX", "TMP_MIN",
                          "Stations", "Min", "Tot", "Frac", "NAME", "LAT", "LONG", "ELEVATION",
                          "RAIN_YRS", "day", "elev", "lat", "lon", "rain_yrs", "wgn_id",
-                         "max_value", "min_value"))
+                         "max_value", "min_value", "lc1"))
 

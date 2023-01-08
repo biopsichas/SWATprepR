@@ -29,9 +29,12 @@ These GIS layers should adjusted to fit structure of example data or script chan
 
 ```{r lu, message = FALSE, warning = FALSE}
 library(svatools)
+library(tidyverse)
 library(sf)
 lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
 lu <- st_read(lu_path,  quiet = TRUE)
+##Adding IDs to land use field data
+lu <- mutate(lu, id = row_number())
 str(lu)
 ```
 
@@ -49,7 +52,96 @@ In the framework of the [OPTAIN project](https://www.optain.eu/) deliverable 3.2
 
 ### Training data
 
-Remote sensing script requires training points with information about year and land use/crop type. for this point. Such data can be prepared with 
+Remote sensing script requires training points with information about year and land use/crop type. Such data can be prepared with [get_lu_points](../reference/get_lu_points.html) function. This function requires preparation of *lookup* table where each landuse has assigned numeric code. Moreover, some land use type as forest, water, urban land uses also will not be participating in the rotation. These should be set asside. 
 
 
+```{r lu_pts, message = FALSE, warning = FALSE}
+##Preparation of lookup table
+lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))),
+                     type = unique(c(lu$type)))
+##Setting, whichland uses will not change 
+lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", "wetl", "past", "watr", "agrl")
+##Obtaining training data
+pts <- get_lu_points(lu, 2021, lookup, lu_constant)
+##Plotting points to be used in remote sensing algorithm 
+ggplot(pts0 %>% left_join(lookup, by = "lc1")) + 
+  geom_sf(mapping = aes(col = type)) +
+  scale_color_brewer(palette = "Paired", name = "Crop type")+
+  theme_void()
+```
+
+GIS layers have to prepared and saved into *.shp* files to be transferred to the Google Earth Engine. 
+
+```{r lu_pts_write, eval=FALSE, message = FALSE, warning = FALSE}
+##Preparing just the boundary data for fields
+parcels <- lu["id"] %>% 
+  st_transform(4326)
+##Preparing basin data 
+output_path <- "../output/"
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+catchment <- st_read(basin_path, quiet = TRUE) %>% 
+  rename(name = basin) %>% 
+  mutate(name = "Upper_Zglowiaczka") %>% 
+  st_transform(4326)
+##Writing all the necessary training data for remote sensing algorithm.
+st_write(pts, paste0(output_path, "pts.shp"), append = F)
+st_write(parcels, paste0(output_path, "lu_prcl.shp"), append = F)
+st_write(catchment, paste0(output_path, "catchment.shp"), append = F)
+```
+
+### Remote sensing results
+
+```{r lu_results, eval=FALSE, message = FALSE, warning = FALSE}
+library(raster)
+result_path <- "../output/"
+##Loading results for accuracy
+conf_m <- read.csv(paste0(result_path, "metrics.csv"))
+##Loading raster results 
+r2022 <- raster(paste0(result_path,"cropmaps.tif"), band = 8)
+r2021 <- raster(paste0(result_path,"cropmaps.tif"), band = 7)
+r2020 <- raster(paste0(result_path,"cropmaps.tif"), band = 6)
+r2019 <- raster(paste0(result_path,"cropmaps.tif"), band = 5)
+r2018 <- raster(paste0(result_path,"cropmaps.tif"), band = 4)
+r2017 <- raster(paste0(result_path,"cropmaps.tif"), band = 3)
+r2016 <- raster(paste0(result_path,"cropmaps.tif"), band = 2)
+r2015 <- raster(paste0(result_path,"cropmaps.tif"), band = 1)
+
+##Assigning correct coordinates
+crs_3035 <- CRS("+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+crs(r2022) <- crs(r2021) <- crs(r2020) <- crs(r2019) <- crs(r2018) <- crs(r2017) <- crs(r2016) <- crs(r2015) <- crs_3035
+```
+
+
+### Post processing
+
+To include most detailed and complex rotations all 2015-2022 were considered. Each field was assigned 8 year rotation with values extracted from classification results. Results were saved in new shape file. Head of attribute table is printed below.
+
+```{r lu_post, eval=FALSE, message = FALSE, warning = FALSE}
+##Centroids for each field in land use data created
+centroid <- lu["id"] %>% 
+  st_centroid() %>% 
+  st_transform(3035)
+
+##Values extracted for each field
+i <- 2015
+for (r in c(r2015, r2016, r2017, r2018, r2019, r2020, r2021, r2022)){
+  centroid[paste0("y_",i)] <- raster::extract(r, centroid)
+  i <- i + 1
+}
+
+##Preparing GIS field layer with rotations in attributes
+lu_rot <- lu[c("id", "type")] %>% 
+  left_join(st_drop_geometry(centroid), by = "id") %>% 
+  mutate_at(vars("y_2015", "y_2016", "y_2017", "y_2018", "y_2019", "y_2020", "y_2021", "y_2022"), ~lookup$type[match(., lookup$lc1)]) %>% 
+  mutate(lu = ifelse(type %in% lu_constant, type, paste0("field_", id))) %>% 
+  mutate(y_2021 = type) %>% 
+  select(lu, starts_with("y_"), geometry)
+
+##Removing rotations for constant land uses/crops
+lu_rot[!startsWith(lu_rot$lu, "field_"), c("y_2015", "y_2016", "y_2017", "y_2018", "y_2019", "y_2020", "y_2021", "y_2022")] <- NA
+
+##Writing results for SWATfarmR input preparation functions
+st_write(lu_rot , paste0(output_path, "lu_rot .shp"), append = F)
+# head(lu_rot %>% st_drop_geometry, 10)
+```
 
