@@ -3,7 +3,7 @@ Introduction to svatools
 
 # svatools
 
-[![](https://img.shields.io/badge/devel%20version-0.0.3-gold.svg)](https://github.com/biopsichas/svatools)
+[![](https://img.shields.io/badge/devel%20version-0.0.4-gold.svg)](https://github.com/biopsichas/svatools)
 [![](https://img.shields.io/github/last-commit/biopsichas/svatools.svg)](https://github.com/biopsichas/svatools/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable

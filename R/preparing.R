@@ -801,5 +801,66 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
   return(pts)
 }
 
+#' Extract rotation information from raster file
+#'
+#' @param df sf data.frame with land use. "id" and "type" columns should be present. 
+#' @param start_year numeric, representing a year from which data begins.
+#' @param tif_name string for name of .tif raster file.
+#' @param r_path string for path to .tif file.
+#' @param lookup dataframe with "lc1" column for numeric codes and "type" column 
+#' for text.
+#' @param lu_constant vector of strings with land uses to be kept constant in 
+#' land use (i.e. water, urban areas, etc.)
+#' @importFrom raster raster nbands extract
+#' @importFrom dplyr left_join mutate_at all_of mutate select vars starts_with
+#' @importFrom sf st_centroid st_transform st_drop_geometry st_crs
+#' @return sf data.frame with land use amended with crop rotation information
+#' @export
+#' @examples
+#' \dontrun{
+#' library(sf)
+#' ##Loading land use/crop layer
+#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+#' lu <- st_read(lu_path,  quiet = TRUE) %>% mutate(id = row_number())
+#' ##Preparing lookup table
+#' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
+#' type = unique(c(lu$type)))
+#' lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
+#' "wetl", "past", "watr", "agrl")
+#' 
+#' ##Extracting rotation information from raster
+#' ##Raster information should have been prepared with remote sensing 
+#' lu_rot <- extract_rotation(lu, 2015, "cropmaps.tif", "./output/", lookup, lu_constant)
+#' }
+
+extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_constant = c()){
+  r <- raster(paste0(r_path, tif_name), band = 1)
+  bn <- nbands(r)
+  ##Centroids for each field in land use data created
+  suppressWarnings(centroid <- df["id"] %>% 
+                     st_centroid() %>% 
+                     st_transform(st_crs(r)))
+  c <- c()
+  for (i in seq(1:bn)){
+    if(i>1){r <- raster(paste0(r_path, tif_name), band = i)}
+    n <- paste0("y_", start_year)
+    centroid[n] <- raster::extract(r, centroid)
+    print(paste0("Finished working on year ", start_year))
+    i <- i + 1
+    start_year <- start_year + 1
+    c <- c(c, n)
+  }
+  ##Preparing GIS field layer with rotations in attributes
+  lu_rot <- df[c("id", "type")] %>% 
+    left_join(st_drop_geometry(centroid), by = "id") %>% 
+    mutate_at(vars(all_of(c)), ~lookup$type[match(., lookup$lc1)]) %>% 
+    mutate(lu = ifelse(type %in% lu_constant, type, paste0("field_", id))) %>% 
+    dplyr::select(lu, type, starts_with("y_"), geometry)
+  
+  ##Removing rotations for constant land uses/crops
+  lu_rot[!startsWith(lu_rot$lu, "field_"), c] <- NA
+  print("Extraction finished succesfully")
+  return(lu_rot)
+}
 
 

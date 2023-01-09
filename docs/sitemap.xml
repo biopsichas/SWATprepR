@@ -175,6 +175,12 @@
     <loc>/reference/add_atmo_dep.html</loc>
   </url>
   <url>
+    <loc>/reference/get_lu_points.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_rotation.html</loc>
+  </url>
+  <url>
     <loc>/404.html</loc>
   </url>
   <url>
@@ -194,6 +200,9 @@
   </url>
   <url>
     <loc>/articles/deposition.html</loc>
+  </url>
+  <url>
+    <loc>/articles/land_use.html</loc>
   </url>
   <url>
     <loc>/news/index.html</loc>
