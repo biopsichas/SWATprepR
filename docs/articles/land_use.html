@@ -310,7 +310,7 @@ protocol</a> section 4.1.1.</p>
 <span><span class="co">## 3   field_3   canp   canp   corn   alfa   corn   alfa   corn   corn</span></span>
 <span><span class="co">## 4   field_4   trit   alfa   corn   corn   mint   trit   wwht   corn</span></span>
 <span><span class="co">## 5   field_5   alfa   alfa   alfa   alfa   mint   mint   wwht   alfa</span></span>
-<span><span class="co">## 6   field_6   trit   canp   wwht   sgbt   onio   wwht   corn   wwht</span></span>
+<span><span class="co">## 6   field_6   barl   alfa   corn   onio   barl   corn   corn   trit</span></span>
 <span><span class="co">## 7   field_7   sgbt   canp   sgbt   lett   lett   lett   corn   corn</span></span>
 <span><span class="co">## 8   field_8   wwht   barl   sgbt   sgbt   sgbt   sgbt   wwht   barl</span></span>
 <span><span class="co">## 9   field_9   barl   corn   barl   wwht   mint   mint   mint   mint</span></span>
@@ -328,6 +328,8 @@ series could be extended.</p>
 <span><span class="op">}</span></span>
 <span><span class="co">##Write the column names and the final file</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lu"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1983</span>,<span class="fl">2022</span><span class="op">)</span><span class="op">)</span>, <span class="st">"geometry"</span><span class="op">)</span></span>
+<span><span class="co">##To get 33 years exact</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">output_path</span>, <span class="st">"lu_rot_final.shp"</span><span class="op">)</span>, append <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-meszaros2022" class="csl-entry">

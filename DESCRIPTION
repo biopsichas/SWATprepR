@@ -32,7 +32,6 @@ Imports:
     RSQLite (>= 2.2.15),
     sf (>= 1.0-9),
     sp (>= 1.5-0),
-    spatialEco (>= 1.3-7),
     stringr (>= 1.4.1),
     tibble (>= 3.1.8),
     tidyr (>= 1.2.0),

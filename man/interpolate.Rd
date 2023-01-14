@@ -6,7 +6,6 @@
 \usage{
 interpolate(
   meteo_lst,
-  write_path,
   catchment_boundary_path,
   dem_data_path,
   grid_spacing,
@@ -17,8 +16,6 @@ interpolate(
 \arguments{
 \item{meteo_lst}{nested list of lists with dataframes.
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
-
-\item{write_path}{path to folder where results should be written.}
 
 \item{catchment_boundary_path}{path to basin boundary shape file.}
 
@@ -46,6 +43,6 @@ temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 met_lst <- load_template(temp_path, 3035)
-interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
+interpolate(met_lst, basin_path, DEM_path, 2000) 
 }
 }

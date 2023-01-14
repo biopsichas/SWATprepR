@@ -61,17 +61,21 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_grid</span><span class="op">(</span><span class="va">sp_df</span>, <span class="va">grid_spacing</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_grid</span><span class="op">(</span><span class="va">b</span>, <span class="va">grid_spacing</span>, <span class="va">wkt_str</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>sp_df</dt>
-<dd><p>SpatialPointsDataFrame with columns as days and rows as stations. Lat and Long columns should be included.</p></dd>
+    <dl><dt>b</dt>
+<dd><p>vector of border c(xmin, ymin, xmax, ymax) coordinates to define extent of the grid.</p></dd>
 
 
 <dt>grid_spacing</dt>
 <dd><p>Grid spacing. Depending on coordinate system could be in meters, or degrees.</p></dd>
+
+
+<dt>wkt_str</dt>
+<dd><p>projection string</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -83,10 +87,7 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">get_grid</span><span class="op">(</span><span class="va">sp_sf</span>, <span class="fl">2000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-</code></pre></div>
+    
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

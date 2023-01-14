@@ -6,10 +6,10 @@
 \usage{
 get_interpolated_data(
   meteo_lst,
+  grd,
   par,
-  catchment_boundary_path,
+  shp,
   dem_data_path,
-  grid_spacing,
   idw_exponent = 2
 )
 }
@@ -17,13 +17,13 @@ get_interpolated_data(
 \item{meteo_lst}{nested list of lists with dataframes.
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
 
+\item{grd}{sp SpatialGrid grid for the interpolation.}
+
 \item{par}{character representing weather variable to extract (i.e. "PCP", "SLR", etc).}
 
-\item{catchment_boundary_path}{path to basin boundary shape file.}
+\item{shp}{sf dataframe for defining basin boundary shape.}
 
 \item{dem_data_path}{path to DEM raster data in same projection as weather station.}
-
-\item{grid_spacing}{numeric value for distance in grid. Units of coordinate system should be used.}
 
 \item{idw_exponent}{numeric value for exponent parameter to be used in interpolation.
 (optional, default value is 2).}
@@ -40,6 +40,6 @@ temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 met_lst <- load_template(temp_path, 3035)
-get_interpolated_data(met_lst, "PCP", basin_path, DEM_path, 2000, 2)
+get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 }
 }

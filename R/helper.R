@@ -131,8 +131,9 @@ min_ks <- function(df, max_depth){
 
 #' Prepare grid for interpolation
 #'
-#' @param sp_df SpatialPointsDataFrame with columns as days and rows as stations. Lat and Long columns should be included.
+#' @param b  vector of border c(xmin, ymin, xmax, ymax) coordinates to define extent of the grid.
 #' @param grid_spacing Grid spacing. Depending on coordinate system could be in meters, or degrees.
+#' @param wkt_str projection string
 #' @importFrom sf st_crs
 #' @importFrom sp coordinates<- proj4string<- gridded<- fullgrid<- CRS
 #' @return Grid needed for the interpolation. 
@@ -140,17 +141,17 @@ min_ks <- function(df, max_depth){
 #'
 #' @examples
 #' \dontrun{
-#' get_grid(sp_sf, 2000)
+#' get_grid(shp 2000)
 #' }
 
-get_grid <- function(sp_df, grid_spacing){
-  x.range <- c(min(round(sp_df$Long,2)*0.999),max(round(sp_df$Long,2)*1.001))
-  y.range <- c(min(round(sp_df$Lat,2)*0.999),max(round(sp_df$Lat,2)*1.001))
+get_grid <- function(b, grid_spacing, wkt_str){
+  x.range <- c(b[1]*0.999,b[3]*1.001)
+  y.range <- c(b[2]*0.999,b[4]*1.001)
   grd <- expand.grid(x = seq(from = x.range[1], to = x.range[2], by = grid_spacing), y = seq(from = y.range[1], to = y.range[2], by = grid_spacing)) 
   coordinates(grd) <- c("x", "y")
   gridded(grd)     <- TRUE
   fullgrid(grd)    <- TRUE
-  suppressWarnings(proj4string(grd) <-  CRS(SRS_string = st_crs(sp_df)$wkt))
+  suppressWarnings(proj4string(grd) <-  CRS(SRS_string = wkt_str))
   return(grd)
 }
 
@@ -164,7 +165,6 @@ get_grid <- function(sp_df, grid_spacing){
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
 #' @importFrom gstat idw
 #' @importFrom raster raster extract
-#' @importFrom spatialEco sp.na.omit
 #' @return SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
 #' @keywords internal
 #'
@@ -187,6 +187,33 @@ get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
     st@data[as.character(i)] <- NA
   }
   return(st)
+}
+
+#' Function to remove NAs in sp dataframe
+#'
+#' @param x sp dataframe
+#' @param margin numeric. Optional, default 1 for remove rows, 2 for removing columns.
+#'
+#' @return sp dataframe without NAs in data 
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' sp_df <- sp.na.omit(sp_df)
+#' }
+
+sp.na.omit <- function(x, margin=1) {
+  if (!inherits(x, "SpatialPointsDataFrame") & !inherits(x, "SpatialPolygonsDataFrame")) 
+    stop("MUST BE sp SpatialPointsDataFrame OR SpatialPolygonsDataFrame CLASS OBJECT") 
+  na.index <- unique(as.data.frame(which(is.na(x@data),arr.ind=TRUE))[,margin])
+  ##Deleting rows
+  if(margin == 1) {  
+    return( x[-na.index,]  ) 
+  }
+  ##Deleting columns
+  if(margin == 2) {  
+    return( x[,-na.index]  ) 
+  }
 }
 
 

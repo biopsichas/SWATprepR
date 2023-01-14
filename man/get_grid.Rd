@@ -4,12 +4,14 @@
 \alias{get_grid}
 \title{Prepare grid for interpolation}
 \usage{
-get_grid(sp_df, grid_spacing)
+get_grid(b, grid_spacing, wkt_str)
 }
 \arguments{
-\item{sp_df}{SpatialPointsDataFrame with columns as days and rows as stations. Lat and Long columns should be included.}
+\item{b}{vector of border c(xmin, ymin, xmax, ymax) coordinates to define extent of the grid.}
 
 \item{grid_spacing}{Grid spacing. Depending on coordinate system could be in meters, or degrees.}
+
+\item{wkt_str}{projection string}
 }
 \value{
 Grid needed for the interpolation.
@@ -19,7 +21,7 @@ Prepare grid for interpolation
 }
 \examples{
 \dontrun{
-get_grid(sp_sf, 2000)
+get_grid(shp 2000)
 }
 }
 \keyword{internal}

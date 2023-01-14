@@ -63,7 +63,6 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">interpolate</span><span class="op">(</span></span>
 <span>  <span class="va">meteo_lst</span>,</span>
-<span>  <span class="va">write_path</span>,</span>
 <span>  <span class="va">catchment_boundary_path</span>,</span>
 <span>  <span class="va">dem_data_path</span>,</span>
 <span>  <span class="va">grid_spacing</span>,</span>
@@ -77,10 +76,6 @@
     <dl><dt>meteo_lst</dt>
 <dd><p>nested list of lists with dataframes.
 Nested structure meteo_lst -&gt; data -&gt; Station ID -&gt; Parameter -&gt; Dataframe (DATE, PARAMETER).</p></dd>
-
-
-<dt>write_path</dt>
-<dd><p>path to folder where results should be written.</p></dd>
 
 
 <dt>catchment_boundary_path</dt>
@@ -121,7 +116,7 @@ Function also writes all SWAT weather text input files from the interpolation re
 <span class="r-in"><span><span class="va">DEM_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/DEM.tif"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/basin.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">met_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_template.html">load_template</a></span><span class="op">(</span><span class="va">temp_path</span>, <span class="fl">3035</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">interpolate</span><span class="op">(</span><span class="va">met_lst</span>, <span class="st">"./output/"</span>,  <span class="va">basin_path</span>, <span class="va">DEM_path</span>, <span class="fl">2000</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">interpolate</span><span class="op">(</span><span class="va">met_lst</span>, <span class="va">basin_path</span>, <span class="va">DEM_path</span>, <span class="fl">2000</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

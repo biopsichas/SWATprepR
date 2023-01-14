@@ -49,13 +49,20 @@ stations <- st_transform(met_lst$stations, 4326)
 mapview(stations) + mapview(basin)
 ```
 
-For such need function [interpolate](../reference/interpolate.html) was prepared. It allows to do interpolation between data in presented stations. Function's *grid_spacing* parameter defines, how dense spatial interpolation points will be. Interpolate function creates virtual stations. It also writes SWAT model input files for virtual stations into output folder. Data needed for this function are [loaded](#load_weather) stations observations, basin boundary shape path, DEM raster path. It is important, that GIS data used in function would be of same coordinate system.
+For such need function [interpolate](../reference/interpolate.html) was prepared. It allows to do interpolation between data in presented stations. Function's *grid_spacing* parameter defines, how dense spatial interpolation points will be. Interpolate function creates virtual stations. Data needed for this function are [loaded](#load_weather) stations observations, basin boundary shape path, DEM raster path. It is important, that GIS data used in function would be of same coordinate system.
 
-Function parameters are *grid_spacing*, *p_vector* - character vector representing weather variables to interpolate (optional, default all variables selected c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ), *idw_exponent* - numeric value for exponent parameter to be used in interpolation  (optional, default value is 2). This function automatically writes inputs for SWAT model in defined output folder. Results could be also saved in R environment by assigning to an object. 
+Function parameters are *grid_spacing*, *p_vector* - character vector representing weather variables to interpolate (optional, default all variables selected c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ), *idw_exponent* - numeric value for exponent parameter to be used in interpolation  (optional, default value is 2). 
+
+After running [interpolate](../reference/interpolate.html) function the [transform_to_list](../reference/transform_to_list.html) function could be used to transform interpolation results to list of list format, which is used with other functions (after loading weather data from template). So all the other functions can be applied. Transformation function requires dates for the beginning and the end of time series. This info can be extracted from loaded weather data (used in an interpolation) with the internal function `svatools:::get_dates`. 
 
 ```{r met_interpolation, eval=FALSE, message = FALSE, warning = FALSE}
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
+result <- interpolate(met_lst, basin_path, DEM_path, 2000) 
+
+##To transform interpolation results to list of lists, which could be used with other weather functions. 
+start_date <- svatools:::get_dates(met_lst)$min_date
+end_date <- svatools:::get_dates(met_lst)$max_date
+met_lst_int <- transform_to_list(result, start_date, end_date)
 ```
 
 ## Weather generator

@@ -51,10 +51,10 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #'
 #' @param meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param grd sp SpatialGrid grid for the interpolation. 
 #' @param par character representing weather variable to extract (i.e. "PCP", "SLR", etc).
-#' @param catchment_boundary_path path to basin boundary shape file.
+#' @param shp  sf dataframe for defining basin boundary shape.
 #' @param dem_data_path path to DEM raster data in same projection as weather station.
-#' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
 #' (optional, default value is 2).
 #' @importFrom sp coordinates<- proj4string<- CRS over
@@ -63,23 +63,20 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @importFrom sf st_crs st_transform read_sf
 #' @return SpatialPointsDataFrame with interpolated data.
 #' @export
-#'
 #' @examples
 #' \dontrun{
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 #' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 #' met_lst <- load_template(temp_path, 3035)
-#' get_interpolated_data(met_lst, "PCP", basin_path, DEM_path, 2000, 2)
+#' get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 #' }
 
-get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent = 2){
+get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_exponent = 2){
   ##Preparing data for interpolation and grid
   df <- get_data_to_interpolate(meteo_lst, par)
-  grd <- get_grid(df, grid_spacing)
   ##Loading data
   DEM <- raster(dem_data_path)
-  shp <- read_sf(catchment_boundary_path)
   ##Defining coordinate system
   m_proj <- st_crs(meteo_lst$stations)$input
   if (m_proj != st_crs(shp)$input){
@@ -104,7 +101,6 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #'
 #' @param meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' @param write_path path to folder where results should be written.
 #' @param catchment_boundary_path path to basin boundary shape file.
 #' @param dem_data_path path to DEM raster data in same projection as weather station.
 #' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
@@ -122,35 +118,36 @@ get_interpolated_data <- function(meteo_lst, par, catchment_boundary_path, dem_d
 #' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 #' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 #' met_lst <- load_template(temp_path, 3035)
-#' interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
+#' interpolate(met_lst, basin_path, DEM_path, 2000) 
 #' }
 
-interpolate <- function(meteo_lst, write_path, catchment_boundary_path, dem_data_path, grid_spacing, 
+interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_spacing, 
                         p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN"), idw_exponent = 2){
   ##List to save interpolation results for examining
   results <- list()
   p_lst <- list("PCP" = "pcp", "SLR" = "solar", "RELHUM" = "rh", "TMP_MAX" = "tmp", 
                 "TMP_MIN" = "tmp", "WNDSPD" = "wind")
+  ##Reading and defining coordinate system
+  shp <-st_read(catchment_boundary_path, quiet = TRUE)
+  m_proj <- st_crs(meteo_lst$stations)$input
+  if (m_proj != st_crs(shp)$input){
+    shp <- st_transform(shp, m_proj)
+  }
+  ##Getting vector of max extent border coordinates
+  b <- st_bbox(shp)
+  s <- st_bbox(meteo_lst$stations)
+  bb <- c(min(b[1], s[1]), min(b[2], s[2]), max(b[3], s[3]), max(b[4], s[4]))
+  ##Making a grid to interpolate to
+  grd <- get_grid(bb, grid_spacing, st_crs(shp)$wkt)
   ##Loop for all parameter
   for (p in p_vector){
     ##Interpolation case for which has data at more than 1 station and not TMP
-    if(get_nb_st_with_data(meteo_lst, p)>1 & !startsWith(p, 'TMP')){
-      r <- get_interpolated_data(meteo_lst, p, catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
-      write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r, p)
-      write_input_files(write_path, r, meteo_lst, p)
-      results[[p]] <- r
-      ##Interpolation for TMP data
-    } else if(p == 'TMP_MAX'){
-      r_tmx <- get_interpolated_data(meteo_lst, "TMP_MAX", catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
-      r_tmn <- get_interpolated_data(meteo_lst, "TMP_MIN", catchment_boundary_path, dem_data_path, grid_spacing, idw_exponent)
-      results[['TMP_MAX']] <- r_tmx
-      results[['TMP_MIN']] <- r_tmn
-      write_input_files_tmp(write_path, r_tmx, r_tmn, meteo_lst)
-      write_ref_file(paste0(write_path, p_lst[[p]], ".txt"), r_tmx, "TMP")
+    if(get_nb_st_with_data(meteo_lst, p)>1){
+      results[[p]] <- get_interpolated_data(meteo_lst, grd, p, shp, dem_data_path, idw_exponent)
     }
   }
   cat("\014") 
-  print("Interpolation is finished. Results are in results dataframe.")
+  print("Interpolation is finished.")
   return(results)
 }
 
@@ -813,7 +810,7 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 #' land use (i.e. water, urban areas, etc.)
 #' @importFrom raster raster nbands extract
 #' @importFrom dplyr left_join mutate_at all_of mutate select vars starts_with
-#' @importFrom sf st_centroid st_transform st_drop_geometry st_crs
+#' @importFrom sf st_point_on_surface st_transform st_drop_geometry st_crs
 #' @return sf data.frame with land use amended with crop rotation information
 #' @export
 #' @examples
@@ -838,7 +835,7 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
   bn <- nbands(r)
   ##Centroids for each field in land use data created
   suppressWarnings(centroid <- df["id"] %>% 
-                     st_centroid() %>% 
+                     st_point_on_surface() %>% 
                      st_transform(st_crs(r)))
   c <- c()
   for (i in seq(1:bn)){
