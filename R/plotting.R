@@ -17,12 +17,37 @@
 #' plot_cal_data(cal_data$data, c("1", "2", "3","10"))
 
 plot_cal_data <- function(df, stations){
+  
+  df = subset(df, Station == stations)
+  df_gaps = data.frame (matrix(nrow = 0, ncol = length(colnames (df))))
+  colnames(df_gaps) = colnames (df)
+  
+  for (i in 1:length(stations)) {
+    ss = df %>% 
+      subset (Station == stations[i]) %>% 
+      group_by(Variables) %>% 
+      summarise(max = max(DATE), min = min (DATE), 
+                d_amount = max(DATE)-min(DATE)+1)
+    
+    hh = data.frame (
+      DATE = to_vec(for (j in 1:length(ss$Variables))  as.character(seq(ss$min[j], ss$max[j], by="days"))) %>%
+        as.Date() %>%
+        as.POSIXlt(), 
+      Station = stations[i], 
+      Variables = rep (ss$Variables,ss$d_amount))
+    
+    df_gaps = rbind(df_gaps, hh)
+  }
+  
+  df = merge(df,df_gaps, by.x = c ("DATE", "Station", "Variables"), 
+             by.y = c("DATE",  "Station", "Variables"), all.x=T,all.y=T)
+  
   if(length(stations) == 1){
     fig <- df %>%
       filter(Station %in% stations) %>% 
       mutate(Variables = as.factor(Variables)) %>% 
       group_by(Variables) %>%
-      group_map(~ plot_ly(data=., x = ~DATE, y = ~Values, color = ~Variables, colors = "Set2", type = "scatter", mode =  "lines"), keep=TRUE) %>%
+      group_map(~ plot_ly(data=., x = ~DATE, y = ~Values, color = ~Variables, colors = "Set2", type = "scatter", mode =  "lines+markers"), keep=TRUE) %>%
       subplot(nrows = 3, shareX = FALSE, shareY=FALSE) %>% 
       hide_show()
   } else if (length(stations) > 1){
