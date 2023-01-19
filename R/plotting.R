@@ -16,9 +16,9 @@
 #' cal_data <- load_template(temp_path)
 #' plot_cal_data(cal_data$data, c("1", "2", "3","10"))
 
-plot_cal_data <- function(df, stations){
+plot_cal_data <- function(df, stations, variables = levels(as.factor(df$Variables))) {
   
-  df = subset(df, Station == stations)
+  df = subset(df, Station %in% stations & Variables %in% variables)
   df_gaps = data.frame (matrix(nrow = 0, ncol = length(colnames (df))))
   colnames(df_gaps) = colnames (df)
   
