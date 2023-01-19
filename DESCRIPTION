@@ -13,6 +13,7 @@ BugReports: https://github.com/biopsichas/svatools/issues
 Depends:
     R (>= 4.2)
 Imports:
+    comprehenr,
     DBI (>= 1.1.3),
     dplyr (>= 0.8.0.1),
     euptf2,
