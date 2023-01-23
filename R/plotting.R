@@ -14,7 +14,8 @@
 #' @examples
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
-#' plot_cal_data(cal_data$data, c("1", "2", "3","10"))
+#' plot_cal_data(cal_data$data, stations = c("1", "2", "3","10"), variables =
+#' c("PT", "Q"))
 
 plot_cal_data <- function(df, stations, variables = levels(as.factor(df$Variables))) {
   
@@ -115,12 +116,13 @@ plot_ts_fig <- function(station, df){
 #' @examples
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
-#' plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
+#' plot_monthly(cal_data$data, station = "4", variables = c("Q"))
 #' 
 
-plot_monthly <- function(df, station, drop_variables = c()){
+plot_monthly <- function(df, station, 
+                         variables = levels(as.factor(df$Variables))){
   df %>%
-    filter(Station == station & !Variables %in% drop_variables) %>% 
+    filter(Station == station & Variables %in% variables) %>% 
     mutate(Variables = as.factor(Variables),
            Month = month(DATE)) %>% 
     group_by(Variables) %>% 
