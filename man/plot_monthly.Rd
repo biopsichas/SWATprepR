@@ -4,14 +4,14 @@
 \alias{plot_monthly}
 \title{Aggregating values of single station to interactive monthly box plots}
 \usage{
-plot_monthly(df, station, drop_variables = c())
+plot_monthly(df, station, variables = levels(as.factor(df$Variables)))
 }
 \arguments{
 \item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed)}
 
 \item{station}{character indicating station, which should be selected for figure.}
 
-\item{drop_variables}{optional parameter of character vector, which parameters should be excluded from figure.}
+\item{variables}{optional parameter of character vector, which parameters should be in figure.}
 }
 \value{
 plotly object of interactive figure
@@ -22,6 +22,6 @@ Aggregating values of single station to interactive monthly box plots
 \examples{
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 cal_data <- load_template(temp_path)
-plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
+plot_monthly(cal_data$data, station = "4")
 
 }

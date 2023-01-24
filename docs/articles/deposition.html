@@ -49,10 +49,10 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
-    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
-    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
     <a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a>
     <a class="dropdown-item" href="../articles/land_use.html">Land use</a>
+    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
+    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
   </div>
 </li>
 <li class="nav-item">
@@ -168,10 +168,10 @@ protocol</a>.</p>
 <span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/basin.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_atmo_dep.html">get_atmo_dep</a></span><span class="op">(</span><span class="va">basin_path</span><span class="op">)</span></span>
 <span><span class="co">##Plot results</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="va">df</span>, <span class="op">!</span><span class="va">DATE</span>, names_to <span class="op">=</span> <span class="st">"par"</span>, values_to <span class="op">=</span> <span class="st">"values"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">DATE</span>, y <span class="op">=</span> <span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">par</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span><span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="fu">pivot_longer</span><span class="op">(</span><span class="va">df</span>, <span class="op">!</span><span class="va">DATE</span>, names_to <span class="op">=</span> <span class="st">"par"</span>, values_to <span class="op">=</span> <span class="st">"values"</span><span class="op">)</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">DATE</span>, y <span class="op">=</span> <span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">+</span> </span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span><span class="op">+</span> </span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">par</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span><span class="op">+</span> </span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Rplot.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">

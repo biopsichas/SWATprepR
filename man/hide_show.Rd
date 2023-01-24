@@ -17,7 +17,7 @@ Function to put option remove hide or show all lines in chart and this function 
 }
 \examples{
 \dontrun{
-hide_show_print_graph(fig)
+hide_show(fig)
 }
 }
 \keyword{internal}

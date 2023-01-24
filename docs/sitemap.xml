@@ -1,31 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/authors.html</loc>
+    <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>/articles/calibration.html</loc>
+  </url>
+  <url>
+    <loc>/articles/deposition.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/land_use.html</loc>
+  </url>
+  <url>
+    <loc>/articles/NEWS.html</loc>
+  </url>
+  <url>
+    <loc>/articles/soil.html</loc>
+  </url>
+  <url>
+    <loc>/articles/weather.html</loc>
+  </url>
+  <url>
+    <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/news/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/add_atmo_dep.html</loc>
+  </url>
+  <url>
+    <loc>/reference/add_weather.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_outliers.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_wq.html</loc>
+  </url>
+  <url>
+    <loc>/reference/df_t.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_rotation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_atmo_dep.html</loc>
   </url>
   <url>
     <loc>/reference/get_data_to_interpolate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_interpolated_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/shp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hide_show.html</loc>
   </url>
   <url>
     <loc>/reference/get_dates.html</loc>
@@ -34,31 +67,136 @@
     <loc>/reference/get_grid.html</loc>
   </url>
   <url>
+    <loc>/reference/get_hsg.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_interpolated_data.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_interpolation.html</loc>
   </url>
   <url>
-    <loc>/reference/load_template.html</loc>
+    <loc>/reference/get_lu_points.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_nb_st_with_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_soil_parameters.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hide_show.html</loc>
+  </url>
+  <url>
+    <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/interpolate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_to_df.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_climate.html</loc>
   </url>
   <url>
     <loc>/reference/load_stations.html</loc>
   </url>
   <url>
+    <loc>/reference/load_template.html</loc>
+  </url>
+  <url>
+    <loc>/reference/min_ks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.check.pwd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.check.pww.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.pcpd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.pwd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.pww.html</loc>
+  </url>
+  <url>
+    <loc>/reference/my.skew.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nyears.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_cal_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_fractions.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot_many.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_one.html</loc>
+    <loc>/reference/plot_map.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_monthly.html</loc>
   </url>
   <url>
     <loc>/reference/plot_monthly_one.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_NminTN.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot_Nmin_NT.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_one.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_PminTP.html</loc>
   </url>
   <url>
     <loc>/reference/plot_Pmin_PT.html</loc>
   </url>
   <url>
-    <loc>/reference/df_t.html</loc>
+    <loc>/reference/plot_ts_fig.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_compare.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_fig.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_fig_compare.html</loc>
+  </url>
+  <url>
+    <loc>/reference/prepare_wgn.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/shp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sp.na.omit.html</loc>
+  </url>
+  <url>
+    <loc>/reference/transform_to_list.html</loc>
+  </url>
+  <url>
+    <loc>/reference/update_wst_id.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_atmo_cli.html</loc>
   </url>
   <url>
     <loc>/reference/write_input_files.html</loc>
@@ -71,143 +209,5 @@
   </url>
   <url>
     <loc>/reference/write_wgnmaker_files.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_ts_fig.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_map.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather_fig.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather_fig_compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_soil_parameters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_cal_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_monthly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_NminTN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_PminTP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_fractions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather_compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_nb_st_with_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/interpolate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/transform_to_list.html</loc>
-  </url>
-  <url>
-    <loc>/reference/list_to_df.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nyears.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.skew.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.check.pwd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.check.pww.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.pwd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.pww.html</loc>
-  </url>
-  <url>
-    <loc>/reference/my.pcpd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/prepare_wgn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_climate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/min_ks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_hsg.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_wst_id.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_weather.html</loc>
-  </url>
-  <url>
-    <loc>/reference/clean_outliers.html</loc>
-  </url>
-  <url>
-    <loc>/reference/clean_wq.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_atmo_dep.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_atmo_cli.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_atmo_dep.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_lu_points.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_rotation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sp.na.omit.html</loc>
-  </url>
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/calibration.html</loc>
-  </url>
-  <url>
-    <loc>/articles/weather.html</loc>
-  </url>
-  <url>
-    <loc>/articles/soil.html</loc>
-  </url>
-  <url>
-    <loc>/articles/NEWS.html</loc>
-  </url>
-  <url>
-    <loc>/articles/deposition.html</loc>
-  </url>
-  <url>
-    <loc>/articles/land_use.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
   </url>
 </urlset>

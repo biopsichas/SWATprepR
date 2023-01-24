@@ -165,13 +165,46 @@ str(usertable)
 
 ### Adding soil parameters to user table {#par_make}
 
-This section is the only required part and is the essence of the workflow. In it [get_soil_parameters](../reference/get_soil_parameters.html) is filling all required SWAT+ parameters for exception of Hydrologic Soil Groups, which is added in a loop with [get_hsg](../reference/get_hsg.html) function. [get_soil_parameters](../reference/get_soil_parameters.html) function is very straightforward, if input data is formatted correctly. However, [get_hsg](../reference/get_hsg.html) function require an assemblance of information per each soil type. A simple example 
-*get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_Z1 = 250, SOL_Z2 = 700))*. The first three class values (impervious layer, water level and drainage status) extracted from soil name (SNAM) and the last is one line dataframe extracted from *usertable* with all *SOL_K* and *SOL_Z* parameters available for a soil type. 
-If case of some generated parameters are available (i.e. from field measurements or local databases), they can be used by overwriting generated parameters in the *usertable*. In our example we didn't have such data.
+This section is the only required part and is the essence of the workflow. In it [get_soil_parameters](../reference/get_soil_parameters.html) is filling all required SWAT+ parameters for exception of [Hydrologic Soil Groups](#par_make2), which is added in a loop with [get_hsg](../reference/get_hsg.html) function. [get_soil_parameters](../reference/get_soil_parameters.html) function is very straightforward, if input data is formatted correctly. 
 
 ```{r soil_fusert, message = FALSE, warning = FALSE}
 ##Adding all SWAT soil parameters for except HYDGRP  
 usertable <- get_soil_parameters(usertable)
+```
+
+### Overwritting with measured parameters
+
+In case some soil types do have have required soil parameters [get_soil_parameters](../reference/get_soil_parameters.html) function results can be overwritten. Example below provides example data and code to be used for replacing parameters in the generated user table.  
+
+```{r soil_overwrite, message = FALSE, warning = FALSE}
+##Example data loaded to be used for overwriting parameters in the user table
+rep_pars_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
+replace_pars <- read_excel(rep_pars_path)
+
+##Extracting soil type codes for each soil layer 
+usertable <- separate(usertable, SNAM, c("Lyr1", "Lyr2", "Lyr3", "LyrX"), "_", extra = "merge", remove = FALSE) 
+
+##Replacing values for selected soil types
+for(p in c("Emt", "Mpl", "Tn")){
+  ##Selected soil layers
+  for (l in seq(1, 3)){
+    ##Selected parameters
+    mp <- paste0(c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", 
+                   "SILT", "SAND", "ROCK", "SOL_ALB", "USLE_K", "SOL_EC"),l)
+    usertable[usertable[paste0("Lyr",l)] == p, mp] <- replace_pars[replace_pars["SNAM"] == p, mp]
+  }
+}
+##Removing columns with soil types for each layer
+usertable <- select(usertable, -starts_with("Lyr"))
+```
+
+### Adding Hydrologic Soil Groups {#par_make2}
+
+[get_hsg](../reference/get_hsg.html) function require an assemblance of information per each soil type. A simple example 
+*get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_Z1 = 250, SOL_Z2 = 700))*. The first three class values (impervious layer, water level and drainage status) extracted from soil name (SNAM) and the last is one line dataframe extracted from *usertable* with all *SOL_K* and *SOL_Z* parameters available for a soil type. 
+If case of some generated parameters are available (i.e. from field measurements or local databases), they can be used by overwriting generated parameters in the *usertable*. In our example we didn't have such data.
+
+```{r soil_hsg, message = FALSE, warning = FALSE}
 ##Adding HYDGRP in a look for each row
 c <- c()
 for(i in 1:nrow(usertable)){

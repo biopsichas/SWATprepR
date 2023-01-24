@@ -5,10 +5,12 @@
 #'
 #' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed)
 #' @param stations character vector listing stations, which should be selected for figure. 
+#' @param variables optional parameter of character vector, which parameters should be in figure. 
 #' @return plotly object of interactive figure.
 #' @importFrom dplyr filter mutate group_by %>% group_map
 #' @importFrom ggplot2 ggplot aes facet_wrap geom_line geom_point
 #' @importFrom plotly plot_ly subplot ggplotly 
+#' @importFrom comprehenr to_vec
 #' @export
 #'
 #' @examples
@@ -106,7 +108,7 @@ plot_ts_fig <- function(station, df){
 #'
 #' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed)
 #' @param station character indicating station, which should be selected for figure. 
-#' @param drop_variables optional parameter of character vector, which parameters should be excluded from figure. 
+#' @param variables optional parameter of character vector, which parameters should be in figure. 
 #' @return plotly object of interactive figure
 #' @importFrom dplyr filter mutate group_by %>% group_map
 #' @importFrom plotly plot_ly subplot 
@@ -116,7 +118,7 @@ plot_ts_fig <- function(station, df){
 #' @examples
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 #' cal_data <- load_template(temp_path)
-#' plot_monthly(cal_data$data, station = "4", variables = c("Q"))
+#' plot_monthly(cal_data$data, station = "4")
 #' 
 
 plot_monthly <- function(df, station, 

@@ -25,10 +25,10 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
-    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
-    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
     <a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a>
     <a class="dropdown-item" href="../articles/land_use.html">Land use</a>
+    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
+    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
   </div>
 </li>
 <li class="nav-item">
@@ -66,9 +66,69 @@
 
       <dl><dt>
           
+          <code><a href="add_atmo_dep.html">add_atmo_dep()</a></code> 
+        </dt>
+        <dd>Update sqlite database with atmospheric deposition data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="add_weather.html">add_weather()</a></code> 
+        </dt>
+        <dd>Update sqlite database with weather data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="clean_outliers.html">clean_outliers()</a></code> 
+        </dt>
+        <dd>Function to clean outliers outside by some standard deviations</dd>
+      </dl><dl><dt>
+          
+          <code><a href="clean_wq.html">clean_wq()</a></code> 
+        </dt>
+        <dd>Clean water quality data from most typical issues</dd>
+      </dl><dl><dt>
+          
+          <code><a href="extract_rotation.html">extract_rotation()</a></code> 
+        </dt>
+        <dd>Extract rotation information from raster file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_atmo_dep.html">get_atmo_dep()</a></code> 
+        </dt>
+        <dd>Extract EMEP atmospheric deposition data for a catchment</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_hsg.html">get_hsg()</a></code> 
+        </dt>
+        <dd>Function to get soil hydrologic groups</dd>
+      </dl><dl><dt>
+          
           <code><a href="get_interpolated_data.html">get_interpolated_data()</a></code> 
         </dt>
         <dd>Main interpolation function</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_lu_points.html">get_lu_points()</a></code> 
+        </dt>
+        <dd>Preparing training points for remote sensing algorithm</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_soil_parameters.html">get_soil_parameters()</a></code> 
+        </dt>
+        <dd>Function to fill soil parameters</dd>
+      </dl><dl><dt>
+          
+          <code><a href="interpolate.html">interpolate()</a></code> 
+        </dt>
+        <dd>Interpolating and writing results into model input files</dd>
+      </dl><dl><dt>
+          
+          <code><a href="load_climate.html">load_climate()</a></code> 
+        </dt>
+        <dd>Function loading climate data csv files</dd>
+      </dl><dl><dt>
+          
+          <code><a href="load_stations.html">load_stations()</a></code> 
+        </dt>
+        <dd>Reading station data from excel templates</dd>
       </dl><dl><dt>
           
           <code><a href="load_template.html">load_template()</a></code> 
@@ -77,9 +137,49 @@
 (data should have been cleaned before).</dd>
       </dl><dl><dt>
           
-          <code><a href="load_stations.html">load_stations()</a></code> 
+          <code><a href="plot_cal_data.html">plot_cal_data()</a></code> 
         </dt>
-        <dd>Reading station data from excel templates</dd>
+        <dd>Plotting calibration data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_fractions.html">plot_fractions()</a></code> 
+        </dt>
+        <dd>Plot regression and fractions for each month between parts of nutrient and total</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_map.html">plot_map()</a></code> 
+        </dt>
+        <dd>Preparing interactive map of monitoring points</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_monthly.html">plot_monthly()</a></code> 
+        </dt>
+        <dd>Aggregating values of single station to interactive monthly box plots</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_weather.html">plot_weather()</a></code> 
+        </dt>
+        <dd>Prepare the plotly figure for weather data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_weather_compare.html">plot_weather_compare()</a></code> 
+        </dt>
+        <dd>Plotting figure to comparing two datasets with weather data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="prepare_wgn.html">prepare_wgn()</a></code> 
+        </dt>
+        <dd>Function to generate wgn data for the model</dd>
+      </dl><dl><dt>
+          
+          <code><a href="transform_to_list.html">transform_to_list()</a></code> 
+        </dt>
+        <dd>Transforming list of sp dataframes to list of list</dd>
+      </dl><dl><dt>
+          
+          <code><a href="write_atmo_cli.html">write_atmo_cli()</a></code> 
+        </dt>
+        <dd>Write 'atmo.cli' file</dd>
       </dl><dl><dt>
           
           <code><a href="write_input_files.html">write_input_files()</a></code> 
@@ -100,106 +200,6 @@
           <code><a href="write_wgnmaker_files.html">write_wgnmaker_files()</a></code> 
         </dt>
         <dd>Preparing input files for WGNmaker.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_map.html">plot_map()</a></code> 
-        </dt>
-        <dd>Preparing interactive map of monitoring points</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_soil_parameters.html">get_soil_parameters()</a></code> 
-        </dt>
-        <dd>Function to fill soil parameters</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_cal_data.html">plot_cal_data()</a></code> 
-        </dt>
-        <dd>Plotting calibration data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_monthly.html">plot_monthly()</a></code> 
-        </dt>
-        <dd>Aggregating values of single station to interactive monthly box plots</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_fractions.html">plot_fractions()</a></code> 
-        </dt>
-        <dd>Plot regression and fractions for each month between parts of nutrient and total</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_weather.html">plot_weather()</a></code> 
-        </dt>
-        <dd>Prepare the plotly figure for weather data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_weather_compare.html">plot_weather_compare()</a></code> 
-        </dt>
-        <dd>Plotting figure to comparing two datasets with weather data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="interpolate.html">interpolate()</a></code> 
-        </dt>
-        <dd>Interpolating and writing results into model input files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="transform_to_list.html">transform_to_list()</a></code> 
-        </dt>
-        <dd>Transforming list of sp dataframes to list of list</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prepare_wgn.html">prepare_wgn()</a></code> 
-        </dt>
-        <dd>Function to generate wgn data for the model</dd>
-      </dl><dl><dt>
-          
-          <code><a href="load_climate.html">load_climate()</a></code> 
-        </dt>
-        <dd>Function loading climate data csv files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_hsg.html">get_hsg()</a></code> 
-        </dt>
-        <dd>Function to get soil hydrologic groups</dd>
-      </dl><dl><dt>
-          
-          <code><a href="add_weather.html">add_weather()</a></code> 
-        </dt>
-        <dd>Update sqlite database with weather data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="clean_outliers.html">clean_outliers()</a></code> 
-        </dt>
-        <dd>Function to clean outliers outside by some standard deviations</dd>
-      </dl><dl><dt>
-          
-          <code><a href="clean_wq.html">clean_wq()</a></code> 
-        </dt>
-        <dd>Clean water quality data from most typical issues</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_atmo_dep.html">get_atmo_dep()</a></code> 
-        </dt>
-        <dd>Extract EMEP atmospheric deposition data for a catchment</dd>
-      </dl><dl><dt>
-          
-          <code><a href="write_atmo_cli.html">write_atmo_cli()</a></code> 
-        </dt>
-        <dd>Write 'atmo.cli' file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="add_atmo_dep.html">add_atmo_dep()</a></code> 
-        </dt>
-        <dd>Update sqlite database with atmospheric deposition data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_lu_points.html">get_lu_points()</a></code> 
-        </dt>
-        <dd>Preparing training points for remote sensing algorithm</dd>
-      </dl><dl><dt>
-          
-          <code><a href="extract_rotation.html">extract_rotation()</a></code> 
-        </dt>
-        <dd>Extract rotation information from raster file</dd>
       </dl></div>
   </main></div>
 

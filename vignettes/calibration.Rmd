@@ -62,7 +62,7 @@ plot_cal_data(cal_data$data, c("4"))
 Sometimes for the evaluation of data quality monthly plots can be useful. Such plots allow to see if monitoring results corresponds to other data sources and processes, which should be taking place in the monitored catchment. [plot_monthly](../reference/plot_monthly.html) function can be used to plot monthly aggregates. 
 
 ```{r plot_cal_mon, message = FALSE, warning = FALSE}
-plot_monthly(cal_data$data, station = "4", drop_variables = c("Q"))
+plot_monthly(cal_data$data, station = "4")
 ```
 
 ### Fractions

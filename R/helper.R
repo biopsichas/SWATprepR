@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' hide_show_print_graph(fig)
+#' hide_show(fig)
 #' }
 
 hide_show <- function(graph){

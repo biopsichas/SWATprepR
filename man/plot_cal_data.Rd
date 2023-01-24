@@ -4,12 +4,14 @@
 \alias{plot_cal_data}
 \title{Plotting calibration data}
 \usage{
-plot_cal_data(df, stations)
+plot_cal_data(df, stations, variables = levels(as.factor(df$Variables)))
 }
 \arguments{
 \item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed)}
 
 \item{stations}{character vector listing stations, which should be selected for figure.}
+
+\item{variables}{optional parameter of character vector, which parameters should be in figure.}
 }
 \value{
 plotly object of interactive figure.
@@ -20,5 +22,6 @@ Plotting calibration data
 \examples{
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 cal_data <- load_template(temp_path)
-plot_cal_data(cal_data$data, c("1", "2", "3","10"))
+plot_cal_data(cal_data$data, stations = c("1", "2", "3","10"), variables =
+c("PT", "Q"))
 }

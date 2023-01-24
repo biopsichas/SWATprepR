@@ -49,10 +49,10 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
-    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
-    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
     <a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a>
     <a class="dropdown-item" href="../articles/land_use.html">Land use</a>
+    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
+    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
   </div>
 </li>
 <li class="nav-item">
@@ -261,7 +261,7 @@ well. For instance a new code is
 stay the same and the last three added should be depth to impervious
 layers, depth to water level and drainage status classes. It is
 important to point out that intersection with GIS layers in this example
-increased number of unique soil types from 185 to 546 and a new soil
+increased number of unique soil types from 184 to 542 and a new soil
 type distribution GIS data have been created.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Example of new soil codes</span></span>
@@ -339,7 +339,7 @@ functions.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span>, <span class="va">NLAYERS</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">)</span>, <span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Lyr"</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="co">##Printing structure example of the required table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 'data.frame':    546 obs. of  17 variables:</span></span>
+<pre><code><span><span class="co">## 'data.frame':    542 obs. of  17 variables:</span></span>
 <span><span class="co">##  $ SNAM   : chr  "SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N" "SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N" "SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N" "SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N" ...</span></span>
 <span><span class="co">##  $ NLAYERS: num  3 3 3 3 3 3 3 3 3 3 ...</span></span>
 <span><span class="co">##  $ SOL_Z1 : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
@@ -363,12 +363,48 @@ functions.</p>
 </h3>
 <p>This section is the only required part and is the essence of the
 workflow. In it <a href="../reference/get_soil_parameters.html">get_soil_parameters</a> is
-filling all required SWAT+ parameters for exception of Hydrologic Soil
-Groups, which is added in a loop with <a href="../reference/get_hsg.html">get_hsg</a> function. <a href="../reference/get_soil_parameters.html">get_soil_parameters</a>
-function is very straightforward, if input data is formatted correctly.
-However, <a href="../reference/get_hsg.html">get_hsg</a> function
-require an assemblance of information per each soil type. A simple
-example <em>get_hsg(d_imp = “&gt;100cm”, d_wtr = “&lt;60cm”, drn = “Y”,
+filling all required SWAT+ parameters for exception of <a href="#par_make2">Hydrologic Soil Groups</a>, which is added in a loop
+with <a href="../reference/get_hsg.html">get_hsg</a> function. <a href="../reference/get_soil_parameters.html">get_soil_parameters</a>
+function is very straightforward, if input data is formatted
+correctly.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Adding all SWAT soil parameters for except HYDGRP  </span></span>
+<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="overwritting-with-measured-parameters">Overwritting with measured parameters<a class="anchor" aria-label="anchor" href="#overwritting-with-measured-parameters"></a>
+</h3>
+<p>In case some soil types do have have required soil parameters <a href="../reference/get_soil_parameters.html">get_soil_parameters</a>
+function results can be overwritten. Example below provides example data
+and code to be used for replacing parameters in the generated user
+table.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Example data loaded to be used for overwriting parameters in the user table</span></span>
+<span><span class="va">rep_pars_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"soil_parameters.xlsx"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span>
+<span><span class="va">replace_pars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">rep_pars_path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##Extracting soil type codes for each soil layer </span></span>
+<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html" class="external-link">separate</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="va">SNAM</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr1"</span>, <span class="st">"Lyr2"</span>, <span class="st">"Lyr3"</span>, <span class="st">"LyrX"</span><span class="op">)</span>, <span class="st">"_"</span>, extra <span class="op">=</span> <span class="st">"merge"</span>, remove <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co">##Replacing values for selected soil types</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">p</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Emt"</span>, <span class="st">"Mpl"</span>, <span class="st">"Tn"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">##Selected soil layers</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">l</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">##Selected parameters</span></span>
+<span>    <span class="va">mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SOL_Z"</span>, <span class="st">"SOL_BD"</span>, <span class="st">"SOL_AWC"</span>, <span class="st">"SOL_K"</span>, <span class="st">"SOL_CBN"</span>, <span class="st">"CLAY"</span>, </span>
+<span>                   <span class="st">"SILT"</span>, <span class="st">"SAND"</span>, <span class="st">"ROCK"</span>, <span class="st">"SOL_ALB"</span>, <span class="st">"USLE_K"</span>, <span class="st">"SOL_EC"</span><span class="op">)</span>,<span class="va">l</span><span class="op">)</span></span>
+<span>    <span class="va">usertable</span><span class="op">[</span><span class="va">usertable</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Lyr"</span>,<span class="va">l</span><span class="op">)</span><span class="op">]</span> <span class="op">==</span> <span class="va">p</span>, <span class="va">mp</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">replace_pars</span><span class="op">[</span><span class="va">replace_pars</span><span class="op">[</span><span class="st">"SNAM"</span><span class="op">]</span> <span class="op">==</span> <span class="va">p</span>, <span class="va">mp</span><span class="op">]</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">##Removing columns with soil types for each layer</span></span>
+<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Lyr"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="par_make2">Adding Hydrologic Soil Groups<a class="anchor" aria-label="anchor" href="#par_make2"></a>
+</h3>
+<p><a href="../reference/get_hsg.html">get_hsg</a> function require an
+assemblance of information per each soil type. A simple example
+<em>get_hsg(d_imp = “&gt;100cm”, d_wtr = “&lt;60cm”, drn = “Y”,
 data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_Z1 = 250, SOL_Z2 = 700))</em>.
 The first three class values (impervious layer, water level and drainage
 status) extracted from soil name (SNAM) and the last is one line
@@ -377,10 +413,8 @@ dataframe extracted from <em>usertable</em> with all <em>SOL_K</em> and
 generated parameters are available (i.e. from field measurements or
 local databases), they can be used by overwriting generated parameters
 in the <em>usertable</em>. In our example we didn’t have such data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##Adding all SWAT soil parameters for except HYDGRP  </span></span>
-<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_soil_parameters.html">get_soil_parameters</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span>
-<span><span class="co">##Adding HYDGRP in a look for each row</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##Adding HYDGRP in a look for each row</span></span>
 <span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">c</span>, <span class="fu"><a href="../reference/get_hsg.html">get_hsg</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">$</span><span class="va">SNAM</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"_"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>,</span>
@@ -423,17 +457,17 @@ in the <em>usertable</em>. In our example we didn’t have such data.</p>
 <p>After generation of all required soil parameters, one could join them
 with soil type GIS data and check the results on a map. Below are just
 few examples.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">soilp</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">usertable</span>, by <span class="op">=</span> <span class="st">"SNAM"</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co">##Plot soil hydrologic groups</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"HYDGRP"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-1.png" width="700"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"SOL_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-2.png" width="700"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Plot soil sol_k for the top layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilp</span><span class="op">[</span><span class="st">"USLE_K1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_maps-3.png" width="700"></p>
@@ -447,12 +481,12 @@ codes and soil type codes (<em>‘Soil_SWAT_cod.csv’</em>) and
 <em>usersoil</em> table (<em>‘usersoil_lrew.csv’</em>). DEM data in this
 step is used to help rastarize soil types distribution to grid, which
 will be used by setup preparation algorithms.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Reading catchment DEM raster data</span></span>
 <span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/read_stars.html" class="external-link">read_stars</a></span><span class="op">(</span><span class="va">DEM_path</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dem</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_output-1.png" width="700"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Merging unique soil types into one row and multipolygon</span></span>
 <span><span class="va">soils_dis</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -465,22 +499,22 @@ will be used by setup preparation algorithms.</p>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_rasterize.html" class="external-link">st_rasterize</a></span><span class="op">(</span><span class="va">dem</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soils_raster</span><span class="op">)</span></span></code></pre></div>
 <p><img src="soil_files/figure-html/soil_output-2.png" width="700"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Preparing linkage table</span></span>
 <span><span class="va">soil_link_table</span> <span class="op">&lt;-</span> <span class="va">soils_dis</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SOIL_ID</span>, <span class="va">SNAME</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">soil_link_table</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
-<span><span class="co">##   SOIL_ID SNAME                       </span></span>
-<span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span>       1 L_L_L_2_&gt;100cm_&lt;60cm_Y      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span>       2 L_L_L_2_&gt;100cm_&gt;100cm_Y     </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span>       3 LS1_LS1_S1_4_&gt;100cm_&gt;100cm_N</span></span></code></pre>
+<span><span class="co">##   SOIL_ID SNAME                        </span></span>
+<span><span class="co">##     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>       1 Emt_Emt_Emt_1_&gt;100cm_&lt;60cm_N </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>       2 Emt_Emt_Emt_1_&gt;100cm_&lt;60cm_Y </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>       3 Emt_Emt_Emt_1_&gt;100cm_&gt;100cm_N</span></span></code></pre>
 <p><code>write_stars</code> function from <code>stars</code> package
 could be used to write raster file and <code>write.csv</code> R base
 function to write <em>.csv</em> files.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/write_stars.html" class="external-link">write_stars</a></span><span class="op">(</span><span class="va">soils_raster</span> , <span class="st">"../output/SoilmapSWAT.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">soil_link_table</span>, <span class="st">"../output/Soil_SWAT_cod.csv"</span>, row.names<span class="op">=</span><span class="cn">FALSE</span>, quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="st">"../output/usersoil_lrew.csv"</span>, row.names<span class="op">=</span><span class="cn">FALSE</span>, quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>

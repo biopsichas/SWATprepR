@@ -2,8 +2,13 @@ Type: Package
 Package: svatools
 Title: SWAT+ protocol tools
 Version: 0.0.4
-Date: 2023-01-09
-Author: Svajunas Plunge <svajunas.plunge@gmail.com>
+Date: 2023-01-23
+Author: c(person("Svajunas", "Plunge",
+             email = "svajunas.plunge@gmail.com",
+             role = c("aut", "cre")),
+          person("Ekaterina", "Rets",
+             email = "ekaterina.p.rets@gmail.com",
+             role = c("aut")))
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
 Description: Tool is designed to help with SWAT+ input data preparation,
     visualisation and model outpout data assessment.
