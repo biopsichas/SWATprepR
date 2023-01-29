@@ -112,7 +112,7 @@ parcels <- lu["id"] %>%
 output_path <- "../output/"
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 catchment <- st_read(basin_path, quiet = TRUE) %>% 
-  rename(name = basin) %>% 
+  select() %>% 
   mutate(name = "Upper_Zglowiaczka") %>% 
   st_transform(4326)
 ##Writing all the necessary training data for remote sensing algorithm.
@@ -152,7 +152,7 @@ lu_rot_df <- read.csv(system.file("extdata", "lu_rot.csv", package = "svatools")
 print(head(lu_rot_df, 10))
 ```
 
-Prepared attribute table can be looped, if longer time series of crop rotation data is needed. Following lines provides example how time series could be extended.
+Prepared attribute table can be looped, if longer time series of crop rotation data is needed. Following lines provides example how time series could be extended. Additionally, write 
 
 ```{r lu_extend, eval = FALSE, message = FALSE, warning = FALSE}
 i=1
@@ -168,3 +168,13 @@ colnames(df) <- c("lu", paste0("y_", seq(1983,2022)), "geometry")
 df <- df[-c(2:8)]
 st_write(df, paste0(output_path, "lu_rot_final.shp"), append = F)
 ```
+
+Final few lines to write input for the SWATbuildR.  
+
+```{r lu_buildr, eval = FALSE, message = FALSE, warning = FALSE}
+lu$type <- df$lu
+lu[lu$drainage == 0, "drainage"] <- NA
+##Write land use input file for SWATbuildR
+st_write(st_make_valid(lu), paste0(output_path, "land.shp"), append = F)
+```
+

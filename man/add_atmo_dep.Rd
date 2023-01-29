@@ -4,23 +4,28 @@
 \alias{add_atmo_dep}
 \title{Update sqlite database with atmospheric deposition data}
 \usage{
-add_atmo_dep(db_path, t_ext = "year")
+add_atmo_dep(df, db_path, t_ext = "year")
 }
 \arguments{
+\item{df}{dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns obtained from \code{\link{get_atmo_dep}}) function.}
+
 \item{db_path}{character to sqlite database (example "./output/project.sqlite")}
 
 \item{t_ext}{string, 'year' for yearly averages, 'month' - monthly averages
 and 'annual' for average of all period. Optional (default - "year").}
 }
 \value{
-updated sqlite database with codes and connection to atmospheric deposition  data in 'atmo.cli' file
+write data in 'atmodep.cli' file and updated sqlite database with codes and connection
+to atmospheric deposition data
 }
 \description{
 Update sqlite database with atmospheric deposition data
 }
 \examples{
 \dontrun{
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+df <- get_atmo_dep(basin_path)
 db_path <- "./output/test/project.sqlite"
-add_atmo_dep(db_path)
+add_atmo_dep(df, db_path)
 }
 }

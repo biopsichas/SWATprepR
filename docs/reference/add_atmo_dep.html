@@ -61,12 +61,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_atmo_dep</span><span class="op">(</span><span class="va">db_path</span>, t_ext <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_atmo_dep</span><span class="op">(</span><span class="va">df</span>, <span class="va">db_path</span>, t_ext <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>db_path</dt>
+    <dl><dt>df</dt>
+<dd><p>dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns obtained from <code><a href="get_atmo_dep.html">get_atmo_dep</a></code>) function.</p></dd>
+
+
+<dt>db_path</dt>
 <dd><p>character to sqlite database (example "./output/project.sqlite")</p></dd>
 
 
@@ -79,14 +83,17 @@ and 'annual' for average of all period. Optional (default - "year").</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>updated sqlite database with codes and connection to atmospheric deposition  data in 'atmo.cli' file</p>
+<p>write data in 'atmodep.cli' file and updated sqlite database with codes and connection
+to atmospheric deposition data</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/basin.shp"</span>, package <span class="op">=</span> <span class="st">"svatools"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_atmo_dep.html">get_atmo_dep</a></span><span class="op">(</span><span class="va">basin_path</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"./output/test/project.sqlite"</span></span></span>
-<span class="r-in"><span><span class="fu">add_atmo_dep</span><span class="op">(</span><span class="va">db_path</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">add_atmo_dep</span><span class="op">(</span><span class="va">df</span>, <span class="va">db_path</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

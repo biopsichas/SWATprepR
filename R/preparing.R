@@ -439,14 +439,16 @@ get_soil_parameters <- function(soilp){
     soilp[paste0("USLE_K", i)] <-  ES*ECT*EOC*EHS
     soilp[paste0("ROCK", i)] <- 0
     soilp[paste0("SOL_EC", i)] <- 0
+    soilp[paste0("SOL_CAL", i)] <- 0
+    soilp[paste0("SOL_PH", i)] <- 0
   }
   ##Formating table
   soilpf <- data.frame(OBJECTID = soilp$rownum, MUID = "", SEQN = 1, SNAM = soilp$SNAM, S5ID = "", CMPPCT = 1, NLAYERS = soilp$NLAYERS, 
                        HYDGRP = "", SOL_ZMX = soilp$SOL_ZMX, ANION_EXCL = 0.5, SOL_CRK = 0.5, TEXTURE = "")
   
   for(i in seq_along(sol_z)){
-    sel_cols <- c(paste0("SOL_Z", i), paste0("SOL_BD", i), paste0("SOL_AWC", i), paste0("SOL_K", i), paste0("SOL_CBN", i), paste0("CLAY", i),
-                  paste0("SILT", i), paste0("SAND", i), paste0("ROCK", i), paste0("SOL_ALB", i), paste0("USLE_K", i), paste0("SOL_EC", i))
+    sel_cols <- paste0(c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
+                         "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH"), i)
     soilpf[sel_cols]  <- soilp[sel_cols] 
   }
   return(soilpf)
@@ -713,38 +715,79 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
 
 #' Update sqlite database with atmospheric deposition data
 #'
+#' @param df dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns obtained from \code{\link{get_atmo_dep}}) function.
 #' @param db_path character to sqlite database (example "./output/project.sqlite")
 #' @param t_ext string, 'year' for yearly averages, 'month' - monthly averages
 #' and 'annual' for average of all period. Optional (default - "year"). 
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
 #' @importFrom RSQLite SQLite
-#' @return updated sqlite database with codes and connection to atmospheric deposition  data in 'atmo.cli' file
+#' @return write data in 'atmodep.cli' file and updated sqlite database with codes and connection 
+#' to atmospheric deposition data 
 #' @export 
 #' @examples
 #' \dontrun{
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' df <- get_atmo_dep(basin_path)
 #' db_path <- "./output/test/project.sqlite"
-#' add_atmo_dep(db_path)
+#' add_atmo_dep(df, db_path)
 #' }
 
-add_atmo_dep <- function(db_path,  t_ext = 'year'){
-  ##Preparing code for codes_bsn table
-  if (t_ext == 'year'){
+add_atmo_dep <- function(df, db_path, t_ext = "year"){
+  ##Path to the folder to write weather files (same as sql db)
+  write_path <- sub("[^/]+$", "", db_path)
+  f_name <- "atmodep.cli"
+  ##Rounding input data
+  df <- mutate_if(df, is.numeric, ~round(.,3))
+  d <- as.data.frame(t(df))
+  ##Setting file name and initial parameters to write
+  f_path <- paste0(write_path, f_name)
+  mo_init <- 0 
+  yr_init <- as.numeric(substr(d[1,1], 1, 4))
+  num_aa <- dim(d)[2]
+  ##Cases depending on time step
+  if(t_ext == "year"){
+    ts <- "yr"
     atmo_dep <- 'y'
-  } else if (t_ext == 'month'){
+    d <- d[-1,]
+  } else if(t_ext == "month"){
+    ts <- "mo"
     atmo_dep <- 'm'
-  } else if (t_ext == 'annual'){
+    mo_init <- as.numeric(substr(d[1,1], 6, 7))
+    d <- d[-1,]
+  } else if(t_ext == "annual"){
+    ts <- "aa"
     atmo_dep <- 'a'
+    yr_init <- 0
+    d <- mutate_if(as.data.frame(colMeans(df[,-1])), is.numeric, ~round(.,3))
+    num_aa <- 0
   } else {
     stop("Wrong input t_ext should be 'year', 'month' or 'annual'")
   }
+  ##Combining all parameters in a dataframe
+  df <- data.frame(NUM_STA = 1, TIMESTEP = ts, MO_INIT = mo_init, 
+                   YR_INIT = yr_init, NUM_AA = num_aa)
+  ##Adding parameter names in the end
+  d$par <- rownames(d)
+  ##Writing file
+  write.table(paste0("'atmodep.cli' file was written by svatools R package ", Sys.time()), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  suppressWarnings(write.table(df, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
+  write.table("atmo", f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(d, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  ##Info from writing
+  print(paste("Atmospheric deposition data were written into ", f_path))
+  
   ##Adding info to database tables
   db <- dbConnect(RSQLite::SQLite(), db_path)
   weather_sta_cli <- dbReadTable(db, 'weather_sta_cli')
   codes_bsn <- dbReadTable(db, 'codes_bsn')
-  weather_sta_cli$atmo_dep <- "atmo.cli"
+  weather_sta_cli$atmo_dep <- f_name
   codes_bsn$atmo_dep <- atmo_dep
   dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, overwrite = TRUE)
   dbWriteTable(db, 'codes_bsn', codes_bsn, overwrite = TRUE)
+  ##Table for atmo_cli 
+  df <- data.frame(id = 1, filename = f_name, timestep = ts, mo_init = mo_init, 
+                   yr_init = yr_init, num_aa = num_aa)
+  dbWriteTable(db, 'atmo_cli', df, overwrite = TRUE)
   dbDisconnect(db)
   return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
 }

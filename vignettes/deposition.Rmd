@@ -50,18 +50,9 @@ knitr::include_graphics('Rplot.png')
 
 ## SWAT+ input
 
-Atmospheric deposition data into SWAT+ model can be included via *'atmo.cli'* file. For this [write_atmo_cli](../reference/write_atmo_cli.html) function was designed. It could write yearly, monthly or whole modeled period averages. Function requires only [get_atmo_dep](../reference/get_atmo_dep.html) function output for yearly or monthly data. 
+Atmospheric deposition data into SWAT+ model can be included via *'atmodep.cli'* file. For this [add_atmo_dep](../reference/add_atmo_dep.html) function was designed. It could write yearly, monthly or whole modeled period averages. Function requires only [get_atmo_dep](../reference/get_atmo_dep.html) function output for yearly or monthly data. SWAT+ model setup `.sqlite` database has to be updated too. Thus, this function updates also required tables. In case other than average yearly atmospheric deposition data are used, *t_ext* function parameter should be provided. Please read more in [add_atmo_dep](../reference/add_atmo_dep.html).
 
 ```{r atmo_write, eval=FALSE, message = FALSE, warning = FALSE}
-write_atmo_cli(df, "./output/test/")
-```
-
-## Updating .sqlite database 
-
-SWAT+ model setup sqlite database has to be updated after writing atmospheric deposition into *'atmo.cli'* file. For this task [add_atmo_dep](../reference/add_atmo_dep.html) function can be used to update required tables. In case other than average yearly atmospheric deposition data are used, *t_ext* function parameter  should be provided. Please read more in [add_atmo_dep](../reference/add_atmo_dep.html).  
-
-```{r update, eval=FALSE, message = FALSE, warning = FALSE}
-##Path to .sqlite
 db_path <- "./output/test/project.sqlite"
-add_atmo_dep(db_path)
+add_atmo_dep(df, db_path)
 ```

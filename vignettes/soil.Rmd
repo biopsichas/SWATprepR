@@ -68,10 +68,14 @@ print(head(humus, 3))
 ##All data should be in one coordinate system.
 ##Impervious layer is prepared from basin layer as it is below 1 m whole catchment falls into one category. 
 impervious<- st_read(basin_path, quiet = TRUE) %>% 
-  mutate(Impervious = ">100cm")
-water_level <- st_read(water_l_path, quiet = TRUE) 
-drainage <- st_read(drainage_path, quiet = TRUE) 
-soils <- st_read(soil_path, quiet = TRUE)
+  mutate(Impervious = ">100cm") %>% 
+  st_transform(3035)
+water_level <- st_read(water_l_path, quiet = TRUE) %>% 
+  st_transform(3035)
+drainage <- st_read(drainage_path, quiet = TRUE) %>% 
+  st_transform(3035)
+soils <- st_read(soil_path, quiet = TRUE) %>% 
+  st_transform(3035)
 ```
 
 All required GIS input data are presented in the maps below. Polygons in the impervious layer should have one of three possible categories:  "<50cm", "50-100cm" and ">100cm". If no information is available impervious layer depth could be assumed to be the depth of last soil layer and then reclassified into one of the three categories. Water level depth also should have only three categories: "<60cm", "60-100cm" and ">100cm". If information is not available soil types and land use could serve as a good proxy for this information. For instance wet areas as wetlands could probably be assigned with "<60cm" class, areas with dominant organic soils with "60-100cm", etc. Drainage status should be divided into two: "Y" for drained areas, "N" for areas without working tile drains. If no database available, information about existence of drains might be available in drainage installation plans.  
@@ -250,7 +254,6 @@ soils_dis <- soils %>%
          SNAME = SNAM)
 ##Rasterizing soil type data
 soils_raster <- soils_dis %>% 
-  st_transform(3035) %>% 
   st_rasterize(dem)
 plot(soils_raster)
 ##Preparing linkage table
@@ -263,6 +266,12 @@ print(head(soil_link_table, 3))
 `write_stars` function from `stars` package could be used to write raster file and `write.csv` R base function to write *.csv* files. 
 
 ```{r soil_write, message = FALSE, warning = FALSE, eval = FALSE}
+##Extending table from 3 to 10 layers (needed by SWATbuildR)
+for(i in seq(4, 10)){
+  usertable[paste0(c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
+                  "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH"), i)] <- 0
+}
+##Writing files
 write_stars(soils_raster , "../output/SoilmapSWAT.tif")
 write.csv(soil_link_table, "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
 write.csv(usertable, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)

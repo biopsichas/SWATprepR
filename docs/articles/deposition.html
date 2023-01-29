@@ -178,25 +178,17 @@ protocol</a>.</p>
 <h2 id="swat-input">SWAT+ input<a class="anchor" aria-label="anchor" href="#swat-input"></a>
 </h2>
 <p>Atmospheric deposition data into SWAT+ model can be included via
-<em>‘atmo.cli’</em> file. For this <a href="../reference/write_atmo_cli.html">write_atmo_cli</a> function was
+<em>‘atmodep.cli’</em> file. For this <a href="../reference/add_atmo_dep.html">add_atmo_dep</a> function was
 designed. It could write yearly, monthly or whole modeled period
 averages. Function requires only <a href="../reference/get_atmo_dep.html">get_atmo_dep</a> function output
-for yearly or monthly data.</p>
+for yearly or monthly data. SWAT+ model setup <code>.sqlite</code>
+database has to be updated too. Thus, this function updates also
+required tables. In case other than average yearly atmospheric
+deposition data are used, <em>t_ext</em> function parameter should be
+provided. Please read more in <a href="../reference/add_atmo_dep.html">add_atmo_dep</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_atmo_cli.html">write_atmo_cli</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"./output/test/"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="updating--sqlite-database">Updating .sqlite database<a class="anchor" aria-label="anchor" href="#updating--sqlite-database"></a>
-</h2>
-<p>SWAT+ model setup sqlite database has to be updated after writing
-atmospheric deposition into <em>‘atmo.cli’</em> file. For this task <a href="../reference/add_atmo_dep.html">add_atmo_dep</a> function can be
-used to update required tables. In case other than average yearly
-atmospheric deposition data are used, <em>t_ext</em> function parameter
-should be provided. Please read more in <a href="../reference/add_atmo_dep.html">add_atmo_dep</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##Path to .sqlite</span></span>
-<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"./output/test/project.sqlite"</span></span>
-<span><span class="fu"><a href="../reference/add_atmo_dep.html">add_atmo_dep</a></span><span class="op">(</span><span class="va">db_path</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="st">"./output/test/project.sqlite"</span></span>
+<span><span class="fu"><a href="../reference/add_atmo_dep.html">add_atmo_dep</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">db_path</span><span class="op">)</span></span></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-grizzetti2005" class="csl-entry">
 Grizzetti, B., F. Bouraoui, G. de Marsily, and G. Bidoglio. 2005.

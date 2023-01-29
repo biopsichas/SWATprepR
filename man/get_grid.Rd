@@ -21,7 +21,7 @@ Prepare grid for interpolation
 }
 \examples{
 \dontrun{
-get_grid(shp 2000)
+get_grid(shp, 2000, wkt_str)
 }
 }
 \keyword{internal}
