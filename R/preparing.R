@@ -771,7 +771,7 @@ add_atmo_dep <- function(df, db_path, t_ext = "year"){
   ##Writing file
   write.table(paste0("'atmodep.cli' file was written by svatools R package ", Sys.time()), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   suppressWarnings(write.table(df, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
-  write.table("atmo", f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(f_name, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(d, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   ##Info from writing
   print(paste("Atmospheric deposition data were written into ", f_path))
