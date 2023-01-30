@@ -261,7 +261,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     wgn_mon$wet_dry <- aggregate(PCP~mon, df, my.pwd)[,2]
     wgn_mon$wet_wet <- aggregate(PCP~mon, df, my.pww)[,2]
     wgn_mon$slr_ave <- aggregate(SLR~mon, df, mean)[,2]
-    wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]/100
+    wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]
     wgn_mon$wnd_ave <- aggregate(WNDSPD~mon, df, mean)[,2]
     wgn_mon$wgn_id <- j
     ##Saving results
