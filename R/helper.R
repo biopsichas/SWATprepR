@@ -234,7 +234,7 @@ sp.na.omit <- function(x, margin=1) {
 df_t <- function(sp_df){
   ##Preparing time series files and writing them into output folder
   df <- sp_df@data[,-1]
-  df[is.na(df)] <- -99 ##Changing NA to -99 for weather generator
+  # df[is.na(df)] <- -99 ##Changing NA to -99 for weather generator
   as.data.frame(t(df)) %>%
     mutate_if(is.numeric, ~round(., 3))
 }
