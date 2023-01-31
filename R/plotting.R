@@ -251,7 +251,7 @@ plot_map <- function(df, df_station, rch, shp){
       addPopupGraphs(p_all, group = 'Stations', width = 600, height = 400) %>%
       addLayersControl(baseGroups = c("OSM", "Imagery", "Topography"),
                        overlayGroups = c("Basin", "Reaches", "Stations"),
-                       options = layersControlOptions(collapsed = FALSE))
+                       options = layersControlOptions(collapsed = TRUE))
   } else {
     stop("Coordinate system of station, reach and basin data should be EPSG:4326!!!. Now it is not. Please correct it. ")
   }
