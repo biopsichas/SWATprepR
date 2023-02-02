@@ -54,7 +54,6 @@ For data rich monitoring station [plot_cal_data](../reference/plot_cal_data.html
 
 ```{r plot_cal_one, message = FALSE, warning = FALSE}
 plot_cal_data(cal_data$data, c("4"))
-
 ```
 
 ### Monthly summary
@@ -90,7 +89,7 @@ library(sf)
 ##Loading and converting coordinate system of GIS data. EPSG 4326 coordinate system should be used to get right plot. 
 reach_path <- system.file("extdata", "GIS/reaches.shp", package = "svatools")
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
-reach <- st_transform(st_read(reach_path), 4326)
-basin <-st_transform(st_read(basin_path), 4326)
+reach <- st_transform(st_read(reach_path, quiet = TRUE), 4326)
+basin <-st_transform(st_read(basin_path, quiet = TRUE), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)
 ```
