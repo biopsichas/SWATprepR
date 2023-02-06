@@ -20,7 +20,6 @@
 #' c("PT", "Q"))
 
 plot_cal_data <- function(df, stations, variables = levels(as.factor(df$Variables))) {
-  
   df = subset(df, Station %in% stations & Variables %in% variables)
   if (nrow(df)==0) stop("Non existing station or variable")
   df_gaps = data.frame (matrix(nrow = 0, ncol = length(colnames (df))))
@@ -47,12 +46,13 @@ plot_cal_data <- function(df, stations, variables = levels(as.factor(df$Variable
              by.y = c("DATE",  "Station", "Variables"), all.x=T,all.y=T)
   
   if(length(stations) == 1){
+    num_rows = ifelse (length(ss$Variables)< 3, length(ss$Variables), 3)
     fig <- df %>%
       filter(Station %in% stations) %>% 
       mutate(Variables = as.factor(Variables)) %>% 
       group_by(Variables) %>%
-      group_map(~ plot_ly(data=., x = ~DATE, y = ~Values, color = ~Variables, colors = "Set2", type = "scatter", mode =  "lines+markers"), keep=TRUE) %>%
-      subplot(nrows = 3, shareX = FALSE, shareY=FALSE) %>% 
+      group_map(~ plot_ly(data=., x = ~DATE, y = ~Values, color = ~Variables, colors = "Set2", type = "scatter", mode =  "lines+markers"), .keep=TRUE) %>%
+      subplot(nrows = num_rows, shareX = FALSE, shareY=FALSE) %>% 
       hide_show()
   } else if (length(stations) > 1){
     fig <- ggplotly(ggplot(df %>% filter(Station %in% stations), aes(x = DATE, y = Values, color = Station))+
@@ -113,6 +113,7 @@ plot_ts_fig <- function(station, df){
 #' @return plotly object of interactive figure
 #' @importFrom dplyr filter mutate group_by %>% group_map
 #' @importFrom plotly plot_ly subplot 
+#' @importFrom plotly layout
 #' @importFrom lubridate month
 #' @export
 #'
@@ -124,19 +125,27 @@ plot_ts_fig <- function(station, df){
 
 plot_monthly <- function(df, station, 
                          variables = levels(as.factor(df$Variables))){
-  num_rows = ifelse (length(variables)< 3, 1, 3)
+
   if (nrow(subset(df, Station %in% station & Variables %in% variables))==0) stop("Non existing station or variable")
-  df %>%
-    filter(Station == station & Variables %in% variables) %>% 
+  df = subset(df, Station == station & Variables %in% variables)
+   ss = df %>% 
+    group_by(Variables)%>%
+     summarise()
+  num_rows = ifelse (length(ss$Variables)< 3, length(ss$Variables), 3)
+  n_colors = ifelse (length(ss$Variables)< 3, 3, length(ss$Variables))
+  df %>% 
     mutate(Variables = as.factor(Variables),
            Month = month(DATE)) %>% 
     group_by(Variables) %>% 
-    group_map(~ plot_ly(data=., x = ~Month, y = ~Values, color = ~Variables,  type = "box") %>%
+    group_map(~ plot_ly(data=., x = ~Month, y = ~Values, 
+                        color = ~Variables, 
+                        colors = RColorBrewer::brewer.pal(n_colors, "Set2")[1:length(ss$Variables)],
+                        type = "box") %>%
           layout(xaxis = list(
           tickvals = list(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
           tickangle = 0)
                 ), 
-          keep=TRUE)  %>%
+          .keep=TRUE)  %>%
     subplot(nrows = num_rows, shareX = FALSE, shareY=FALSE) %>% 
     hide_show()
 }
