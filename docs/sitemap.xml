@@ -210,4 +210,10 @@
   <url>
     <loc>/reference/write_wgnmaker_files.html</loc>
   </url>
+  <url>
+    <loc>/reference/add_missing_pcp_zero.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_weather_template.html</loc>
+  </url>
 </urlset>

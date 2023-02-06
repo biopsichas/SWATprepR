@@ -558,3 +558,35 @@ clean_wq <- function(df, zero_to_min = 1){
     distinct()
   return(df)
 }
+
+#' Replace empty PCP entry with 0
+#'
+#' @param df_to_correct dataframe to correct for PCP variable with "DATE" and "PCP" columns.
+#' @param df_valid (optional) dataframe with valid data for PCP variable with "DATE" and "PCP" columns.
+#'  Also should overlap with df_to_correct data.
+#' @param value_to_zero (optional) numeric value of daily PCP. Only NA values can be set to 0 when df_valid PCP
+#' values are below or equal to value_to_zero (default 0.2).
+#' @importFrom dplyr left_join mutate case_when filter select
+#' @return updated dataframe 
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' met_lst$data$ID8$PCP <- add_missing_pcp_zero(met_lst$data$ID8$PCP, met_lst$data$ID9$PCP)
+#' }
+
+add_missing_pcp_zero <- function(df_to_correct, df_valid = NULL, value_to_zero = .2){
+  df <- data.frame(DATE = seq.POSIXt(df_to_correct[[1,"DATE"]], df_to_correct[[nrow(df_to_correct),"DATE"]], by="day"))
+  df <- left_join(df, df_to_correct, by = "DATE") 
+  if(is.null(df_valid)){
+    df[is.na(df)] <- 0
+  } else {
+    df <- df %>% 
+      left_join(rename(df_valid, P = 2), by = "DATE") %>%
+      mutate(PCP = case_when(is.na(PCP) & P <= value_to_zero ~ 0,
+                             !is.na(PCP) ~ PCP)) %>% 
+      filter(!is.na(PCP)) %>% 
+      select(DATE, PCP)
+  }
+  return(df)
+}

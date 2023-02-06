@@ -176,3 +176,54 @@ write_wgnmaker_files <- function(write_path, meteo_lst, wgn_stations_lst, statio
   }
   return(print(paste0("Files for WGNmaker is prepared and located in ", write_path)))
 }
+
+# Write template ------------------------------------------------------
+
+#' Write weather meteo_lst into template .xlsx file
+#'
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param write_path (optional) character path to folder where results should be written (default "").
+#' @param f_name (optional) character name of the file (default 'weather_data.xlsx'). 
+#' @importFrom xlsx write.xlsx2 write.xlsx
+#' @importFrom sf st_drop_geometry
+#' @importFrom dplyr %>% select full_join arrange mutate
+#' @return .xlsx file written in template format, which could de read by \code{\link{load_template}} function.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' write_weather_template(met_lst)
+#' }
+
+write_weather_template <- function(meteo_lst, write_path = "", f_name = "weather_data.xlsx"){
+  ##Removing existing file if in path
+  f <- paste0(write_path, f_name)
+  if (file.exists(f)){file.remove(f)}
+  ##Writing station info
+  write.xlsx(as.data.frame(meteo_lst$stations %>% 
+                             st_drop_geometry %>%
+                             select(ID, Name, Elevation, Source, Long, Lat)), 
+             file = f, sheetName = "Stations", row.names = F, append = FALSE, showNA=FALSE)
+  options(xlsx.date.format="YYYY-MM-DD")
+  ##Writing data
+  dt <- meteo_lst$data
+  for (n in names(dt)){
+    df <- NULL
+    print(paste0("Working on station ", n))
+    for (par in names(dt[[n]])){
+      if(is.null(df)){
+        df <- dt[[n]][[par]]
+      } else {
+        df <- df %>%
+          full_join(dt[[n]][[par]], by = "DATE")
+      }
+    }
+    write.xlsx2(as.data.frame(df %>% mutate(DATE = as.Date(DATE)) %>% arrange(DATE)), file = f, sheetName = n, row.names = F,
+                append = T, showNA=FALSE)
+    ##Cleaning not get error from Java 
+    gc()
+  }
+  return(paste0("Writing was successful. Your file is in ", f))
+}
+
