@@ -629,6 +629,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
                       lon = round(as.numeric(st[st$ID == n,"Long"]), 3), 
                       elev = round(as.numeric(st[st$ID == n,"Elevation"]), 3))
     pars <- names(meteo_lst[["data"]][[n]])
+    pars <- pars[pars %in% names(p_lst)[c(1:6)]]
     ##Initial information to 'weather_sta_cli'
     weather_sta_cli[id_st, c("id", "name", "wgn_id", "lat", "lon")] <- 
       list(as.integer(id_st), paste0("s", gsub("\\.", "", as.character(df1$lat)), "n", gsub("\\.", "", as.character(df1$lon)), "e"),
@@ -640,7 +641,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
         full_join(meteo_lst[["data"]][[n]][["TMP_MIN"]], by = "DATE") %>% 
         mutate(year = year(DATE), day = yday(DATE)) %>% 
         select(year, day, TMP_MAX, TMP_MIN, DATE)
-      df1$nbyr <- round(interval(df[1,"DATE"], df[nrow(df),"DATE"]) / years(1), 0)
+      df1$nbyr <- round(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1), 0)
       file_n <- paste0("sta_", tolower(n), ".", p_lst[["TMP_MAX"]][[1]])
       ##Head line in file
       text_l <- paste0(file_n, ": ", p_lst[["TMP_MAX"]][[2]], " data - file written by svatools R package ", Sys.time())
@@ -665,7 +666,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
     for(p in pars){
       df <- meteo_lst[["data"]][[n]][[p]] %>% 
         mutate(year = year(DATE), day = yday(DATE)) 
-      df1$nbyr <- round(interval(df[1,"DATE"], df[nrow(df),"DATE"]) / years(1), 0)
+      df1$nbyr <- round(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1), 0)
       file_n <- paste0("sta_", tolower(n), ".", p_lst[[p]][[1]])
       text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by svatools R package ", Sys.time())
       ##Writing file per parameter for each station
