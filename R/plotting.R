@@ -160,7 +160,7 @@ plot_monthly <- function(df, station,
 #' @importFrom tidyr drop_na pivot_wider
 #' @importFrom lubridate month
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth facet_wrap theme_bw theme
-#' element_text geom_boxplot xlab ylab
+#' element_text geom_boxplot xlab ylab after_stat
 #' @importFrom ggpmisc stat_poly_eq
 #' @return list of two ggplot objects: regression - monthly regression plots for total vs some part 
 #' (i.e. mineral or organic), fraction - monthly fraction values.
@@ -195,7 +195,7 @@ plot_fractions <- function(df, station, total_var, min_vars){
   plot_reg <- ggplot(df, aes(x = Min, y = Tot)) +
     geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
     stat_poly_eq(formula = y~x, 
-                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 aes(label = paste(ggplot2::after_stat(eq.label),ggplot2::after_stat(rr.label), sep = "~~~")), 
                  parse = TRUE, 
                  size = 2.4) +         
     geom_point()+
