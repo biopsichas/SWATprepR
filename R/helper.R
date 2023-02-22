@@ -288,7 +288,7 @@ transform_to_list <- function(list_sp, start_date, end_date){
       y <- df_t(list_sp[[p]])
       names(y) <- rep(p, dim(y)[2])
       for(i in 1:ncol(y)){
-        r[["data"]][[paste0("ID", i)]][[p]] <- bind_cols(df["DATE"], y[1])
+        r[["data"]][[paste0("ID", i)]][[p]] <- bind_cols(df["DATE"], y[i])
       }
     } else {
       warning(paste(p, "variable is missing. Please add it later."))

@@ -135,10 +135,12 @@ For this *.tif* file [extract_rotation](../reference/extract_rotation.html) func
 ##Loading results for accuracy
 lu_rot <- extract_rotation(lu, 2015, "cropmaps2015_2022.tif", "../output/", lookup, lu_constant)
 
-##Overwriting 2021 year classification results since actual data were available.
+##Overwriting 2021 year classification results since actual data were available. 
+##Also removing results were land use should be constant
 lu_rot <- lu_rot %>% 
   mutate(y_2021 = ifelse(!is.na(y_2021), type, NA)) %>% 
-  select(-type)
+  select(-type) %>% 
+  mutate_at(vars(starts_with("y_")), ~ifelse(lu %in%  lu_constant,NA,.))
 
 ##Writing results for SWATfarmR input preparation functions
 st_write(lu_rot , paste0(output_path, "lu_rot.shp"), append = F)
