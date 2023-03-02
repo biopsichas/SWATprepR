@@ -641,7 +641,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
         full_join(meteo_lst[["data"]][[n]][["TMP_MIN"]], by = "DATE") %>% 
         mutate(year = year(DATE), day = yday(DATE)) %>% 
         select(year, day, TMP_MAX, TMP_MIN, DATE)
-      df1$nbyr <- round(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1), 0)
+      df1$nbyr <- ceiling(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1))
       file_n <- paste0("sta_", tolower(n), ".", p_lst[["TMP_MAX"]][[1]])
       ##Head line in file
       text_l <- paste0(file_n, ": ", p_lst[["TMP_MAX"]][[2]], " data - file written by svatools R package ", Sys.time())
@@ -693,7 +693,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
     rename(id = ID, name = NAME, lat = LAT, lon = LONG, elev = ELEVATION, rain_yrs = RAIN_YRS) %>% 
     mutate(lat = round(as.numeric(lat), 2),
            lon = round(as.numeric(lon), 2),
-           elev = round(elev, 1),
+           elev = round(as.numeric(elev), 1),
            rain_yrs = as.integer(rain_yrs))
   weather_wgn_cli_mon <- wgn_lst$wgn_data %>% 
     rename(weather_wgn_cli_id = wgn_id)

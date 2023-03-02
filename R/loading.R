@@ -27,11 +27,11 @@ load_template <- function(template_path, epsg_code = 4326){
   ids <- excel_sheets(template_path) %>% 
     .[!. %in% "Stations"]
   ##Loading data with one data sheet
-  if(length(ids) == 1){
+  if(length(ids) == 1 && ids == "Data"){
     r <- read_xlsx(template_path, ids) %>%
       mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
-  ##Loading data with many data sheets
-  }else if(length(ids) > 1){
+    ##Loading data with many data sheets
+  }else if(length(ids) > 0){
     r <- list()
     for (id in ids){
       print(paste("Reading station", id, "data."))

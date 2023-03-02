@@ -474,6 +474,25 @@ my.pcpd <- function(x, nyears, na.rm = FALSE){
   return(pcpd)
 }
 
+#' Function to calculate hhr parameter
+#'
+#' @param x vector of numbers 
+#' @param na.rm logical, if NA should be cleaned
+#' @return numeric result
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#' my.pcpmhhr(x)
+#' }
+
+my.pcpmhhr <- function(x, na.rm = FALSE){ # this is an alternative way to calculate max half-hourly rainfall
+  if(na.rm)                               # it disaggregates the maximum daily pcp by multiplying with (30/1440)^0.25
+    x <- x[!is.na(x)]                     # perhaps useful if no subdaily pcp data are available
+  else if (any(is.na(x)))                 # source: Bernhofer script
+    return(NA)  
+  pcpmhhr <- max(x)*(30/1440)^0.25
+  return(pcpmhhr)
+}
 
 # Cleaning data ----------------------------------------------------------------
 

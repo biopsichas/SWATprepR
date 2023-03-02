@@ -65,18 +65,6 @@ end_date <- svatools:::get_dates(met_lst)$max_date
 met_lst_int <- transform_to_list(result, start_date, end_date)
 ```
 
-## Weather generator
-
-### WGNmaker excel macro
-
-SWAT model also needs weather generator input, which could be prepared with  [WGNmaker excel macro](https://swat.tamu.edu/media/41583/wgen-excel.zip). However, this tool requires specifically formatted excel files. [write_wgnmaker_files](../reference/write_wgnmaker_files.html) function allows to prepare those files. 
-
-```{r met_wgn, eval=FALSE, message = FALSE, warning = FALSE}
-wgn_stations_lst <- list(PCP = "ID12", SLR = "ID11", RELHUM = "ID12", TMP_MAX = "ID12", TMP_MIN = "ID12", WNDSPD = "ID12", MAXHHR = "ID12")
-write_wgnmaker_files("./output/", met_lst, wgn_stations_lst, "WGN_station")
-
-```
-
 ### WGN input function
 
 Weather generator inputs also can be directly prepared with [prepare_wgn](../reference/prepare_wgn.html) function from this package. 
