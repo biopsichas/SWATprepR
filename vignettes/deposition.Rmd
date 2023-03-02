@@ -35,6 +35,7 @@ EMEP provides access to yearly, monthly, daily and hourly data. Data for a selec
 
 ```{r atmo_dep, eval=FALSE, message = FALSE, warning = FALSE}
 library(svatools)
+library(ggplot2)
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
 df <- get_atmo_dep(basin_path)
 ##Plot results

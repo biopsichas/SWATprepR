@@ -1,8 +1,8 @@
 Type: Package
 Package: svatools
 Title: SWAT+ protocol tools
-Version: 0.0.4
-Date: 2023-01-23
+Version: 0.0.5
+Date: 2023-03-02
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")),
@@ -10,42 +10,39 @@ Author: c(person("Svajunas", "Plunge",
              email = "ekaterina.p.rets@gmail.com",
              role = c("aut")))
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
-Description: Tool is designed to help with SWAT+ input data preparation,
-    visualisation and model outpout data assessment.
+Description: Tool is designed to help with SWAT+ input data preparation.
 License: MIT + file LICENSE
 URL: https://github.com/biopsichas/svatools
 BugReports: https://github.com/biopsichas/svatools/issues
-Depends:
-    R (>= 4.2)
 Imports:
     comprehenr,
-    DBI (>= 1.1.3),
-    dplyr (>= 0.8.0.1),
+    DBI,
+    dplyr,
     euptf2,
-    ggplot2 (>= 3.3.6),
-    ggpmisc (>= 0.5.0),
-    gstat (>= 2.0-9),
-    leaflet (>= 2.1.1),
-    leafpop (>= 0.1.0),
-    lubridate (>= 1.8.0),
+    ggplot2,
+    ggpmisc,
+    gstat,
+    leaflet,
+    leafpop,
+    lubridate,
     methods,
-    plotly (>= 4.10),
-    purrr (>= 0.3.4),
-    raster (>= 3.5-21),
+    plotly,
+    purrr,
+    raster,
     RColorBrewer,
-    Rdpack (>= 2.4),
-    readxl (>= 1.4.0),
-    RNetCDF (>= 2.6-1),
-    RSQLite (>= 2.2.15),
-    sf (>= 1.0-9),
-    sp (>= 1.5-0),
-    stringr (>= 1.4.1),
-    tibble (>= 3.1.8),
-    tidyr (>= 1.2.0),
-    tidyselect (>= 1.1.2),
+    Rdpack,
+    readxl,
+    RNetCDF,
+    RSQLite,
+    sf,
+    sp,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
     utils,
-    xlsx (>= 0.6.5),
-    zoo (>= 1.8-10)
+    xlsx,
+    zoo
 Suggests: 
     devtools,
     knitr,

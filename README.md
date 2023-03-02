@@ -3,7 +3,7 @@ Introduction to svatools
 
 # svatools
 
-[![](https://img.shields.io/badge/devel%20version-0.0.4-gold.svg)](https://github.com/biopsichas/svatools)
+[![](https://img.shields.io/badge/devel%20version-0.0.5-gold.svg)](https://github.com/biopsichas/svatools)
 [![](https://img.shields.io/github/last-commit/biopsichas/svatools.svg)](https://github.com/biopsichas/svatools/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -14,14 +14,14 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7436013-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7436013)
 
-The goal of svatools is to help with the [SWAT+
-model](https://swat.tamu.edu/software/plus/) input data preparation,
-visualization and model output assessment. There are mostly functions,
-which were developed for the implementation of modeling tasks in the
-[OPTAIN project](https://www.optain.eu/). These tools are intended to
-fill the gaps in the SWAT+ workflow along side the main tools developed
-by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467).
-Therefore, we highly recommend trying and using these tools:
+The goal of `svatools` is to help with the [SWAT+
+model](https://swat.tamu.edu/software/plus/) input data preparation.
+There are mostly functions, which were developed for the implementation
+of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These
+tools are intended to fill the gaps in the SWAT+ workflow along side the
+main tools developed by [Christoph
+Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly
+recommend trying and using these tools:
 
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
   preparing management schedules for SWAT model;

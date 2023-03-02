@@ -1,3 +1,7 @@
+# svatools 0.0.5
+
+* Different bugs in various functions corrected. Plotting functions updated. Added function `add_missing_pcp_zero()`.
+
 # svatools 0.0.4
 
 * Land use data functions added `get_lu_points()` and `extract_rotation()` as well as *Land use* article page to explain how to use them.
