@@ -78,8 +78,8 @@ wgn <- prepare_wgn(met_lst,
                    WNDSPD = met_lst$data$ID10$WNDSPD, 
                    MAXHHR = met_lst$data$ID11$MAXHHR, 
                    SLR = met_lst$data$ID9$SLR)
-write.csv(wgn$wgn_st, "wgn_st.csv")
-write.csv(wgn$wgn_data, "wgn_data.csv")
+write.csv(wgn$wgn_st, "wgn_st.csv", row.names = FALSE, quote = FALSE)
+write.csv(wgn$wgn_data, "wgn_data.csv", row.names = FALSE, quote = FALSE)
 ```
 
 ## Writing

@@ -1,11 +1,10 @@
 .gitignore
-^R/test.R
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^templates$
 ^output$
 ^LICENSE\.md$
-^test.R
+^test*
 ^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$

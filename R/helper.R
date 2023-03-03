@@ -609,3 +609,55 @@ add_missing_pcp_zero <- function(df_to_correct, df_valid = NULL, value_to_zero =
   }
   return(df)
 }
+
+# Write template ------------------------------------------------------
+
+#' Write weather meteo_lst into template .xlsx file
+#'
+#' @param meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' @param write_path (optional) character path to folder where results should be written (default "").
+#' @param f_name (optional) character name of the file (default 'weather_data.xlsx'). 
+#' @importFrom openxlsx saveWorkbook createWorkbook writeData addWorksheet
+#' @importFrom sf st_drop_geometry
+#' @importFrom dplyr %>% select full_join arrange mutate
+#' @return .xlsx file written in template format, which could de read by \code{\link{load_template}} function.
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#' write_weather_template(met_lst)
+#' }
+
+write_weather_template <- function(meteo_lst, write_path = "", f_name = "weather_data.xlsx"){
+  ##Removing existing file if in path
+  f <- paste0(write_path, f_name)
+  ##Writing station info
+  getOption("openxlsx.dateFormat", "YYYY-MM-DD")
+  wb <- createWorkbook()
+  addWorksheet(wb, "Stations")
+  writeData(wb, "Stations", as.data.frame(meteo_lst$stations %>% 
+                                            st_drop_geometry %>%
+                                            select(ID, Name, Elevation, Source, Long, Lat)))
+  ##Writing data
+  dt <- meteo_lst$data
+  for (n in names(dt)){
+    df <- NULL
+    print(paste0("Working on station ", n))
+    for (par in names(dt[[n]])){
+      if(is.null(df)){
+        df <- dt[[n]][[par]]
+      } else {
+        df <- df %>%
+          full_join(dt[[n]][[par]], by = "DATE")
+      }
+    }
+    addWorksheet(wb, n)
+    writeData(wb, n, as.data.frame(df %>% 
+                                     mutate(DATE = as.Date(DATE)) %>%
+                                     arrange(DATE)))
+    
+  }
+  saveWorkbook(wb, f, overwrite = TRUE)
+  return(paste0("Writing was successful. Your file is in ", f))
+}
+

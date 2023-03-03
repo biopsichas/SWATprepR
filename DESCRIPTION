@@ -26,6 +26,7 @@ Imports:
     leafpop,
     lubridate,
     methods,
+    openxlsx,
     plotly,
     purrr,
     raster,
@@ -41,7 +42,6 @@ Imports:
     tidyr,
     tidyselect,
     utils,
-    xlsx,
     zoo
 Suggests: 
     devtools,

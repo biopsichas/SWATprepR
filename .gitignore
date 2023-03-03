@@ -4,6 +4,6 @@
 .Ruserdata
 templates/
 R/test.R
-test.R
+test*
 .pdf
 output/
