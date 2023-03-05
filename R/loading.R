@@ -37,6 +37,24 @@ load_template <- function(template_path, epsg_code = 4326){
       print(paste("Reading station", id, "data."))
       df <- read_xlsx(template_path, id, guess_max = 10000) 
       for (p in names(df)[-1]){
+        if(p == "RELHUM" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 1)){
+          warning(paste0(p, " variable values at station ", id, " should be between 0 and 1. Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "TMP_MAX" && (min(df[[p]], na.rm = TRUE) < -89.2 | max(df[[p]], na.rm = TRUE) > 70.7)){
+          warning(paste0(p, " variable values at station ", id, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "TMP_MIN" && (min(df[[p]], na.rm = TRUE) < -89.2 | max(df[[p]], na.rm = TRUE) > 70.7)){
+          warning(paste0(p, " variable values at station ", id, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "WNDSPD" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 104)){
+          warning(paste0(p, " variable values at station ", id, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "SLR" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 1000)){
+          warning(paste0(p, " variable values at station ", id, " should be between 0 and 1000 W/m2 (maximum received at the Earth's surface). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "PCP" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) >  1825)){
+          warning(paste0(p, " variable values at station ", id, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check, correct your input data and reload template!!!")) 
+        }
         r[[id]][[p]] <- df[,c("DATE", p)] %>% 
           drop_na() %>% 
           mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))

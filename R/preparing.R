@@ -151,6 +151,60 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
   return(results)
 }
 
+# Weather data -----------------------------------------------
+
+#' Filling missing variables from the closest stations, which has data. 
+#'
+#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param par_fill vector of variables to be filled. Optional (default is c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")).
+#' @importFrom sf st_distance
+#' @importFrom dplyr filter %>% 
+#' @return list of dataframe with filled data. Returned list is for meteo_lst$data.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' met_lst <- load_template(temp_path, 3035)
+#' met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
+#' }
+
+fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")){
+  ##Initializing vectors, lists
+  df_list <- meteo_lst$data
+  stations <- names(df_list)
+  av_list <- list()
+  ##Checking missing variables for every station
+  for(p in par_fill){
+    c <- c()
+    for(st in stations){
+      if(!is.null(df_list[[st]][[p]])){
+        c <- c(c, st)
+      }
+    }
+    av_list[[p]] <- c
+  }
+  ##Loop to fill data for missing stations for provided variables in par_fill
+  for (p in par_fill){
+    ##Stations with data for selected variable
+    sel <- meteo_lst$stations %>% filter(ID %in% as.vector(av_list[[p]]))
+    ##Matrix for distances between stations
+    m <- st_distance(meteo_lst$stations, sel)
+    ##Adding names
+    rownames(m) <- meteo_lst$stations$ID
+    colnames(m) <- sel$ID
+    ##For each station missing selected variable
+    for(st in stations[!stations %in% av_list[[p]]]){
+      ##Finding closest station with data 
+      st_fill <- colnames(m)[which(m[st,] == min(m[st,]))]
+      df_list[[st]][[p]] <- meteo_lst$data[[st_fill]][[p]]
+    }
+  }
+  return(df_list)
+}
+
 #' Function to generate wgn data for the model
 #'
 #' @param meteo_lst meteo_lst nested list of lists with dataframes. 
@@ -224,9 +278,14 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     }
   }
   ##Missing variables error (in case there are missing variables and they were not provided)
+  missing_maxhhr <- FALSE
   if (length(c_f) != 0){
-    stop(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations. 
+    if (length(c_f) == 1 && c_f == "MAXHHR"){
+      missing_maxhhr <- TRUE
+    } else{
+      stop(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations. 
              Please add data on these variables to function, which should be used in case station is missing variable."))
+    }
   }
   ##Setting dataframes to save results
   res_wgn_mon <- NULL
@@ -261,7 +320,11 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     wgn_mon$tmp_max_sd <- aggregate(TMP_MAX~mon, df, sd)[,2]
     wgn_mon$tmp_min_sd <- aggregate(TMP_MIN~mon, df, sd)[,2]
     wgn_mon$pcp_ave <- aggregate(PCP~mon, df, mean)[,2]
-    wgn_mon$pcp_hhr <- aggregate(MAXHHR~mon, df, max)[,2]
+    if (missing_maxhhr){
+      wgn_mon$pcp_hhr <- aggregate(PCP~mon, df, my.pcpmhhr)[,2]
+    } else {
+      wgn_mon$pcp_hhr <- aggregate(MAXHHR~mon, df, max)[,2]
+    }
     wgn_mon$pcp_days <- aggregate(PCP~mon, df, my.pcpd, nyears)[,2]
     wgn_mon$pcp_sd <- aggregate(PCP~mon, df, sd)[,2]
     wgn_mon$pcp_skew <- aggregate(PCP~mon, df, my.skew)[,2]
