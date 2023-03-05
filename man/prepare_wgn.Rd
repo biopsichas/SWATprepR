@@ -21,25 +21,25 @@ Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE
 Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
 
 \item{TMP_MAX}{dataframe with two columns: DATE : POSIXct, TMP_MAX : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if TMP_MAX variable is missing for a station.}
+This parameter refers to data, which should be used instead, if TMP_MAX variable is missing for a station.}
 
 \item{TMP_MIN}{dataframe with two columns: DATE : POSIXct, TMP_MIN : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if TMP_MIN is missing for a station.}
+This parameter refers to data, which should be used instead, if TMP_MIN is missing for a station.}
 
 \item{PCP}{dataframe with two columns: DATE : POSIXct, PCP : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if PCP is missing for a station.}
+This parameter refers to data, which should be used instead, if PCP is missing for a station.}
 
 \item{RELHUM}{dataframe with two columns: DATE : POSIXct, RELHUM : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if RELHUM is missing for a station.}
+This parameter refers to data, which should be used instead, if RELHUM is missing for a station.}
 
 \item{WNDSPD}{dataframe with two columns: DATE : POSIXct, WNDSPD : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if WNDSPD is missing for a station.}
+This parameter refers to data, which should be used instead, if WNDSPD is missing for a station.}
 
 \item{MAXHHR}{dataframe with two columns: DATE : POSIXct, MAXHHR : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if MAXHHR is missing for a station.}
+This parameter refers to data, which should be used instead, if MAXHHR is missing for a station.}
 
 \item{SLR}{dataframe with two columns: DATE : POSIXct, SLR : num. Optional (default NULL).
-This parameter refers to data, which should be unused instead, if SLR is missing for a station.}
+This parameter refers to data, which should be used instead, if SLR is missing for a station.}
 }
 \value{
 list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data

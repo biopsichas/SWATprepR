@@ -211,19 +211,19 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
 #' @param TMP_MAX dataframe with two columns: DATE : POSIXct, TMP_MAX : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if TMP_MAX variable is missing for a station.  
+#' This parameter refers to data, which should be used instead, if TMP_MAX variable is missing for a station.  
 #' @param TMP_MIN dataframe with two columns: DATE : POSIXct, TMP_MIN : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if TMP_MIN is missing for a station.
+#' This parameter refers to data, which should be used instead, if TMP_MIN is missing for a station.
 #' @param PCP dataframe with two columns: DATE : POSIXct, PCP : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if PCP is missing for a station.
+#' This parameter refers to data, which should be used instead, if PCP is missing for a station.
 #' @param RELHUM dataframe with two columns: DATE : POSIXct, RELHUM : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if RELHUM is missing for a station.
+#' This parameter refers to data, which should be used instead, if RELHUM is missing for a station.
 #' @param WNDSPD dataframe with two columns: DATE : POSIXct, WNDSPD : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if WNDSPD is missing for a station.
+#' This parameter refers to data, which should be used instead, if WNDSPD is missing for a station.
 #' @param MAXHHR dataframe with two columns: DATE : POSIXct, MAXHHR : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if MAXHHR is missing for a station.
+#' This parameter refers to data, which should be used instead, if MAXHHR is missing for a station.
 #' @param SLR dataframe with two columns: DATE : POSIXct, SLR : num. Optional (default NULL).
-#' This parameter refers to data, which should be unused instead, if SLR is missing for a station.
+#' This parameter refers to data, which should be used instead, if SLR is missing for a station.
 #' @importFrom stats aggregate sd
 #' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
 #' @importFrom dplyr %>% rename mutate bind_rows select
