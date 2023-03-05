@@ -4,7 +4,7 @@
 \alias{add_weather}
 \title{Update sqlite database with weather data}
 \usage{
-add_weather(db_path, meteo_lst, wgn_lst)
+add_weather(db_path, meteo_lst, wgn_lst, fill_missing = TRUE)
 }
 \arguments{
 \item{db_path}{character to sqlite database (example "./output/project.sqlite")}
@@ -13,7 +13,10 @@ add_weather(db_path, meteo_lst, wgn_lst)
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
 
-\item{wgn_lst}{list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by prepare_wgn funtion)}
+\item{wgn_lst}{list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by \code{prepare_wgn()} function).}
+
+\item{fill_missing}{Boolean, TRUE - fill data for missing stations with data from closest stations with available data.
+FALSE - leave stations without data. Weather generator will be used to fill missing variables for a model. Optional (\code{Default = TRUE}).}
 }
 \value{
 updated sqlite database with weather data

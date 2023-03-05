@@ -283,8 +283,10 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     if (length(c_f) == 1 && c_f == "MAXHHR"){
       missing_maxhhr <- TRUE
     } else{
-      stop(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations. 
-             Please add data on these variables to function, which should be used in case station is missing variable."))
+      warning(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations.
+      Closest stations with data will be used to fill existing gaps.", if("MAXHHR" %in% c_f){"MAXHHR will be calculated by PCP*0.38."}, "\n", 
+      "Please use optional function parameters, if you want specific data to be used in filling missing variables for stations."))
+      data <- fill_with_closest(meteo_lst, c_f)
     }
   }
   ##Setting dataframes to save results
@@ -640,7 +642,9 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @param meteo_lst meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param wgn_lst list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by prepare_wgn funtion)
+#' @param wgn_lst list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by \code{prepare_wgn()} function).
+#' @param fill_missing Boolean, TRUE - fill data for missing stations with data from closest stations with available data.
+#' FALSE - leave stations without data. Weather generator will be used to fill missing variables for a model. Optional (\code{Default = TRUE}).
 #' @importFrom sf st_transform st_coordinates st_drop_geometry
 #' @importFrom dplyr select full_join mutate %>%  rename
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect
@@ -649,7 +653,6 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @importFrom utils write.table
 #' @return updated sqlite database with weather data
 #' @export
-#'
 #' @examples
 #' \dontrun{
 #' ##Getting meteo data from template
@@ -661,7 +664,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' add_weather(db_path, met_lst, wgn)
 #' }
 
-add_weather <- function(db_path, meteo_lst, wgn_lst){
+add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   ##Path to the folder to write weather files (same as sql db)
   write_path <- sub("[^/]+$", "", db_path)
   ##Dictionary for parameters
@@ -673,6 +676,11 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
                 "WNDSPD" = c("wnd", "Wind speed"), 
                 "WND_DIR" = c("wnd_dir", "Wind direction"), 
                 "ATMO_DEP" = c("atmo_dep", "Atmospheric deposition"))
+  ##Filling data missing at stations with closest station data
+  if (fill_missing){
+    print("Closest stations are used to fill missing variables.")
+    meteo_lst$data <- fill_with_closest(meteo_lst)
+  }
   ##Converting station coordinates (if not correct already) 
   st <-  meteo_lst[["stations"]]
   if (!grepl("4326", st_crs(st)$input)){
@@ -772,7 +780,12 @@ add_weather <- function(db_path, meteo_lst, wgn_lst){
   ##Opening database to write 
   db <- dbConnect(RSQLite::SQLite(), db_path)
   ##Appending by prepared table (db tables should be empty)
-  dbWriteTable(db, 'weather_file', weather_file, append = TRUE)
+  tryCatch({
+    dbWriteTable(db, 'weather_file', weather_file, append = TRUE)
+  },
+  error = function(e) {
+    stop("Your database could not be updated. This is probably due to that it already have or had weather data written in before. Please use .sqlite database in which weather data were not written before!!!")
+  })
   dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli', weather_wgn_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli_mon', weather_wgn_cli_mon, append = TRUE)

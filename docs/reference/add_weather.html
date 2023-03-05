@@ -61,7 +61,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_weather</span><span class="op">(</span><span class="va">db_path</span>, <span class="va">meteo_lst</span>, <span class="va">wgn_lst</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_weather</span><span class="op">(</span><span class="va">db_path</span>, <span class="va">meteo_lst</span>, <span class="va">wgn_lst</span>, fill_missing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -77,7 +77,12 @@ Nested meteo_lst -&gt; stations Dataframe (ID, Name, Elevation, Source, geometry
 
 
 <dt>wgn_lst</dt>
-<dd><p>list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by prepare_wgn funtion)</p></dd>
+<dd><p>list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by <code><a href="prepare_wgn.html">prepare_wgn()</a></code> function).</p></dd>
+
+
+<dt>fill_missing</dt>
+<dd><p>Boolean, TRUE - fill data for missing stations with data from closest stations with available data.
+FALSE - leave stations without data. Weather generator will be used to fill missing variables for a model. Optional (<code>Default = TRUE</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
