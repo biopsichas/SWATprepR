@@ -29,3 +29,4 @@ temp_path <- paste0(system.file("extdata", package = "svatools"), "/CORDEX-BC")
 cli_lst <- load_climate(temp_path)
 str(cli_lst)
 }
+\keyword{internal}

@@ -4,14 +4,7 @@
 \alias{get_interpolated_data}
 \title{Main interpolation function}
 \usage{
-get_interpolated_data(
-  meteo_lst,
-  grd,
-  par,
-  shp,
-  dem_data_path,
-  idw_exponent = 2
-)
+get_interpolated_data(meteo_lst, grd, par, shp, dem_data_path, idw_exponent)
 }
 \arguments{
 \item{meteo_lst}{nested list of lists with dataframes.
@@ -43,3 +36,4 @@ met_lst <- load_template(temp_path, 3035)
 get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 }
 }
+\keyword{internal}

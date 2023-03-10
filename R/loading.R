@@ -77,7 +77,7 @@ load_template <- function(template_path, epsg_code = 4326){
 #' @importFrom sf st_as_sf
 #' @importFrom dplyr mutate %>%
 #' @importFrom purrr map
-#' @export 
+#' @keywords internal
 #'
 #' @examples
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
@@ -104,7 +104,7 @@ load_stations <- function(template_path, epsg_code){
 #' Nested structure meteo_lst -> RCM_MOD-> Parameter -> Dataframe (DATE, PARAMETER).
 #' @importFrom dplyr mutate
 #' @importFrom utils read.csv
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' temp_path <- paste0(system.file("extdata", package = "svatools"), "/CORDEX-BC")

@@ -1,3 +1,7 @@
+# svatools 0.0.6
+
+* Updated functions `interpolate()`, `prepare_wgn()`, `add_weather()` and `load_template()` to deal with different data. Added new function `fill_with_closest()`. Bug fixes. 
+
 # svatools 0.0.5
 
 * Different bugs in various functions corrected. Plotting functions updated. Added function `add_missing_pcp_zero()`.

@@ -8,9 +8,9 @@ citEntry(entry='Manual',
 	     url = 'https://biopsichas.github.io/svatools/',
 		 doi = '10.5281/zenodo.7296034',      
 
-         textVersion = paste('Plunge, Svajunas and Rets, Ekaterina (2020),',
-		 'R package of functions to aid with SWAT+ modeling process.',
+         textVersion = paste('Plunge, Svajunas and Rets, Ekaterina (2023),',
+		 'R package to aid with SWAT+ preparation',
 		 'R package.',
-		 'URL https://biopsichas.github.io/svatools/,',
+		 'URL https://biopsichas.github.io/svatools/',
 		 '10.5281/zenodo.7296034.')
 )

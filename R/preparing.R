@@ -61,8 +61,9 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @importFrom methods as
 #' @importFrom raster extract raster
 #' @importFrom sf st_crs st_transform read_sf
+#' @importFrom methods slot slot<-
 #' @return SpatialPointsDataFrame with interpolated data.
-#' @export
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
@@ -72,7 +73,7 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 #' }
 
-get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_exponent = 2){
+get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_exponent){
   ##Preparing data for interpolation and grid
   df <- get_data_to_interpolate(meteo_lst, par)
   ##Loading data
@@ -82,10 +83,15 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
   if (m_proj != st_crs(shp)$input){
     shp <- st_transform(shp, m_proj)
   }
+  ##Dealing with coordinates
   suppressWarnings(proj4string(DEM) <-  CRS(SRS_string = m_proj))
+  ##Converting into sp
+  grd_p <- as(grd, "SpatialPoints")
+  shp_sp <- as(shp, 'Spatial')
+  ##Just to be sure they are exact
+  slot(grd_p, "proj4string") <- slot(shp_sp, "proj4string")
   ##extracting points from the grid for the catchment and saving results
-  meteo_pts <- as(as(grd, "SpatialPoints")[!is.na(over(as(grd, "SpatialPoints"), 
-                                                       as(shp, 'Spatial'))[1]),], "SpatialPointsDataFrame")
+  meteo_pts <- as(grd_p[!is.na(over(grd_p, shp_sp)[1]),], "SpatialPointsDataFrame")
   meteo_pts@data <- data.frame(DEM = raster::extract(DEM, meteo_pts))
   ##Adding DEM values
   nb <- dim(df)[[2]]
@@ -108,6 +114,7 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ).
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation 
 #' (optional, default value is 2).
+#' @importFrom sf st_zm st_bbox st_read st_crs st_transform
 #' @return nested list of lists with dataframes for interpolation results.
 #' Nested structure lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER). 
 #' Function also writes all SWAT weather text input files from the interpolation results.
@@ -128,7 +135,11 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
   p_lst <- list("PCP" = "pcp", "SLR" = "solar", "RELHUM" = "rh", "TMP_MAX" = "tmp", 
                 "TMP_MIN" = "tmp", "WNDSPD" = "wind")
   ##Reading and defining coordinate system
-  shp <-st_read(catchment_boundary_path, quiet = TRUE)
+  shp <- st_read(catchment_boundary_path, quiet = TRUE)
+  ##In case shape file is saved in Polygon (MultiPolygonZ) format with Z values as well
+  if(dim(shp[['geometry']][[1]][[1]])[2] == 3){
+    shp <- st_zm(shp)
+  }
   m_proj <- st_crs(meteo_lst$stations)$input
   if (m_proj != st_crs(shp)$input){
     shp <- st_transform(shp, m_proj)

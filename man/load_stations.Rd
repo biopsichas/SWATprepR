@@ -25,3 +25,4 @@ library(sf)
 library(mapview)
 mapview(st_transform(stations, 4326))
 }
+\keyword{internal}
