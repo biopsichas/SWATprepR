@@ -489,8 +489,10 @@ get_soil_parameters <- function(soilp){
   soilp["SOL_ZMX"] <- do.call(pmax, c(soilp[sol_z], list(na.rm=TRUE)))
   ##Loop to fill parameters for each layer
   for(i in seq_along(sol_z)){
-    soilp[paste0("SOL_BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
-    input <- soilp[c("rownum", paste0("SOL_Z", i), paste0("SOL_BD", i), paste0("SOL_CBN", i), paste0("CLAY", i), 
+    soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
+    soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)]>1,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
+                                         soilp[paste0("BD", i)] + 0.005 * soilp[paste0("CLAY", i)]+ 0.001 * soilp[paste0("SILT", i)])
+    input <- soilp[c("rownum", paste0("SOL_Z", i), paste0("BD", i), paste0("SOL_CBN", i), paste0("CLAY", i), 
                      paste0("SILT", i), paste0("SAND", i))] 
     names(input)[1:7] <- c("rownum","DEPTH_M","BD", "OC", "USCLAY", "USSILT", "USSAND")
     d <- 0
