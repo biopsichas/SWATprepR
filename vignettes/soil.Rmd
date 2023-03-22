@@ -174,7 +174,6 @@ This section is the only required part and is the essence of the workflow. In it
 ```{r soil_fusert, message = FALSE, warning = FALSE}
 ##Adding all SWAT soil parameters for except HYDGRP  
 usertable <- get_soil_parameters(usertable)
-debug(get_soil_parameters)
 ```
 
 ### Overwritting with measured parameters

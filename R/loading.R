@@ -107,9 +107,11 @@ load_stations <- function(template_path, epsg_code){
 #' @keywords internal
 #'
 #' @examples
+#' \dontrun{
 #' temp_path <- paste0(system.file("extdata", package = "svatools"), "/CORDEX-BC")
 #' cli_lst <- load_climate(temp_path)
 #' str(cli_lst)
+#' }
 
 load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRad-1", "RELHUM" = "relHum-1", "TMP_MAX" = "Tmax-1", 
                                               "TMP_MIN" = "Tmin-1", "WNDSPD" = "windSpeed-1")){

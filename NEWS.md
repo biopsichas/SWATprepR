@@ -1,3 +1,7 @@
+# svatools 0.0.7
+
+* Fixed *SOL_BD* calculation in `get_soil_parameters()`. Added function `usersoil_to_sol()`. 
+
 # svatools 0.0.6
 
 * Updated functions `interpolate()`, `prepare_wgn()`, `add_weather()` and `load_template()` to deal with different data. Added new function `fill_with_closest()`. Bug fixes. 

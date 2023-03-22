@@ -1,13 +1,13 @@
 Type: Package
 Package: svatools
-Title: SWAT+ protocol tools
-Version: 0.0.6
-Date: 2023-03-10
+Title: SWAT+ input data preparation tool
+Version: 0.0.7
+Date: 2023-03-22
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
-Description: Tool to help with SWAT+ input data preparation.
+Description: Tool to help with SWAT+ model users with input data preparation. 
 License: MIT + file LICENSE
 URL: https://github.com/biopsichas/svatools
 BugReports: https://github.com/biopsichas/svatools/issues
@@ -29,6 +29,7 @@ Imports:
     raster,
     RColorBrewer,
     Rdpack,
+    readr,
     readxl,
     RNetCDF,
     RSQLite,

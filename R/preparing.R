@@ -490,7 +490,7 @@ get_soil_parameters <- function(soilp){
   ##Loop to fill parameters for each layer
   for(i in seq_along(sol_z)){
     soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
-    soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)]>1,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
+    soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] > 0.58,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
                                          soilp[paste0("BD", i)] + 0.005 * soilp[paste0("CLAY", i)]+ 0.001 * soilp[paste0("SILT", i)])
     input <- soilp[c("rownum", paste0("SOL_Z", i), paste0("BD", i), paste0("SOL_CBN", i), paste0("CLAY", i), 
                      paste0("SILT", i), paste0("SAND", i))] 
@@ -645,6 +645,104 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
     }
   }
   return(r)
+}
+
+#' Convert usersoil.csv to soil.sol
+#'
+#' @param usersoil_csv_path character path to csv file (example "usersoil_lrew.csv"")
+#' @param db_path character to sqlite project database (example "output/project.sqlite"). 
+#' Optional, default NULL. Could be used to reduce soils.sol file, if there are less soil 
+#' types in sqlite database than in usersoil csv file.
+#' @importFrom DBI dbConnect dbReadTable
+#' @importFrom RSQLite SQLite
+#' @importFrom dplyr mutate_all %>% 
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom stringr str_extract
+#' @importFrom purrr map2_chr map2_df
+#' @importFrom readr write_lines parse_number
+#' @importFrom utils read.csv2
+#' @return soils.sol SWAT+ model input file
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' usersoil_to_sol("output/usersoil_lrew.csv")
+#' ##Or
+#' usersoil_to_sol("output/usersoil_lrew.csv", "output/project.sqlite")
+#' }
+
+usersoil_to_sol <- function(usersoil_csv_path, db_path = NULL){
+  ##Reading usersoil table
+  df <- read.csv2(usersoil_csv_path, sep=",")
+  ##Reading db, in case if not successful, just continue without it
+  if(!is.null(db_path)){
+    tryCatch({
+      db <- dbConnect(RSQLite::SQLite(), db_path)
+      soils_sol <- dbReadTable(db, 'soils_sol')
+      dbDisconnect(db)
+      df <- df[df$SNAM %in% soils_sol$name,]
+    },
+    error = function(e) {
+      warning("Your database could not be read!!! Please check if path is correct or soil_sol table exists.")
+    })
+  }
+  ##Settings to function
+  path <- sub("[^/]+$", "", usersoil_csv_path)
+  c_names <- c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
+               "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH")
+  c_write_names <- c("name", "nly", "hyd_grp", "dp_tot", "anion_excl", "perc_crk", "texture", "dp", "bd", "awc", 
+                     "soil_k", "carbon", "clay", "silt", "sand", "rock", "alb", "usle_k", "ec", "caco3", "ph")
+  ##Spacing in output file 
+  sol_nam <- c('%-34s', rep('%15s', 6), '%25s', rep('%15s', 13))
+  sol_val1 <- c('%-34s', rep('%15s', 6))
+  sol_val2 <- c('%156s', rep('%15s', 13))
+  nfile <- paste0(path, 'soils.sol')
+  ##Getting max number of layers available
+  max_lyr <- max(as.numeric(str_extract(names(df)[c(13:dim(df)[2])], "[[:digit:]]+")))
+  ##Getting rid of empty layers
+  while (all(df[paste0(c_names, max_lyr)] == 0)) {
+    df <- df[,!names(df) %in% paste0(c_names, max_lyr)]
+    max_lyr <- max_lyr - 1
+  }
+  ##Converting to characters to numeric and fixing decimal places
+  df[c(9:11,13:dim(df)[2])] <- mutate_all(mutate_all(df[c(9:11,13:dim(df)[2])], 
+                                                     function(x) as.numeric(as.character(x))), ~sprintf(., fmt = '%#.5f'))
+  ##First line to be printed into file
+  text_l <- paste0("soils.sol: written by svatools R package ", Sys.time(), " for SWAT+ rev.60.5.4")
+  ##Heading to be printed into file
+  sol_names <- c_write_names %>%
+    map2_chr(., sol_nam, ~sprintf(.y, .x)) %>%
+    paste(., collapse = ' ')
+  print("Writing soils.sol started.")
+  write_lines(c(text_l, sol_names), nfile, append = FALSE)
+  ##df separation to df1 common parameters per profile
+  df1 <- df[c("SNAM", "NLAYERS", "HYDGRP", "SOL_ZMX", "ANION_EXCL", "SOL_CRK", "TEXTURE")] %>% 
+    mutate(TEXTURE = ifelse(is.na(TEXTURE), "null", TEXTURE))
+  ##df2 parameters different in each layer
+  df2 <- df[c(4,13:dim(df)[2])] %>% 
+    pivot_longer(c(-SNAM), names_to = "param", values_to = "values") %>% 
+    mutate(n_lyr = parse_number(param),
+           param = gsub('[[:digit:]]+', '', param)) %>% 
+    pivot_wider(names_from = param, values_from = values)
+  ##Writing loop into file for each soil type 
+  for (i in seq_len(nrow(df1))){
+    ##Filtering
+    s1 <- df1[i,]
+    s2 <- df2[df2$SNAM == s1$SNAM, c_names]
+    ##Parameters for profile
+    s1 <- s1 %>%
+      map2_df(., sol_val1, ~sprintf(.y, .x)) %>%
+      apply(., 1, paste, collapse = ' ')
+    write_lines(s1, nfile, append = TRUE)
+    ##Parameters for layer
+    s2 <- s2 %>%
+      map2_df(., sol_val2, ~sprintf(.y, .x)) %>%
+      apply(., 1, paste, collapse = ' ')
+    write_lines(s2, nfile, append = TRUE)
+  }
+  print("File conversion from usersoil csv to soils.sol finished successfully.")
+  print(paste0("Prepared result in ", nfile))
+  print("Please copy file to your setup folder.")
 }
 
 # Updating .sqlite database -----------------------------------------------
