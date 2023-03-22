@@ -649,7 +649,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 
 #' Convert usersoil.csv to soil.sol
 #'
-#' @param usersoil_csv_path character path to csv file (example "usersoil_lrew.csv"")
+#' @param csv_path character path to csv file (example "usersoil_lrew.csv"")
 #' @param db_path character to sqlite project database (example "output/project.sqlite"). 
 #' Optional, default NULL. Could be used to reduce soils.sol file, if there are less soil 
 #' types in sqlite database than in usersoil csv file.
@@ -671,9 +671,9 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' usersoil_to_sol("output/usersoil_lrew.csv", "output/project.sqlite")
 #' }
 
-usersoil_to_sol <- function(usersoil_csv_path, db_path = NULL){
+usersoil_to_sol <- function(csv_path, db_path = NULL){
   ##Reading usersoil table
-  df <- read.csv2(usersoil_csv_path, sep=",")
+  df <- read.csv2(csv_path, sep=",")
   ##Reading db, in case if not successful, just continue without it
   if(!is.null(db_path)){
     tryCatch({
@@ -687,7 +687,7 @@ usersoil_to_sol <- function(usersoil_csv_path, db_path = NULL){
     })
   }
   ##Settings to function
-  path <- sub("[^/]+$", "", usersoil_csv_path)
+  path <- sub("[^/]+$", "", csv_path)
   c_names <- c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
                "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH")
   c_write_names <- c("name", "nly", "hyd_grp", "dp_tot", "anion_excl", "perc_crk", "texture", "dp", "bd", "awc", 

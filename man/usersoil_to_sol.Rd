@@ -4,10 +4,10 @@
 \alias{usersoil_to_sol}
 \title{Convert usersoil.csv to soil.sol}
 \usage{
-usersoil_to_sol(usersoil_csv_path, db_path = NULL)
+usersoil_to_sol(csv_path, db_path = NULL)
 }
 \arguments{
-\item{usersoil_csv_path}{character path to csv file (example "usersoil_lrew.csv"")}
+\item{csv_path}{character path to csv file (example "usersoil_lrew.csv"")}
 
 \item{db_path}{character to sqlite project database (example "output/project.sqlite").
 Optional, default NULL. Could be used to reduce soils.sol file, if there are less soil
