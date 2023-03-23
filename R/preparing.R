@@ -492,8 +492,14 @@ get_soil_parameters <- function(soilp){
     soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
     soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] > 0.58,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
                                          soilp[paste0("BD", i)] + 0.005 * soilp[paste0("CLAY", i)]+ 0.001 * soilp[paste0("SILT", i)])
-    input <- soilp[c("rownum", paste0("SOL_Z", i), paste0("BD", i), paste0("SOL_CBN", i), paste0("CLAY", i), 
-                     paste0("SILT", i), paste0("SAND", i))] 
+    if(i == 1){
+      soilp[paste0("DEPTH_M", i)] <- soilp[paste0("SOL_Z", i)] * 0.05
+    } else {
+      soilp[paste0("DEPTH_M", i)] <- ((soilp[paste0("SOL_Z", i)] - soilp[paste0("SOL_Z", i - 1)])/2 + 
+                                        soilp[paste0("SOL_Z", i - 1)])/10
+    }
+    input <- soilp[c("rownum", paste0("DEPTH_M", i), paste0("BD", i), paste0("SOL_CBN", i), paste0("CLAY", i),
+                     paste0("SILT", i), paste0("SAND", i))]
     names(input)[1:7] <- c("rownum","DEPTH_M","BD", "OC", "USCLAY", "USSILT", "USSAND")
     d <- 0
     if (sum(input$DEPTH_M > 0, na.rm=TRUE) == 1){
@@ -504,17 +510,17 @@ get_soil_parameters <- function(soilp){
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
     pred_VG <- merge(pred_VG1[c(1:nrow(pred_VG1)-d), c(1:6,8,10:14)], input[,c(1,2)], by="rownum", all.y=TRUE)
-    
+
     FC <- pred_VG$THR+(pred_VG$THS-pred_VG$THR)*((1+(((pred_VG$N-1)/pred_VG$N)^(1-2*pred_VG$N)))^((1-pred_VG$N)/pred_VG$N))
     WP <- pred_VG$THR+((pred_VG$THS-pred_VG$THR)/((1+pred_VG$THR*(15000^pred_VG$N))^(1-(1/pred_VG$N))))
-    
+
     soilp[paste0("SOL_AWC", i)] <- FC-WP
     soilp[paste0("SOL_K", i)] <- (4.65 * (10^4) * pred_VG$THS * (pred_VG$ALP^2))*0.41666001
-    
+
     # compute albedo
     # method of Gascoin et al. (2009) from Table 6 of Abbaspour, K.C., AshrafVaghefi, S., Yang, H. & Srinivasan, R. 2019. Global soil, landuse, evapotranspiration, historical and future weather databases for SWAT Applications. Scientific Data, 6:263.
     soilp[paste0("SOL_ALB", i)] <- 0.15+0.31*exp(-12.7*FC)
-    
+
     # compute USLE erodibility K factor
     # method published in Sharpley and Williams (1990) based on Table 5 of Abbaspour, K.C., AshrafVaghefi, S., Yang, H. & Srinivasan, R. 2019. Global soil, landuse, evapotranspiration, historical and future weather databases for SWAT Applications. Scientific Data, 6:263.
     ES <- 0.2+0.3*exp(-0.0256*input$USSAND*(1-(input$USSILT/100)))
@@ -647,7 +653,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
   return(r)
 }
 
-#' Convert usersoil.csv to soil.sol
+#' Convert usersoil.csv to soils.sol
 #'
 #' @param csv_path character path to csv file (example "usersoil_lrew.csv"")
 #' @param db_path character to sqlite project database (example "output/project.sqlite"). 
