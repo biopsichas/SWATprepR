@@ -124,7 +124,7 @@ min_ks <- function(df, max_depth){
   } else if (max_depth > 0){
     ind <- 1
   }
-  return(min(df[,ind])/0.4167)
+  return((min(df[,ind])/0.4167)/8.64)
 }
 
 # Interpolation --------------------------------------------------------------------
