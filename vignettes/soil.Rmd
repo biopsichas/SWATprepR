@@ -249,8 +249,8 @@ plot(dem)
 ##Merging unique soil types into one row and multipolygon
 soils_dis <- soils %>% 
   group_by(SNAM) %>% 
-  summarise() %>% 
-  mutate(SOIL_ID = row_number(),
+  dplyr::summarise() %>% 
+  mutate(SOIL_ID = rownames(.),
          SNAME = SNAM)
 ##Rasterizing soil type data
 soils_raster <- soils_dis %>% 

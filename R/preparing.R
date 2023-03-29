@@ -489,7 +489,10 @@ get_soil_parameters <- function(soilp){
   soilp["SOL_ZMX"] <- do.call(pmax, c(soilp[sol_z], list(na.rm=TRUE)))
   ##Loop to fill parameters for each layer
   for(i in seq_along(sol_z)){
-    soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
+    # soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
+    soilp[paste0("BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] < 12, 
+                                      1.72 - 0.294 * (soilp[paste0("SOL_CBN", i)] ^ 0.5), 
+                                     0.074 + 2.632 * exp(-0.076*( soilp[paste0("SOL_CBN", i)])))
     soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] > 0.58,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
                                          soilp[paste0("BD", i)] + 0.005 * soilp[paste0("CLAY", i)]+ 0.001 * soilp[paste0("SILT", i)])
     if(i == 1){
@@ -510,6 +513,16 @@ get_soil_parameters <- function(soilp){
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
     pred_VG <- merge(pred_VG1[c(1:nrow(pred_VG1)-d), c(1:6,8,10:14)], input[,c(1,2)], by="rownum", all.y=TRUE)
+    # correct VG parameters for organic soils if organic soils are present in the data
+    pred_VG$THR <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 0.111, pred_VG$THR)
+    pred_VG$THS <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 0.697, pred_VG$THS)
+    pred_VG$ALP <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 0.0069, pred_VG$ALP)
+    pred_VG$N <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 1.4688, pred_VG$N)
+    
+    pred_VG$THR <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.001, pred_VG$THR)
+    pred_VG$THS <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.835, pred_VG$THS)
+    pred_VG$ALP <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.0113, pred_VG$ALP)
+    pred_VG$N <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 1.2256, pred_VG$N)
 
     FC <- pred_VG$THR+(pred_VG$THS-pred_VG$THR)*((1+(((pred_VG$N-1)/pred_VG$N)^(1-2*pred_VG$N)))^((1-pred_VG$N)/pred_VG$N))
     WP <- pred_VG$THR+((pred_VG$THS-pred_VG$THR)/((1+pred_VG$THR*(15000^pred_VG$N))^(1-(1/pred_VG$N))))
