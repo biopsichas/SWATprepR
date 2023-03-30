@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{usersoil_to_sol}
 \alias{usersoil_to_sol}
-\title{Convert usersoil.csv to soil.sol}
+\title{Convert usersoil.csv to soils.sol}
 \usage{
 usersoil_to_sol(csv_path, db_path = NULL)
 }
@@ -17,7 +17,7 @@ types in sqlite database than in usersoil csv file.}
 soils.sol SWAT+ model input file
 }
 \description{
-Convert usersoil.csv to soil.sol
+Convert usersoil.csv to soils.sol
 }
 \examples{
 \dontrun{

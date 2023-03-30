@@ -57,7 +57,7 @@ After running [interpolate](../reference/interpolate.html) function the [transfo
 
 ```{r met_interpolation, eval=FALSE, message = FALSE, warning = FALSE}
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-result <- interpolate(met_lst, basin_path, DEM_path, 2000) 
+result <- svatools::interpolate(met_lst, basin_path, DEM_path, 2000) 
 
 ##To transform interpolation results to list of lists, which could be used with other weather functions. 
 start_date <- svatools:::get_dates(met_lst)$min_date

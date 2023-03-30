@@ -43,6 +43,8 @@ water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "svatool
 DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
 ##Path to catchment boundary shape file (which in this case used as impervious layer data)
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+##Path to soil hydro groups
+hsg_path <- system.file("extdata", "GIS/hydgrp.shp", package = "svatools")
 ```
 
 ### Preparing input data
@@ -64,7 +66,7 @@ humus <- read_excel(lookup_path, sheet = "Humus") %>%
 ##Print example of humus table
 print(head(humus, 3))
 
-##Reading GIS layers for basin boundary, water level, drainage status and soils (with "Code" column here representing soil types).
+##Reading GIS layers for basin boundary, water level, drainage status, soils (with "Code" column here representing soil types) and soil hydrological groups.
 ##All data should be in one coordinate system.
 ##Impervious layer is prepared from basin layer as it is below 1 m whole catchment falls into one category. 
 impervious<- st_read(basin_path, quiet = TRUE) %>% 
@@ -75,6 +77,8 @@ water_level <- st_read(water_l_path, quiet = TRUE) %>%
 drainage <- st_read(drainage_path, quiet = TRUE) %>% 
   st_transform(3035)
 soils <- st_read(soil_path, quiet = TRUE) %>% 
+  st_transform(3035)
+hsg <- st_read(hsg_path, quiet = TRUE) %>% 
   st_transform(3035)
 ```
 
@@ -206,7 +210,7 @@ usertable <- select(usertable, -starts_with("Lyr"))
 
 [get_hsg](../reference/get_hsg.html) function require an assemblance of information per each soil type. A simple example 
 *get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_Z1 = 250, SOL_Z2 = 700))*. The first three class values (impervious layer, water level and drainage status) extracted from soil name (SNAM) and the last is one line dataframe extracted from *usertable* with all *SOL_K* and *SOL_Z* parameters available for a soil type. 
-If case of some generated parameters are available (i.e. from field measurements or local databases), they can be used by overwriting generated parameters in the *usertable*. In our example we didn't have such data.
+
 
 ```{r soil_hsg, message = FALSE, warning = FALSE}
 ##Adding HYDGRP in a look for each row
@@ -223,19 +227,34 @@ usertable$HYDGRP <- c
 print(head(usertable, 3))
 ```
 
+If case of some generated parameters are available (i.e. from field measurements or local databases), they can be used by overwriting generated parameters in the *usertable*. In our example we had map of soil hydrological groups. It was used  to overwrite results from calculation with [get_hsg](../reference/get_hsg.html) function.
+
+```{r soil_hsg_update, message = FALSE, warning = FALSE}
+##Joining GIS data to generated usertable
+soilp <- soils %>% left_join(usertable, by = "SNAM") 
+##Plotting soil hydrologic groups obtained from get_hsg function
+plot(soilp["HYDGRP"], main="HYDGRP obtained with get_hsg function")
+##Plotting soil hydrologic groups obtained local hydgrp map
+plot(hsg["hsg"], main="HYDGRP from field data")
+##Overwriting generated data with values from field data source
+soilp <- st_join(soilp, hsg, join = st_overlaps, left = TRUE, largest = TRUE) %>% 
+  mutate(HYDGRP = hsg) %>% 
+  select(-hsg)
+##Plotting updated data result
+plot(soilp["HYDGRP"])
+```
+
 ### Checking results on a map
 
-After generation of all required soil parameters, one could join them with soil type GIS data and check the results on a map. Below are just few examples. 
+After generation of all required soil parameters checking of results on a map is a good practice, which could help to spot various issues and validate results. Below are just few examples. 
 
 ```{r soil_maps, message = FALSE, warning = FALSE}
-soilp <- soils %>% left_join(usertable, by = "SNAM") 
-
-##Plot soil hydrologic groups
-plot(soilp["HYDGRP"])
 ##Plot soil sol_k for the top layer
 plot(soilp["SOL_K1"])
 ##Plot soil sol_k for the top layer
 plot(soilp["USLE_K1"])
+##Plot soil sol_awc for the top layer
+plot(soilp["SOL_AWC1"])
 ```
 
 ### Write inputs for SWAT+
