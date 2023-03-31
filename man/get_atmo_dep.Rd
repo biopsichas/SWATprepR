@@ -14,8 +14,7 @@ get_atmo_dep(
 \arguments{
 \item{catchment_boundary_path}{path to basin boundary shape file.}
 
-\item{t_ext}{string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages,
-'day' for daily averages and 'hour' - hourly. Optional (default - "year").}
+\item{t_ext}{string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').}
 
 \item{start_year}{integer year to start data extraction. Optional (default - 1990).}
 

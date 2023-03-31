@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">svatools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -157,12 +157,12 @@ for a selected catchment with required time step could be extracted
 directly from <a href="https://www.emep.int/mscw/mscw_moddata.html" class="external-link">EMEP
 website</a> with <a href="../reference/get_atmo_dep.html">get_atmo_dep</a> function.
 Function requires just path to catchment boundary shape file and
-internet connection. Depending of the data time step selected (yearly to
-hourly), function will need more or less time to run (less with “year”
-selected, much much more with “hour”). More information about the
-inclusion of atmospheric deposition data in SWAT+ modeling is presented
-in the section 3.10 of <a href="https://doi.org/10.5281/zenodo.7463395" class="external-link">SWAT+ modelling
-protocol</a>.</p>
+internet connection. Depending of the data time step selected (yearly or
+monthly), function will need more or less time to run (less with “year”
+selected, more with “month”). More information about the inclusion of
+atmospheric deposition data in SWAT+ modeling is presented in the
+section 3.10 of <a href="https://doi.org/10.5281/zenodo.7463395" class="external-link">SWAT+
+modelling protocol</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/svatools" class="external-link">svatools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>

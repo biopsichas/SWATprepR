@@ -1,3 +1,7 @@
+# svatools 0.0.8
+
+* Some bugs fixed in `get_soil_parameters()` and `get_atmo_dep()`.
+
 # svatools 0.0.7
 
 * Fixed *SOL_BD* calculation in `get_soil_parameters()`. Added function `usersoil_to_sol()`. 

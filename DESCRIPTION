@@ -1,8 +1,8 @@
 Type: Package
 Package: svatools
 Title: SWAT+ input data preparation tool
-Version: 0.0.7
-Date: 2023-03-22
+Version: 0.0.8
+Date: 2023-03-31
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))

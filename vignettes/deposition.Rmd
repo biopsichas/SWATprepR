@@ -31,7 +31,7 @@ These parameters can be used to prepare following SWAT+ parameters required for 
 - *NH4_DRY* - ammonia dry deposition ($kg/ha/yr$);
 - *NO3_DRY* - nitrate dry deposition ($kg/ha/yr$). 
 
-EMEP provides access to yearly, monthly, daily and hourly data. Data for a selected catchment with required time step could be extracted directly from [EMEP website](https://www.emep.int/mscw/mscw_moddata.html) with [get_atmo_dep](../reference/get_atmo_dep.html) function. Function requires just path to catchment boundary shape file and internet connection. Depending of the data time step selected (yearly to hourly), function will need more or less time to run (less with "year" selected, much much more with "hour"). More information about the inclusion of atmospheric deposition data in SWAT+ modeling is presented in the section 3.10 of [SWAT+ modelling protocol](https://doi.org/10.5281/zenodo.7463395).
+EMEP provides access to yearly, monthly, daily and hourly data. Data for a selected catchment with required time step could be extracted directly from [EMEP website](https://www.emep.int/mscw/mscw_moddata.html) with [get_atmo_dep](../reference/get_atmo_dep.html) function. Function requires just path to catchment boundary shape file and internet connection. Depending of the data time step selected (yearly or monthly), function will need more or less time to run (less with "year" selected, more with "month"). More information about the inclusion of atmospheric deposition data in SWAT+ modeling is presented in the section 3.10 of [SWAT+ modelling protocol](https://doi.org/10.5281/zenodo.7463395).
 
 ```{r atmo_dep, eval=FALSE, message = FALSE, warning = FALSE}
 library(svatools)

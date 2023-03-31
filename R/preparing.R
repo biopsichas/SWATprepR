@@ -364,8 +364,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' Extract EMEP atmospheric deposition data for a catchment
 #'
 #' @param catchment_boundary_path path to basin boundary shape file.
-#' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages,
-#''day' for daily averages and 'hour' - hourly. Optional (default - "year").
+#' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').
 #' @param start_year integer year to start data extraction. Optional (default - 1990).
 #' @param end_year integer year to end data extraction. Optional (default - 2020).
 #' @importFrom sf st_transform st_read st_bbox
@@ -428,12 +427,13 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
       wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]*1.2878/prec)
       ##Saving results
       df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
-    } else if(t_ext %in% c("month", "day")){
+    } else if(t_ext %in% c("month")){
       prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat,]
-      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]*4.4268/100, 3, mean)
-      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]*4.4268/prec, 3, mean)
-      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]*1.2878/100, 3, mean)
-      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]*1.2878/prec, 3, mean)
+      di <- length(dim(prec)) ##Dimension of extracted array
+      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]*4.4268/100, di, mean)
+      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]*4.4268/prec, di, mean)
+      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]*1.2878/100, di, mean)
+      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]*1.2878/prec, di, mean)
       ##Saving results
       if(t_ext == "month"){
         df<- bind_rows(df, data.frame(YR = u, MO = seq(1, length(dry_oxn)), DAY = 1, 
@@ -445,7 +445,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
                                       NH4_DRY = dry_rdn, NO3_DRY =dry_oxn))
       }
     } else {
-      stop("Wrong t_ext!!! Should be one of these strings: 'year', 'month' or 'day'.")
+      stop("Wrong t_ext!!! Should be one of these strings: 'year' or 'month'.")
     }
     print(paste("Finished data extraction for year", u))
   }
