@@ -462,8 +462,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 
 #' Function to fill soil parameters
 #'
-#' @param soilp dataframe with at least SNAM	NLAYERS	columns and SOL_Z	CLAY	
-#' SILT	SAND	OC columns for each available soil layer.
+#' @param soilp dataframe with SNAM,	NLAYERS	columns and SOL_Z, CLAY, SILT, SAND,	OC columns for each available soil layer.
 #' @importFrom euptf2 euptfFun 
 #' @importFrom readxl read_excel
 #' @importFrom dplyr rename_at vars
@@ -474,10 +473,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
-#' library(euptf2)
 #' soil <- get_soil_parameters(temp_path)
-#' str(soil)
 #' }
 
 get_soil_parameters <- function(soilp){

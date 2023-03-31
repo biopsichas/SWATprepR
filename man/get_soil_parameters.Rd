@@ -7,8 +7,7 @@
 get_soil_parameters(soilp)
 }
 \arguments{
-\item{soilp}{dataframe with at least SNAM    NLAYERS    columns and SOL_Z    CLAY
-SILT    SAND    OC columns for each available soil layer.}
+\item{soilp}{dataframe with SNAM,    NLAYERS    columns and SOL_Z, CLAY, SILT, SAND,    OC columns for each available soil layer.}
 }
 \value{
 dataframe with fully formatted and filled table of soil parameters for SWAT model.
@@ -18,9 +17,6 @@ Function to fill soil parameters
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
-library(euptf2)
 soil <- get_soil_parameters(temp_path)
-str(soil)
 }
 }
