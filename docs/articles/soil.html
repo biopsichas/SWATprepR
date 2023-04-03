@@ -114,8 +114,11 @@ depth data are needed.</p>
 following workflow. However, depending on available types of data,
 different steps might needed. This is an example of Polish case study of
 <a href="https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka" class="external-link">Upper
-Zglowiaczka in OPTAIN project</a>. ### Loading libraries and paths to
-data</p>
+Zglowiaczka in OPTAIN project</a>.</p>
+</div>
+<div class="section level3">
+<h3 id="loading-libraries-and-paths-to-data">Loading libraries and paths to data<a class="anchor" aria-label="anchor" href="#loading-libraries-and-paths-to-data"></a>
+</h3>
 <p>Workflow presented here needs 6 R packages. However, only
 <code>svatools</code> and <code>euptf2</code> libraries are required for
 the population of soil parameter’s table with <a href="../reference/get_soil_parameters.html">get_soil_parameters</a> and
@@ -345,26 +348,29 @@ functions.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gran</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"3"</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lyr3"</span> <span class="op">=</span> <span class="st">"Texture EN3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">humus</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Humus"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span>, <span class="va">NLAYERS</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">)</span>, <span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Lyr"</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="co">##Renaming OC column to SOL_CBN</span></span>
+<span><span class="va">sol_oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"OC&gt;*"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">usertable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select_all.html" class="external-link">rename_at</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">sol_oc</span><span class="op">)</span><span class="op">)</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"OC"</span>, <span class="st">"SOL_CBN"</span>, <span class="va">sol_oc</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##Printing structure example of the required table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 'data.frame':    542 obs. of  17 variables:</span></span>
-<span><span class="co">##  $ SNAM   : chr  "SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N" "SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N" "SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N" "SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N" ...</span></span>
-<span><span class="co">##  $ NLAYERS: num  3 3 3 3 3 3 3 3 3 3 ...</span></span>
-<span><span class="co">##  $ SOL_Z1 : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
-<span><span class="co">##  $ SAND1  : num  62.5 60.5 62.5 71.7 80.7 ...</span></span>
-<span><span class="co">##  $ SILT1  : num  25.4 27.8 25.4 22.1 14.8 ...</span></span>
-<span><span class="co">##  $ CLAY1  : num  12.07 11.69 12.07 6.11 4.45 ...</span></span>
-<span><span class="co">##  $ OC1    : num  1.88 1.26 1.63 1.63 1.63 ...</span></span>
-<span><span class="co">##  $ SOL_Z2 : num  750 750 750 750 750 750 750 750 750 750 ...</span></span>
-<span><span class="co">##  $ SAND2  : num  62.5 60.5 62.5 60.5 80.7 ...</span></span>
-<span><span class="co">##  $ SILT2  : num  25.4 27.8 25.4 27.8 14.8 ...</span></span>
-<span><span class="co">##  $ CLAY2  : num  12.07 11.69 12.07 11.69 4.45 ...</span></span>
-<span><span class="co">##  $ OC2    : num  0.942 0.628 0.814 0.814 0.814 ...</span></span>
-<span><span class="co">##  $ SOL_Z3 : num  1500 1500 1500 1500 1500 1500 1500 1500 1500 1500 ...</span></span>
-<span><span class="co">##  $ SAND3  : num  62.5 60.5 62.5 60.5 62.5 ...</span></span>
-<span><span class="co">##  $ SILT3  : num  25.4 27.8 25.4 27.8 25.4 ...</span></span>
-<span><span class="co">##  $ CLAY3  : num  12.1 11.7 12.1 11.7 12.1 ...</span></span>
-<span><span class="co">##  $ OC3    : num  0.174 0.116 0.151 0.151 0.151 ...</span></span></code></pre>
+<span><span class="co">##  $ SNAM    : chr  "SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N" "SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N" "SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N" "SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N" ...</span></span>
+<span><span class="co">##  $ NLAYERS : num  3 3 3 3 3 3 3 3 3 3 ...</span></span>
+<span><span class="co">##  $ SOL_Z1  : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
+<span><span class="co">##  $ SAND1   : num  62.5 60.5 62.5 71.7 80.7 ...</span></span>
+<span><span class="co">##  $ SILT1   : num  25.4 27.8 25.4 22.1 14.8 ...</span></span>
+<span><span class="co">##  $ CLAY1   : num  12.07 11.69 12.07 6.11 4.45 ...</span></span>
+<span><span class="co">##  $ SOL_CBN1: num  1.88 1.26 1.63 1.63 1.63 ...</span></span>
+<span><span class="co">##  $ SOL_Z2  : num  750 750 750 750 750 750 750 750 750 750 ...</span></span>
+<span><span class="co">##  $ SAND2   : num  62.5 60.5 62.5 60.5 80.7 ...</span></span>
+<span><span class="co">##  $ SILT2   : num  25.4 27.8 25.4 27.8 14.8 ...</span></span>
+<span><span class="co">##  $ CLAY2   : num  12.07 11.69 12.07 11.69 4.45 ...</span></span>
+<span><span class="co">##  $ SOL_CBN2: num  0.942 0.628 0.814 0.814 0.814 ...</span></span>
+<span><span class="co">##  $ SOL_Z3  : num  1500 1500 1500 1500 1500 1500 1500 1500 1500 1500 ...</span></span>
+<span><span class="co">##  $ SAND3   : num  62.5 60.5 62.5 60.5 62.5 ...</span></span>
+<span><span class="co">##  $ SILT3   : num  25.4 27.8 25.4 27.8 25.4 ...</span></span>
+<span><span class="co">##  $ CLAY3   : num  12.1 11.7 12.1 11.7 12.1 ...</span></span>
+<span><span class="co">##  $ SOL_CBN3: num  0.174 0.116 0.151 0.151 0.151 ...</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="par_make">Adding soil parameters to user table<a class="anchor" aria-label="anchor" href="#par_make"></a>

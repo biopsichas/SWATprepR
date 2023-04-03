@@ -460,6 +460,172 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 
 # Preparing soils -----------------------------------------------
 
+#' Function to prepare user soil table for SWAT model
+#'
+#' @param csv_path character path to csv file (example "usersoil_lrew.csv"). File should be comma separated 
+#' with minimum columns of SNAM,	NLAYERS	and SOL_Z, CLAY, SILT, SAND, SOL_CBN for each available 
+#' soil layer (minimum 1).
+#' @param hsg Boolean, TRUE - prepare soil hydrological groups, FALSE - no soil hydrological group 
+#' preparation will be done. Optional (\code{Default = FALSE}). If \code{hsg = TRUE} three additional columns
+#' should be in an input table: Impervious (allowed values are "<50cm", "50-100cm", ">100cm"), Depth (allowed 
+#' values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas, 
+#' "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol 
+#' Table 3.3 available on \code{\link{https://doi.org/10.5281/zenodo.7463395}}.
+#' @param keep_values Boolean, TRUE - keep old values (new values only will be left where 0 
+#' or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE})
+#' @param nb_lyr integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA}, 
+#' which stands for the same number as in input data).
+#' @importFrom dplyr select ends_with starts_with left_join
+#' @importFrom readr parse_number
+#' @importFrom utils type.convert
+#' @importFrom methods is
+#' @return dataframe with fully formatted and filled table of soil parameters for SWAT model.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' usersoils <- get_usersoil_table("table.csv")
+#' write.csv(usersoils, "usersoils.csv", row.names=FALSE, quote=FALSE)
+#' }
+
+get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_lyr = NA){
+  ##Reading
+  df_save <- df <- read.csv2(csv_path, sep = ",") %>% 
+    type.convert(as.is = TRUE)
+  is_OK <- TRUE
+  c_names <- c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
+               "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH")
+  ##Checking all 
+  if(dim(df)[2] < 7){
+    stop("Your data were not read properly. If your use .csv file path, please ensure column separator is comma. 
+       Minimum columns available should be 'SNAM', 'NLAYERS' and for each layer 'SOL_Z', 'CLAY', 'SILT', 'SAND', 'SOL_CBN' (for example 'SOL_Z1', 'CLAY1', etc.).")
+  }
+  if(!"SNAM" %in% names(df)){
+    warning("'SNAM' column is missing!!! Please correct this.")
+    is_OK <- FALSE
+  } else if (any(nchar(df$SNAM)<1)){
+    warning("'SNAM' values are missing!!! Please correct this.")
+    is_OK <- FALSE
+  }
+  
+  if(!"NLAYERS" %in% names(df)){
+    warning("'NLAYERS' column is missing!!!")
+    is_OK <- FALSE
+  } else if (any(df$NLAYERS<1)|!any(is.numeric(df$NLAYERS))){
+    warning("'SNAM' values are missing or input is not all numbers!!! Please correct this.")
+    is_OK <- FALSE
+  }
+  
+  if(!"SOL_Z1" %in% names(df)){
+    warning("'SOL_Z1' column is missing!!!")
+    is_OK <- FALSE
+  } else if (any(df[["SOL_Z1"]]<0 | df[["SOL_Z1"]]>3000) | !any(is.numeric(df$SOL_Z1))){
+    warning("At least some of 'SOL_Z1' values are missing or input values are not between 0 - 3000!!! Please correct this.")
+    is_OK <- FALSE
+  }
+  
+  for (p in c('CLAY1', 'SILT1', 'SAND1', 'SOL_CBN1')){
+    if(!p %in% names(df)){
+      warning(paste0(p, " column is missing!!!"))
+      is_OK <- FALSE
+    } else if (any(df[[p]]<0 | df[[p]]>100) | !any(is.numeric(df[[p]]))){
+      warning(paste0("At least some of ", p," values are missing or input values are not between 0 - 100!!! Please correct this."))
+      is_OK <- FALSE
+    }
+  }
+  
+  if(hsg){
+    if(!"Impervious" %in% names(df)){
+      warning("'Impervious' column is missing!!!")
+      is_OK <- FALSE
+    } else if (!unique(df[["Impervious"]]) %in% c("<50cm", "50-100cm", ">100cm")){
+      warning("'Impervious' column can have only such values: '<50cm', '50-100cm', '>100cm'!!! Please correct this.")
+      is_OK <- FALSE
+    }
+    if(!"Depth" %in% names(df)){
+      warning("'Depth' column is missing!!!")
+      is_OK <- FALSE
+    } else if (!unique(df[["Depth"]]) %in% c("<60cm", "60-100cm", ">100cm")){
+      warning("'Depth' column can have only such values: '<60cm', '60-100cm', '>100cm'!!! Please correct this.")
+      is_OK <- FALSE
+    }
+    if(!"Drained" %in% names(df)){
+      warning("'Drained' column is missing!!!")
+      is_OK <- FALSE
+    } else if (!unique(df[["Drained"]]) %in% c("N", "Y")){
+      warning("'Drained' column only two entry options possible: 'Y' - for drained areas, 'N' - for areas without working tile drains!!! Please correct this.")
+      is_OK <- FALSE
+    }
+  }
+  
+  if(!is_OK){
+    stop("Please make sure all indicated problems are solved before using this function!!!")
+  }
+  
+  ##Selecting only required layers
+  df <- select(df, SNAM, NLAYERS, starts_with(c("SOL_Z", 'CLAY', 'SILT', 'SAND', 'SOL_CBN')), -starts_with("SOL_ZMX"))
+  
+  ##Getting rid of empty layers
+  max_lyr_start <- max_lyr <- max(parse_number(names(df[c(3:dim(df)[2])])), na.rm = TRUE)
+  while (all(select(df, ends_with(as.character(max_lyr)))==0)) {
+    df <- select(df, -ends_with(as.character(max_lyr)))
+    max_lyr <- max_lyr - 1
+  }
+  
+  ##Calculating parameters
+  soilp <- get_soil_parameters(df)
+  
+  ##Solving multiple layers problems 
+  for(i in 1:max_lyr){
+    for(ii in 1:nrow(soilp)){
+      soilp[ii, paste0(c_names, i)] <- if(!soilp[ii,paste0("SOL_Z", i)] > 0) 0 else  as.vector(unlist(soilp[ii, paste0(c_names, i)]))
+    }
+  }
+  
+  ##Calculating soil hydro groups
+  if(hsg){
+    c <- c()
+    for (i in 1:nrow(df_save)){
+      c <- c(c, get_hsg(df_save[i,"Impervious"], 
+                        df_save[i,"Depth"], 
+                        df_save[i,"Drained"], 
+                        df_save[i,c(paste0("SOL_Z", 1:df_save$NLAYERS[i]),paste0("SOL_K", 1:df_save$NLAYERS[i]))]))
+    }
+    soilp$HYDGRP <- c
+    soilp <- soilp[,!(names(soilp) %in% c("Impervious", "Depth", "Drained"))]
+    print("Soil hydrological groups were calculated.")
+  }
+  
+  ##Taking care of number of layers
+  if(!is.na(nb_lyr) && is(nb_lyr, "numeric") && nb_lyr%%1==0 && nb_lyr > max_lyr){
+    print(paste0("Adding additional ", nb_lyr - max_lyr_start, " layer(s) added."))
+    max_lyr_start <- nb_lyr
+  }
+  
+  for(i in seq(max_lyr+1, max_lyr_start)){
+    soilp[paste0(c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", "CLAY", "SILT", "SAND", "ROCK", 
+                   "SOL_ALB", "USLE_K", "SOL_EC", "SOL_CAL", "SOL_PH"), i)] <- 0
+  }
+  
+  ##Overwriting results with existing values in input table
+  if(keep_values){
+    names(df_save) <- paste0(names(df_save), ".x")
+    soil_par_names <- setdiff(names(soilp), "SNAM")
+    soilp <- left_join(soilp, df_save, by = c("SNAM" = "SNAM.x"))
+    for(sn in soil_par_names){
+      if((paste0(sn, ".x") %in% names(df_save)) && !sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE")){
+        soilp[,sn] <- ifelse(soilp[,paste0(sn, ".x")] > 0, soilp[,paste0(sn, ".x")], soilp[,sn])
+      } else if(sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE") && (paste0(sn, ".x") %in% names(df_save))){
+        soilp[,sn] <- ifelse(!is.na(soilp[,paste0(sn, ".x")]), soilp[,paste0(sn, ".x")], soilp[,sn])
+      } 
+    }
+    soilp <- select(soilp, -ends_with(".x"))
+    print("Values existing in the input table were kept.")
+  }
+  
+  return(soilp)
+}
+
 #' Function to fill soil parameters
 #'
 #' @param soilp dataframe with SNAM,	NLAYERS	columns and SOL_Z, CLAY, SILT, SAND,	OC columns for each available soil layer.
@@ -479,18 +645,14 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 get_soil_parameters <- function(soilp){
   soilp$rownum <- 1:nrow(soilp)
   sol_z <- names(soilp)[grep("SOL_Z.*", names(soilp))]
-  sol_oc <- names(soilp)[grep("OC>*", names(soilp))]
-  sol_cbn <- sub("OC", "SOL_CBN", sol_oc)
-  soilp <- rename_at(soilp, vars(all_of(sol_oc)), ~sol_cbn)
   soilp["SOL_ZMX"] <- do.call(pmax, c(soilp[sol_z], list(na.rm=TRUE)))
   ##Loop to fill parameters for each layer
   for(i in seq_along(sol_z)){
-    # soilp[paste0("BD", i)] <- 1.72 - 0.294*( soilp[paste0("SOL_CBN", i)] ^ 0.5)
-    soilp[paste0("BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] < 12, 
-                                      1.72 - 0.294 * (soilp[paste0("SOL_CBN", i)] ^ 0.5), 
-                                     0.074 + 2.632 * exp(-0.076*( soilp[paste0("SOL_CBN", i)])))
-    soilp[paste0("SOL_BD", i)] <- ifelse(soilp[paste0("SOL_CBN", i)] > 0.58,  soilp[paste0("BD", i)] + 0.009 * soilp[paste0("CLAY", i)], 
-                                         soilp[paste0("BD", i)] + 0.005 * soilp[paste0("CLAY", i)]+ 0.001 * soilp[paste0("SILT", i)])
+    soilp[,paste0("BD", i)] <- ifelse(soilp[,paste0("SOL_CBN", i)] < 12, 
+                                      1.72 - 0.294 * (soilp[,paste0("SOL_CBN", i)] ^ 0.5), 
+                                      0.074 + 2.632 * exp(-0.076*( soilp[,paste0("SOL_CBN", i)])))
+    soilp[,paste0("SOL_BD", i)] <- ifelse(soilp[,paste0("SOL_CBN", i)] > 0.58,  soilp[,paste0("BD", i)] + 0.009 * soilp[,paste0("CLAY", i)], 
+                                          soilp[,paste0("BD", i)] + 0.005 * soilp[,paste0("CLAY", i)]+ 0.001 * soilp[,paste0("SILT", i)])
     if(i == 1){
       soilp[paste0("DEPTH_M", i)] <- soilp[paste0("SOL_Z", i)] * 0.05
     } else {

@@ -14,6 +14,7 @@ Obtaining soil parameters for [SWAT+ model](https://swatplus.gitbook.io/docs/use
 For populating SWAT+ *usersoil* parameter table *SOL_Z* (depth of layer), *CLAY* (percentage of clay defined as particles <2 $\mu m$), *SAND* (percentage of sand - 50–2000 $\mu m$), *SILT* (percentage of silt  - 2–50 $\mu m$) and *OC* (same as *SOL_CBN*, soil organic carbon content in %) parameters should be collected per each separate soil type profile's layer. Other parameters will be filled by [get_soil_parameters](../reference/get_soil_parameters.html) and [get_hsg](../reference/get_hsg.html) functions. For assigning Hydrologic Soil Groups tile drainage, water level and impervious layer depth data are needed.   
 
 The preparation of soil data and parameters could be done using following workflow. However, depending on available types of data, different steps might needed. This is an example of Polish case study of [Upper Zglowiaczka in OPTAIN project](https://www.optain.eu/case-studies-and-actors-involvement/upper-zglowiaczka). 
+
 ### Loading libraries and paths to data
 
 Workflow presented here needs 6 R packages. However, only `svatools` and `euptf2` libraries are required for the population of soil parameter's table with [get_soil_parameters ](../reference/get_soil_parameters.html) and [get_hsg ](../reference/get_hsg.html) functions presented in [Adding soil parameters to user table](#par_make) step. Input for this step could be prepared in various ways. Here is presented just one of the way to understand better all work process to develop soil parameters table.  
@@ -167,6 +168,9 @@ usertable <- soils %>%
   left_join(gran %>% rename_with( ~ paste0(.x, "3")), by = c("Lyr3" = "Texture EN3")) %>% 
   left_join(humus, by = c("Humus")) %>% 
   select(SNAM, NLAYERS, ends_with("1"), ends_with("2"), ends_with("3"), -starts_with("Lyr")) 
+##Renaming OC column to SOL_CBN
+sol_oc <- names(usertable)[grep("OC>*", names(usertable))]
+usertable <- rename_at(usertable, vars(all_of(sol_oc)), ~sub("OC", "SOL_CBN", sol_oc))
 ##Printing structure example of the required table
 str(usertable)
 ```
