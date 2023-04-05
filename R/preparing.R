@@ -485,6 +485,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' }
 
 load_climate_lst <- function(dir_path, location){
+  ##Checking inputs
   if(!is.character(dir_path)){
     stop("Your input to function parameter 'dir_path' is not character!!! Please correct this.")
   }
@@ -498,16 +499,20 @@ load_climate_lst <- function(dir_path, location){
                 "Only possible inputs are of character or list type. 
                 Please consult function documentation."))
   }
-  
+  ##In case path to shape is given
   if (is(class(location), "character")){
     basin <- st_read(location, quiet = TRUE) %>% 
       st_transform(4326)
+    ##Grid vector created
     grid_vec <- st_as_sf(rasterToPolygons(brick(paste0(dir_path, "/", fs[[1]]))[[1]]), crs = st_crs(4326))
+    ##Finding overlap with basin
     suppressMessages(suppressWarnings({touch_basin <- st_overlaps(grid_vec, basin)}))
     touch_basin[lengths(touch_basin) == 0] <- 0
+    ##If no overlap stop it
     if(all(unlist(touch_basin)==0)){
       stop("You basin boundary and netCDF data do not overlap!!! Please correct data or use different set/s.")
     }
+    ##Filter vector grid and use centroid to create monitoring point attribute data
     grid_vec$touch_basin <- unlist(touch_basin)
     grid_vec <- grid_vec[grid_vec$touch_basin == 1,]
     suppressWarnings({grid_centroid <- st_centroid(grid_vec)})
@@ -521,6 +526,7 @@ load_climate_lst <- function(dir_path, location){
              Long = unlist(map(geometry,1)),
              Lat = unlist(map(geometry,2))) %>% 
       select(ID, Name, Elevation, Source, geometry, Long, Lat)
+    ##If meteo_lst is used, use sf data.frame for stations 
   } else if (is(class(location), "list")){
     st <-  location[["stations"]]
     if (!grepl("4326", st_crs(st)$input)){
@@ -528,7 +534,7 @@ load_climate_lst <- function(dir_path, location){
       print("Coordinate system checked and transformed to EPSG:4326.")
     } 
   }
-  
+  ##Load netCDF
   cl_list <- list()
   for (f in fs){
     if(grepl("prec|Tmax|Tmin|solarRad|windSpeed|relHum", f)){
@@ -548,6 +554,7 @@ load_climate_lst <- function(dir_path, location){
       
       fdir <- unlist(strsplit(f, "/"))
       nc <- brick(paste0(dir_path, "/", f))
+      ##Extract values for stations and create data.frame
       ex_m <- raster::extract(nc, st)
       df <- cbind.data.frame(nc@z[[1]],t(ex_m)[1:(ncol(ex_m)),])
       colnames(df) <- c("DATE", st$ID)
@@ -556,9 +563,9 @@ load_climate_lst <- function(dir_path, location){
         df[,st$ID] <- df[,st$ID]/100
         warning("RELHUM values are larger than 1. Correction is applied by dividing it with 100. Values should be between 0 to 1.")
       } 
-      
+      ##Removing columns without records (case no overlap)
       df <- df[,colSums(is.na(df))==0]
-      
+      ##Creating meteo_lst list 
       cl_list[[fdir[1]]][[fdir[2]]][["stations"]] <- st
       for(id in st$ID){
         if(id %in% names(df)){
@@ -566,6 +573,7 @@ load_climate_lst <- function(dir_path, location){
             drop_na() %>% 
             mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
           colnames(cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]]) <- c("DATE", p)
+          ##If PCP below 0.2, than 0
           if(p == "PCP" && min(cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]], na.rm = TRUE)<0.2){
             cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]] <- ifelse(
               cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]]<0.2, 0, 

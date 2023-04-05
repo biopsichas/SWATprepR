@@ -25,9 +25,9 @@ meteo_lst nested list of lists with dataframes.
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
 
-\item{station1}{character, id of one station in the first list selected for comparison (example ""ID1).}
+\item{station1}{character, id of one station in the first list selected for comparison (example "ID1").}
 
-\item{station2}{character, id of one station in the second list selected for comparison (example ""ID1).}
+\item{station2}{character, id of one station in the second list selected for comparison (example "ID1").}
 
 \item{type1}{character, naming of the first dataset (example "measured").}
 

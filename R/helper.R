@@ -37,25 +37,20 @@ hide_show <- function(graph){
 #'
 #' @examples
 #' \dontrun{
-#' get_nx_date_full(meteo_lst)
+#' get_dates(meteo_lst)
 #' }
 
 get_dates <- function(meteo_lst){
   meteo_lst <- meteo_lst$data
-  min_date <- NULL
-  max_date <- NULL
+  min_date <- as.POSIXct(as.Date(now()), "%Y-%m-%d", tz = "UTC")
+  max_date <- as.POSIXct("1900-01-01", "%Y-%m-%d", tz = "UTC")
   for (n in names(meteo_lst)){
-    if(is.null(min_date)|is.null(max_date)){
-      min_date <-  min(meteo_lst[[n]][[p]]$DATE)
-      max_date <-  max(meteo_lst[[n]][[p]]$DATE)
-    } else {
-      for(p in names(meteo_lst[[n]])){
-        if(min_date >= min(meteo_lst[[n]][[p]]$DATE)){
-          min_date <-  min(meteo_lst[[n]][[p]]$DATE)
-        }
-        if(max_date <= max(meteo_lst[[n]][[p]]$DATE)){
-          max_date <-  max(meteo_lst[[n]][[p]]$DATE)
-        }
+    for(p in names(meteo_lst[[n]])){
+      if(min_date >= min(meteo_lst[[n]][[p]]$DATE)){
+        min_date <-  min(meteo_lst[[n]][[p]]$DATE)
+      }
+      if(max_date <= max(meteo_lst[[n]][[p]]$DATE)){
+        max_date <-  max(meteo_lst[[n]][[p]]$DATE)
       }
     }
   }

@@ -22,7 +22,13 @@ Function providing loading for data templates (with single and multiple data she
 (data should have been cleaned before).
 }
 \examples{
+##Two types of templates could be used
+## 1) Example of template for calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
 cal_data <- load_template(temp_path)
 str(cal_data)
+## 2) Example of template for weather data
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+met_lst <- load_template(temp_path, 3035)
+str(met_lst)
 }
