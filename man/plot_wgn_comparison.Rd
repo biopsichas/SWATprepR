@@ -45,6 +45,6 @@ Plot wgn parameters comparison
 \dontrun{
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 met_lst <- load_template(temp_path, 4326)
-plot_wgn_comparison(met_lst, met_lst, "ID1", "ID2", "Station 1", "Station 2", "some text")
+plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce station", "Glebokie station", "comparison")
 }
 }

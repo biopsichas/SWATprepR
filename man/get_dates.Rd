@@ -18,7 +18,7 @@ Function to get maximum min and max dates available for all time series data for
 }
 \examples{
 \dontrun{
-get_nx_date_full(meteo_lst)
+get_dates(meteo_lst)
 }
 }
 \keyword{internal}
