@@ -228,4 +228,10 @@
   <url>
     <loc>/reference/get_usersoil_table.html</loc>
   </url>
+  <url>
+    <loc>/reference/plot_wgn_comparison.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_climate_lst.html</loc>
+  </url>
 </urlset>

@@ -1,3 +1,7 @@
+# svatools 0.0.9 
+
+* New functions `get_usersoil_table()`, `load_climate_lst()` and `plot_wgn_comparison()` were added. 
+
 # svatools 0.0.8
 
 * Some bugs fixed in `get_soil_parameters()` and `get_atmo_dep()`.

@@ -12,17 +12,17 @@ with minimum columns of SNAM,    NLAYERS    and SOL_Z, CLAY, SILT, SAND, SOL_CBN
 soil layer (minimum 1).}
 
 \item{hsg}{Boolean, TRUE - prepare soil hydrological groups, FALSE - no soil hydrological group
-preparation will be done. Optional (\code{Default = FALSE}). If (\code{hsg = TRUE}) three additional columns
+preparation will be done. Optional (\code{Default = FALSE}). If \code{hsg = TRUE} three additional columns
 should be in an input table: Impervious (allowed values are "<50cm", "50-100cm", ">100cm"), Depth (allowed
 values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas,
 "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol
-Table 3.3 available on \code{\link{https://doi.org/10.5281/zenodo.7463395}}.}
+\href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.}
 
 \item{keep_values}{Boolean, TRUE - keep old values (new values only will be left where 0
-or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE})}
+or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE}).}
 
 \item{nb_lyr}{integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA},
-which is same number as in input data).}
+which stands for the same number as in input data).}
 }
 \value{
 dataframe with fully formatted and filled table of soil parameters for SWAT model.

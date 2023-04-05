@@ -458,6 +458,128 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   return(df[c("DATE", "NH4_RF", "NO3_RF" , "NH4_DRY", "NO3_DRY")])
 }
 
+#' Extract climate data into nested list of lists 
+#'
+#' @param dir_path character, path to CORDEX-BC folder (example climate/CORDEX-BC").
+#' @param location character or list. In case of character, path should be provided to 
+#' catchment boundary file (example GIS/basin.shp). In case of list, nested list of lists 
+#' with dataframes. Nested structure meteo_lst -> data -> Station ID -> Parameter -> 
+#' Dataframe (DATE, PARAMETER). List of list could be obtained using \code{load_template()}
+#' with prepared excel template.
+#' @importFrom elevatr get_elev_point
+#' @importFrom sf st_read st_transform st_as_sf st_crs st_overlaps st_centroid
+#' @importFrom raster brick rasterToPolygons extract
+#' @importFrom dplyr select rename mutate 
+#' @importFrom tidyr drop_na
+#' @importFrom purrr map
+#' @return Nested lists of lists. First nesting level is for RCP, second for RCM model numbers,
+#' the rest is the same as in meteo_lst. This part could be used with other package functions 
+#' (example  plot_weather(result$rcp26$1), "PCP", "month", "sum").
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools") 
+#' data_path <- "climate/CORDEX-BC"
+#' result <- load_climate_lst(data_path, basin_path)
+#' }
+
+load_climate_lst <- function(dir_path, location){
+  if(!is.character(dir_path)){
+    stop("Your input to function parameter 'dir_path' is not character!!! Please correct this.")
+  }
+  fs <- list.files(dir_path, recursive = T)
+  if(length(fs)==0){
+    stop(paste0("No netCDF data were found on ", dir_path, " path!!! 
+                Please check your path and consult function documentation."))
+  }
+  if(!is.character(location)|is.list(location)){
+    stop(paste0("`location` parameter input is ", class(location), 
+                "Only possible inputs are of character or list type. 
+                Please consult function documentation."))
+  }
+  
+  if (is(class(location), "character")){
+    basin <- st_read(location, quiet = TRUE) %>% 
+      st_transform(4326)
+    grid_vec <- st_as_sf(rasterToPolygons(brick(paste0(dir_path, "/", fs[[1]]))[[1]]), crs = st_crs(4326))
+    suppressMessages(suppressWarnings({touch_basin <- st_overlaps(grid_vec, basin)}))
+    touch_basin[lengths(touch_basin) == 0] <- 0
+    if(all(unlist(touch_basin)==0)){
+      stop("You basin boundary and netCDF data do not overlap!!! Please correct data or use different set/s.")
+    }
+    grid_vec$touch_basin <- unlist(touch_basin)
+    grid_vec <- grid_vec[grid_vec$touch_basin == 1,]
+    suppressWarnings({grid_centroid <- st_centroid(grid_vec)})
+    st <- grid_centroid %>% 
+      select() %>% 
+      get_elev_point(src = "aws") %>% 
+      rename(Elevation = elevation) %>% 
+      mutate(ID = paste0("ID",rownames(.)),
+             Name = paste0("ID",rownames(.)),
+             Source = "Grid",
+             Long = unlist(map(geometry,1)),
+             Lat = unlist(map(geometry,2))) %>% 
+      select(ID, Name, Elevation, Source, geometry, Long, Lat)
+  } else if (is(class(location), "list")){
+    st <-  location[["stations"]]
+    if (!grepl("4326", st_crs(st)$input)){
+      st <- st_transform(st, 4326)
+      print("Coordinate system checked and transformed to EPSG:4326.")
+    } 
+  }
+  
+  cl_list <- list()
+  for (f in fs){
+    if(grepl("prec|Tmax|Tmin|solarRad|windSpeed|relHum", f)){
+      if (grepl("prec", f)){
+        p <- "PCP"
+      } else if (grepl("Tmax", f)){
+        p <- "TMP_MAX"
+      } else if (grepl("Tmin", f)){
+        p <- "TMP_MIN"
+      } else if (grepl("solarRad", f)){
+        p <- "SLR"
+      } else if (grepl("windSpeed", f)){
+        p <- "WNDSPD"
+      } else if (grepl("relHum", f)){
+        p <- "RELHUM"
+      } 
+      
+      fdir <- unlist(strsplit(f, "/"))
+      nc <- brick(paste0(dir_path, "/", f))
+      ex_m <- raster::extract(nc, st)
+      df <- cbind.data.frame(nc@z[[1]],t(ex_m)[1:(ncol(ex_m)),])
+      colnames(df) <- c("DATE", st$ID)
+      rownames(df) <- NULL
+      if (p == "RELHUM" && mean(ex_m, na.rm = TRUE)>1){
+        df[,st$ID] <- df[,st$ID]/100
+        warning("RELHUM values are larger than 1. Correction is applied by dividing it with 100. Values should be between 0 to 1.")
+      } 
+      
+      df <- df[,colSums(is.na(df))==0]
+      
+      cl_list[[fdir[1]]][[fdir[2]]][["stations"]] <- st
+      for(id in st$ID){
+        if(id %in% names(df)){
+          cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]] <- df[,c("DATE", id)] %>% 
+            drop_na() %>% 
+            mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
+          colnames(cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]]) <- c("DATE", p)
+          if(p == "PCP" && min(cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]], na.rm = TRUE)<0.2){
+            cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]] <- ifelse(
+              cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]]<0.2, 0, 
+              cl_list[[fdir[1]]][[fdir[2]]][["data"]][[id]][[p]][[p]])
+          }
+        }
+      }
+      print(paste0("Working on ", f))
+    }
+  }
+  print("Extraction of data is finished.")
+  return(cl_list)
+}
+
 # Preparing soils -----------------------------------------------
 
 #' Function to prepare user soil table for SWAT model
@@ -470,9 +592,9 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' should be in an input table: Impervious (allowed values are "<50cm", "50-100cm", ">100cm"), Depth (allowed 
 #' values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas, 
 #' "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol 
-#' Table 3.3 available on \code{\link{https://doi.org/10.5281/zenodo.7463395}}.
+#' \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
 #' @param keep_values Boolean, TRUE - keep old values (new values only will be left where 0 
-#' or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE})
+#' or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE}).
 #' @param nb_lyr integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA}, 
 #' which stands for the same number as in input data).
 #' @importFrom dplyr select ends_with starts_with left_join

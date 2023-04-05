@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">svatools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,21 +74,21 @@ soil layer (minimum 1).</p></dd>
 
 <dt>hsg</dt>
 <dd><p>Boolean, TRUE - prepare soil hydrological groups, FALSE - no soil hydrological group
-preparation will be done. Optional (<code>Default = FALSE</code>). If (<code>hsg = TRUE</code>) three additional columns
+preparation will be done. Optional (<code>Default = FALSE</code>). If <code>hsg = TRUE</code> three additional columns
 should be in an input table: Impervious (allowed values are "&lt;50cm", "50-100cm", "&gt;100cm"), Depth (allowed
 values are "&lt;60cm", "60-100cm", "&gt;100cm") and Drained (allowed values are "Y" for drained areas,
 "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol
-Table 3.3 available on <code>https://doi.org/10.5281/zenodo.7463395</code>.</p></dd>
+<a href="https://doi.org/10.5281/zenodo.7463395" class="external-link">Table 3.3</a>.</p></dd>
 
 
 <dt>keep_values</dt>
 <dd><p>Boolean, TRUE - keep old values (new values only will be left where 0
-or NA values are present in an input table), FALSE - keep only new values. Optional (<code>Default = FALSE</code>)</p></dd>
+or NA values are present in an input table), FALSE - keep only new values. Optional (<code>Default = FALSE</code>).</p></dd>
 
 
 <dt>nb_lyr</dt>
 <dd><p>integer, number of layers resulting user soil data should contain. Optional (<code>Default = NA</code>,
-which is same number as in input data).</p></dd>
+which stands for the same number as in input data).</p></dd>
 
 </dl></div>
     <div class="section level2">

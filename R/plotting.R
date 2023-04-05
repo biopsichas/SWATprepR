@@ -379,3 +379,80 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
     hide_show()
   return(fig)
 }
+
+#' Plot wgn parameters comparison
+#'
+#' @param meteo_lst1 first nested list of lists with dataframes. 
+#' meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param meteo_lst2 second nested list of lists with dataframes. 
+#' meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param station1 character, id of one station in the first list selected for comparison (example ""ID1).
+#' @param station2 character, id of one station in the second list selected for comparison (example ""ID1).
+#' @param type1 character, naming of the first dataset (example "measured").
+#' @param type2 character, naming of the second dataset (example "netCDF").
+#' @param title character, information to be added in figure title
+#' @importFrom dplyr %>%  filter select mutate bind_rows
+#' @importFrom tidyr pivot_longer
+#' @importFrom ggplot2 ggplot geom_bar facet_wrap ggtitle aes theme_minimal
+#' @return ggplot figure of bar plots 
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' met_lst <- load_template(temp_path, 4326)
+#' plot_wgn_comparison(met_lst, met_lst, "ID1", "ID2", "Station 1", "Station 2", "some text")
+#' }
+
+plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type1 = "set 1", type2 = "set 2", title = "comparison"){
+  
+  stopifnot(is.list(meteo_lst1))
+  stopifnot(is.list(meteo_lst2))
+  stopifnot(is.character(station1))
+  stopifnot(is.character(station2))
+  stopifnot(is.character(type1))
+  stopifnot(is.character(type2))
+  stopifnot(is.character(title))
+  
+  min_date <- as.POSIXct(get_dates(meteo_lst1)$min_date, "%Y-%m-%d", tz = "UTC")
+  max_date <- as.POSIXct(get_dates(meteo_lst1)$max_date, "%Y-%m-%d", tz = "UTC")
+  for (id in names(meteo_lst2$data)){
+    for (p in names(meteo_lst2$data[[id]])){
+      meteo_lst2$data[[id]][[p]] <- meteo_lst2$data[[id]][[p]] %>% 
+        filter(DATE >= min_date & DATE <= max_date)
+    }
+  }
+  
+  meteo_lst1$data <- fill_with_closest(meteo_lst1)
+  meteo_lst2$data <- fill_with_closest(meteo_lst2)
+  
+  meteo_lst1$data <-  meteo_lst1$data[names(meteo_lst1$data) %in% c(station1)]
+  meteo_lst1$stations <- meteo_lst1$stations[meteo_lst1$stations$ID %in% c(station1),]
+  
+  meteo_lst2$data <- meteo_lst2$data[names(meteo_lst2$data) %in% c(station2)]
+  meteo_lst2$stations <- meteo_lst2$stations[meteo_lst2$stations$ID %in% c(station2),]
+  
+  df1 <- prepare_wgn(meteo_lst1)$wgn_data %>% 
+    filter(wgn_id == 1) %>% 
+    select(-c("id", "wgn_id")) %>% 
+    pivot_longer(-month, names_to = "par", values_to = "values") %>% 
+    mutate(source = type1)
+  
+  df2 <- prepare_wgn(meteo_lst2)$wgn_data %>% 
+    filter(wgn_id == 1) %>% 
+    select(-c("id", "wgn_id")) %>% 
+    pivot_longer(-month, names_to = "par", values_to = "values") %>% 
+    mutate(source = type2)
+  
+  fig <- ggplot(bind_rows(df1,df2), aes(x = month, y = values, fill = source))+
+    geom_bar(stat='identity', position = "dodge")+
+    facet_wrap(~par, scales = "free")+
+    ggtitle(paste(type1, "vs.", type2,  title))+
+    theme_minimal()
+  
+  return(fig)
+}

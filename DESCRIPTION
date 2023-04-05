@@ -1,8 +1,8 @@
 Type: Package
 Package: svatools
 Title: SWAT+ input data preparation tool
-Version: 0.0.8
-Date: 2023-03-31
+Version: 0.0.9
+Date: 2023-04-05
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))
@@ -15,6 +15,7 @@ Imports:
     comprehenr,
     DBI,
     dplyr,
+    elevatr,
     euptf2,
     ggplot2,
     ggpmisc,
