@@ -405,7 +405,7 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
 #' \dontrun{
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' met_lst <- load_template(temp_path, 4326)
-#' plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce station", "Glebokie station", "comparison")
+#' plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
 #' }
 
 plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type1 = "set 1", type2 = "set 2", title = "comparison"){

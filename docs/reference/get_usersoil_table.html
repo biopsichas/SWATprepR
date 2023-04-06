@@ -82,8 +82,11 @@ values are "&lt;60cm", "60-100cm", "&gt;100cm") and Drained (allowed values are 
 
 
 <dt>keep_values</dt>
-<dd><p>Boolean, TRUE - keep old values (new values only will be left where 0
-or NA values are present in an input table), FALSE - keep only new values. Optional (<code>Default = FALSE</code>).</p></dd>
+<dd><p>Boolean or character vector, TRUE - keep old values (new values only will be left where 0
+or NA values are present in an input table), FALSE - keep only new values. Character vector also could be used
+to keep only specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of soil hydro groups and
+rock data for the first layer, while c("HYDGRP", "ROCK") would keep values in all rock data columns.
+Optional (<code>Default = FALSE</code>).</p></dd>
 
 
 <dt>nb_lyr</dt>

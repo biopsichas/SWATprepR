@@ -18,8 +18,11 @@ values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" fo
 "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol
 \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.}
 
-\item{keep_values}{Boolean, TRUE - keep old values (new values only will be left where 0
-or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE}).}
+\item{keep_values}{Boolean or character vector, TRUE - keep old values (new values only will be left where 0
+or NA values are present in an input table), FALSE - keep only new values. Character vector also could be used
+to keep only specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of soil hydro groups and
+rock data for the first layer, while c("HYDGRP", "ROCK") would keep values in all rock data columns.
+Optional (\code{Default = FALSE}).}
 
 \item{nb_lyr}{integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA},
 which stands for the same number as in input data).}

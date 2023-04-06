@@ -601,8 +601,11 @@ load_climate_lst <- function(dir_path, location){
 #' values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas, 
 #' "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol 
 #' \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
-#' @param keep_values Boolean, TRUE - keep old values (new values only will be left where 0 
-#' or NA values are present in an input table), FALSE - keep only new values. Optional (\code{Default = FALSE}).
+#' @param keep_values Boolean or character vector, TRUE - keep old values (new values only will be left where 0 
+#' or NA values are present in an input table), FALSE - keep only new values. Character vector also could be used 
+#' to keep only specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of soil hydro groups and 
+#' rock data for the first layer, while c("HYDGRP", "ROCK") would keep values in all rock data columns.
+#' Optional (\code{Default = FALSE}).
 #' @param nb_lyr integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA}, 
 #' which stands for the same number as in input data).
 #' @importFrom dplyr select ends_with starts_with left_join
@@ -738,19 +741,29 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
   }
   
   ##Overwriting results with existing values in input table
-  if(keep_values){
-    names(df_save) <- paste0(names(df_save), ".x")
-    soil_par_names <- setdiff(names(soilp), "SNAM")
-    soilp <- left_join(soilp, df_save, by = c("SNAM" = "SNAM.x"))
-    for(sn in soil_par_names){
-      if((paste0(sn, ".x") %in% names(df_save)) && !sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE")){
-        soilp[,sn] <- ifelse(soilp[,paste0(sn, ".x")] > 0, soilp[,paste0(sn, ".x")], soilp[,sn])
-      } else if(sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE") && (paste0(sn, ".x") %in% names(df_save))){
-        soilp[,sn] <- ifelse(!is.na(soilp[,paste0(sn, ".x")]), soilp[,paste0(sn, ".x")], soilp[,sn])
-      } 
+  if(is.character(keep_values) || keep_values){
+    ##In case keep_values is vector of characters
+    if(is.character(keep_values)){
+      for(sn in keep_values){
+        soilp[, grepl(sn , names(soilp))] <- df_save[, grepl(sn , names(df_save))]
+        col_names <- names(df_save[grepl(sn , names(df_save))])
+        print(paste0(paste(col_names, collapse = ", "), " column", if(length(col_names)==1) "" else "s",  
+                     if(length(col_names)==1) " was " else " were ", "kept."))
+      }
+    } else {
+      names(df_save) <- paste0(names(df_save), ".x")
+      soil_par_names <- setdiff(names(soilp), "SNAM")
+      soilp <- left_join(soilp, df_save, by = c("SNAM" = "SNAM.x"))
+      for(sn in soil_par_names){
+        if((paste0(sn, ".x") %in% names(df_save)) && !sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE")){
+          soilp[,sn] <- ifelse(soilp[,paste0(sn, ".x")] > 0, soilp[,paste0(sn, ".x")], soilp[,sn])
+        } else if(sn %in% c("MUID", "S5ID", "CMPPCT", "HYDGRP", "ANION_EXCL", "SOL_CRK", "TEXTURE") && (paste0(sn, ".x") %in% names(df_save))){
+          soilp[,sn] <- ifelse(!is.na(soilp[,paste0(sn, ".x")]), soilp[,paste0(sn, ".x")], soilp[,sn])
+        } 
+      }
+      soilp <- select(soilp, -ends_with(".x"))
+      print("Values existing in the input table were kept.")
     }
-    soilp <- select(soilp, -ends_with(".x"))
-    print("Values existing in the input table were kept.")
   }
   
   return(soilp)
@@ -797,7 +810,12 @@ get_soil_parameters <- function(soilp){
       d <- 1
       input[nrow(input)+1,] <- list(nrow(input)+1, 200, 1, 0.01, 1, 1, 98)
     }
-    pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
+    tryCatch({
+      pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
+    },
+    error = function(e) {
+      stop("euptfFun function from euptf2 package couldn't be used. Please make sure euptf2 package is loaded.")
+    })
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
     pred_VG <- merge(pred_VG1[c(1:nrow(pred_VG1)-d), c(1:6,8,10:14)], input[,c(1,2)], by="rownum", all.y=TRUE)
