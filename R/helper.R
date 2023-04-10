@@ -392,7 +392,7 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing){
     map2_df(., spacing, ~sprintf(.y, .x)) %>%
     apply(., 1, paste, collapse = '  ') %>% 
     str_replace_all("NA", "") ##Removing NAs
-
+  ##Creating temp directory to to save results 
   f_dir <- paste(write_path, "temp", sep = '/')
   f_write <- paste(f_dir, fname, sep = '/')
   if(!dir.exists(f_dir)){
@@ -404,6 +404,7 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing){
     unlink(f_write)
     file.create(f_write)
   }
+  ##Writing results into temp directory
   write_lines(c(text_l, f_names, f_lines), f_write)
   print(paste0("Updated weather stations in ", fname, " file."))
 }

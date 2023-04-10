@@ -234,4 +234,13 @@
   <url>
     <loc>/reference/load_climate_lst.html</loc>
   </url>
+  <url>
+    <loc>/reference/update_wst_txt.html</loc>
+  </url>
+  <url>
+    <loc>/reference/read_tbl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/prepare_climate.html</loc>
+  </url>
 </urlset>

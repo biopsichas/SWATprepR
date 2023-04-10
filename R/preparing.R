@@ -787,6 +787,10 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 46))
   update_wst_txt('rout_unit.con', write_path, wst_sf, spacing)
   
+  ##Coping files from temp folder into main and deleting temp folder
+  con_files <- list.files(paste(write_path, "temp", sep = "/"))
+  invisible(file.copy(paste(write_path, "temp" , con_files, sep = "/"), write_path, overwrite = TRUE))
+  unlink(paste(write_path, "temp", sep = "/"),recursive = TRUE)
   print(paste0("Climate data were successfully written in ", write_path))
 }
 
