@@ -16,14 +16,15 @@
 #'
 #' @examples
 #' ##Two types of templates could be used
-#' ## 1) Example of template for calibration data
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
-#' cal_data <- load_template(temp_path)
-#' str(cal_data)
-#' ## 2) Example of template for weather data
+#' # 1) Example of template for weather data
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
 #' met_lst <- load_template(temp_path, 3035)
 #' str(met_lst)
+#' ## 2) Example of template for calibration data
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' cal_data <- load_template(temp_path)
+#' str(cal_data)
+
 
 load_template <- function(template_path, epsg_code = 4326){
   print("Loading data from template.")
@@ -135,4 +136,57 @@ load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRa
   }
   print("Loading of data is finished.")
   return(r)
+}
+
+# Loading SWAT text file --------------------------------------------------------------------
+
+#' Loading SWAT+ text files into dataframe
+#'
+#' @param tbl_name character, name of the file to be read eaxmple ('rout_unit.con').
+#' @param proj_path character, path to SWAT+ txtinout folder (example "my_model").
+#' @param row_data_start numeric, row number from which data are being written.
+#' @param row_col_names numeric, row nu,mber in which column names are being written.
+#' @importFrom vroom vroom_lines
+#' @importFrom stringr str_trim str_split
+#' @importFrom dplyr %>% mutate across all_of bind_rows
+#' @importFrom purrr map map_lgl map_df set_names
+#' @return dataframe with information from text file
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' df <- read_tbl('rout_unit.con', 'model_folder', 3, 2) 
+#' }
+
+read_tbl <- function(tbl_name, proj_path, row_data_start, row_col_names) {
+  tbl_path <- paste(proj_path, tbl_name, sep = '/')
+  ##Reading column names
+  col_names <- vroom_lines(tbl_path, skip = row_col_names - 1, n_max = 1) %>%
+    str_trim(.) %>%
+    str_split(., '[:space:]+') %>%
+    unlist()
+  ##Reading file body into list
+  tbl <- vroom_lines(tbl_path, skip = row_data_start - 1) %>%
+    str_trim(.) %>%
+    str_split(., '\t[:space:]+|[:space:]+')
+  
+  ##Checking if all columns have names
+  col_length_true <- max(unlist(map(tbl, length)),rm.na=TRUE)
+  col_length_catched <- length(col_names)
+  ##If not, adding missing names 'vvv'+number
+  if(col_length_true>col_length_catched){
+    col_names <- c(col_names, paste0("vvv",seq(1:(col_length_true-col_length_catched ))))
+    ##Identifying number columns
+    is_num <- tbl[[which(sapply(tbl, length)==col_length_true)[1]]] %>% as.numeric() %>% 
+      suppressWarnings() %>% map_lgl(., ~!is.na(.x)) %>% which()
+  } else {
+    is_num <- tbl[[1]] %>% as.numeric() %>% suppressWarnings() %>% 
+      map_lgl(., ~!is.na(.x)) %>% which()
+  }
+  ##Returning dataframe
+  tbl <- tbl %>%
+    map(., ~set_names(.x, col_names[c(1:length(.x))])) %>%
+    map_df(., ~bind_rows(.x)) %>%
+    mutate(across(all_of(is_num), ~ as.numeric(.x)))
+  return(tbl)
 }

@@ -349,6 +349,66 @@ update_wst_id <- function(tname, db_path, wst_cli){
   return(print(paste(tname, "updated with wst_id and rewritten into database.")))
 }
 
+#' Updating wst_id information in model text files
+#'
+#' @param fname character, model file name (example 'aquifer.con').
+#' @param write_path character, path to SWAT+ txtinout folder (example "my_model").
+#' @param wst_sf sf dataframe with weather station information. Should contain "name" and "geometry" columns. 
+#' @param spacing character, should contain information about spacing between columns in the file. 
+#' Example c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4)).
+#' @importFrom dplyr mutate_at vars one_of
+#' @importFrom sf st_as_sf st_nearest_feature
+#' @importFrom purrr map2_df
+#' @importFrom stringr str_replace_all
+#' @importFrom readr write_lines
+#' @return Updated text file, which would have updated station names 
+#' (with nearest stations to features). 
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', 
+#' rep('%8s', 4), '%12s', '%8s', rep('%12s', 2))
+#' update_wst_txt("reservoir.con", "model_folder", wst_sf, spacing)
+#' }
+
+update_wst_txt <- function(fname, write_path, wst_sf, spacing){
+  ##Making heading text
+  text_l <-  paste0(fname,": ", "rewritten by svatools R package ", Sys.time(), " for SWAT+ rev.60.5.4")
+  ##Reading file into dataframe
+  f <- read_tbl(fname, write_path, 3, 2) %>% 
+    mutate_at(vars(one_of(c("area", "lat", "lon", "elev", "frac"))), ~format(round(as.numeric(.), 5), nsmall = 5)) %>% 
+    suppressWarnings()
+  ##Finding nearest weather station and updating info in file with this info 
+  f_sf <- st_as_sf(f, coords = c("lon", "lat"), crs = 4326)
+  f$wst <-  wst_sf$name[st_nearest_feature(f_sf, wst_sf)]
+  ##Preparing column name line
+  f_names <- colnames(f) %>%
+    map2_chr(., spacing, ~sprintf(.y, .x)) %>%
+    paste(., collapse = '  ')
+  f_names <- gsub('vvv[0-9]+', '', f_names)
+  ##Preparing all other lines
+  f_lines <- f %>%
+    map2_df(., spacing, ~sprintf(.y, .x)) %>%
+    apply(., 1, paste, collapse = '  ') %>% 
+    str_replace_all("NA", "") ##Removing NAs
+
+  f_dir <- paste(write_path, "temp", sep = '/')
+  f_write <- paste(f_dir, fname, sep = '/')
+  if(!dir.exists(f_dir)){
+    dir.create(f_dir)
+  } 
+  if(!file.exists(f_write)){
+    file.create(f_write)
+  } else {
+    unlink(f_write)
+    file.create(f_write)
+  }
+  write_lines(c(text_l, f_names, f_lines), f_write)
+  print(paste0("Updated weather stations in ", fname, " file."))
+}
+
+
 #' Write weather meteo_lst into template .xlsx file
 #'
 #' @param meteo_lst nested list of lists with dataframes. 

@@ -7,5 +7,5 @@ utils::globalVariables(c("DATE", "geometry", "Station", "Values", "Variables",
                          "RAIN_YRS", "day", "elev", "lat", "lon", "rain_yrs", "wgn_id",
                          "max_value", "min_value", "lc1", "id", "lu", "type", "variables",
                          "PCP", "eq.label","rr.label", "SNAM", "TEXTURE", "param", "values",
-                         "NLAYERS", "elevation" ))
+                         "NLAYERS", "elevation", "nbyr", "tstep"))
 

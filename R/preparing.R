@@ -588,6 +588,208 @@ load_climate_lst <- function(dir_path, location){
   return(cl_list)
 }
 
+#' Function to prepare or update climate data text input files in SWAT+ model
+#'
+#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
+#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
+#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
+#' @param write_path character, path to SWAT+ txtinout folder (example "my_model").
+#' @param period_starts character, date string (example '1991-01-01'). Optional (\code{default = NA}, 
+#' stands for all available in data).
+#' @param period_ends character, date string (example '2020-12-31'). Optional (\code{default = NA}, 
+#' stands for all available in data).
+#' @importFrom purrr map map2_df 
+#' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains
+#' @importFrom sf st_as_sf
+#' @return Fill or update multiple weather related weather text files.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' prepare_climate(meteo_lst, "output", "1991-01-01", "2020-12-31")
+#' }
+
+prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_ends = NA){
+  ##Checking input
+  if(!is.list(meteo_lst)){
+    stop("Make sure your meteo_lst input is list of lists described in function description!!!")
+  }
+  if(!is.character(write_path)){
+    stop("write_path should be character type!")
+  }
+  ##Dealing with dates
+  if(is.na(period_starts)){
+    period_starts <- get_dates(meteo_lst)$min_date
+  } else {
+    tryCatch({
+      period_starts <- as.Date(period_starts)
+    },
+    error = function(e){
+      stop("Make sure your period start date is provided in this format '1991-01-01'!!!")
+    })
+  }
+  if(is.na(period_ends)){
+    period_ends <- get_dates(meteo_lst)$max_date
+  } else {
+    tryCatch({
+      period_ends <- as.Date(period_ends)
+    },
+    error = function(e){
+      stop("Make sure your period end date is provided in this format '2020-12-31'!!!")
+    })
+  }
+  if(period_starts>=period_ends){
+    stop("Make sure your 'period_starts' parameter is earier date than 'period_ends'!!!")
+  }
+
+  ##Heading in weather files
+  hd_txt <-  paste0(": written by svatools R package on ", Sys.time(), " for SWAT+ rev.60.5.4")
+  ##Filtering list to a defined period
+  meteo_lst$data <- map(meteo_lst$data, ~map(., ~filter(., DATE >= period_starts & DATE <= period_ends)))
+  ##Preparing wgn parameters
+  wgn <- prepare_wgn(meteo_lst)
+  
+  ##Writing weather-wgn.cli file
+  fname <- "weather-wgn.cli"
+  ##First line to be printed into file
+  text_l <- paste0(fname, hd_txt)
+  ##Stations info
+  df1 <- wgn$wgn_st %>% 
+    mutate(ID = paste0("ID", ID)) %>% 
+    select(-NAME) %>% 
+    mutate_at(vars(c(LAT, LONG, ELEVATION)), ~sprintf(., fmt = '%#.5f'))
+  ##Station data
+  df2 <- wgn$wgn_data %>% 
+    mutate(ID = paste0("ID", wgn_id)) %>% 
+    select(-c(id, month, wgn_id)) %>% 
+    mutate_if(is.numeric, ~sprintf(., fmt = '%#.5f'))
+  ##Defining spacing in written files 
+  st_hd <- c('%-30s', rep('%-13s', 2), '%-15s', '%-3s')
+  st_dt <- c(rep('%13s', 14))
+  ##Printing heading line
+  write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  ##Loop to each station
+  for (id in df1$ID){
+    ##Filtering
+    s1 <- df1[df1$ID == id,]
+    s2 <- subset(df2[df2$ID == id,], select = -ID)
+    ##Heading for ID
+    s1 <- s1 %>%
+      map2_df(., st_hd, ~sprintf(.y, .x)) %>%
+      apply(., 1, paste, collapse = ' ')
+    write.table(s1, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    ##Parameters for layer
+    write.table(paste(sprintf(st_dt, names(s2)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    s2 <- s2 %>%
+      map2_df(., st_dt, ~sprintf(.y, .x)) %>%
+      apply(., 1, paste, collapse = ' ')
+    write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  }
+  print(paste0(fname, " file was successfully written."))
+  
+  ##Writing weather-sta.cli file
+  fname <- "weather-sta.cli"
+  ##File heading line
+  text_l <- paste0(fname, hd_txt)
+  write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  ##Creating station names from coordinates (example s52699n18600e)
+  station_names <- mutate_all(df1[c("LAT", "LONG")], ~sprintf(., fmt = '%#.6s')) %>% 
+    mutate(name =  gsub("\\.", "", as.character(paste0("s", LAT, "n", LONG, "e"))))
+  ##Writing file names for different variables
+  weather_sta_cli <- data.frame(name=station_names$name, 
+                                wgn = df1$ID, 
+                                pcp = paste0("sta_", tolower(df1$ID), ".pcp"),
+                                tmp = paste0("sta_", tolower(df1$ID), ".tmp"),
+                                slr = paste0("sta_", tolower(df1$ID), ".slr"),
+                                hmd = paste0("sta_", tolower(df1$ID), ".hmd"),
+                                wnd = paste0("sta_", tolower(df1$ID), ".wnd"),
+                                wnd_dir = "null",
+                                atmo_dep = "atmodep.cli")
+  ##Spacing
+  st_hd <- c('%-26s', '%6s', rep('%25s', 7))
+  write.table(paste(sprintf(st_hd, names(weather_sta_cli)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  ##Filing file with dataframe information
+  s2 <- weather_sta_cli %>%
+    map2_df(., st_hd, ~sprintf(.y, .x)) %>%
+    apply(., 1, paste, collapse = ' ')
+  write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  print(paste0(fname, " file was successfully written."))
+  
+  ##Writing weather variable files
+  p_lst <- list("pcp" = list("PCP", "Precipitation"), 
+                "slr" = list("SLR", "Solar radiation"), 
+                "hmd" = list("RELHUM", "Relative humidity"), 
+                "tmp" = list(c("TMP_MAX", "TMP_MIN"), "Temperature"), 
+                "wnd" = list("WNDSPD", "Wind speed"), 
+                "wnd_dir" = list("WND_DIR", "Wind direction"), 
+                "atmo_dep" = list("ATMO_DEP", "Atmospheric deposition"))
+  ##Preparing general info for station
+  df1_cli <- df1 %>% 
+    mutate_at(vars(LAT, LONG, ELEVATION), ~format(round(as.numeric(.), 3), nsmall = 3)) %>% 
+    rename(lat = LAT, lon = LONG, elev = ELEVATION, nbyr = RAIN_YRS) %>% 
+    mutate(tstep = 0) %>% 
+    select(ID, nbyr, tstep, lat, lon, elev) %>% 
+    mutate(ID = tolower(ID))
+  ##Loop to write for each variable
+  for(cli in names(weather_sta_cli[c(3:7)])){
+    ##Writing reference file (where all variable files are listed)
+    fname <- paste0(cli, ".cli")
+    text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " file names - file written by svatools R package ", Sys.time())
+    write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table("filename", paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(weather_sta_cli[cli], paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    ##For each station
+    for(id in df1_cli$ID){
+      s2 <- subset(df1_cli[df1_cli$ID == id,], select = -ID)
+      fname <- paste0("sta_", id, ".", cli)
+      ##Heading line
+      text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " data - file written by svatools R package ", Sys.time())
+      write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Heading names
+      st_hd <- c('%-6s', rep('%7s', 4))
+      write.table(paste(sprintf(st_hd, names(s2)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Info for a station
+      s2 <- s2 %>%
+        map2_df(., st_hd, ~sprintf(.y, .x)) %>%
+        apply(., 1, paste, collapse = ' ')
+      write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      ##Identifying temperature as should be joined two variables
+      if(cli == "tmp"){
+        wdf <- meteo_lst[["data"]][[toupper(id)]][[p_lst[[cli]][[1]][[1]]]] %>% 
+          full_join(meteo_lst[["data"]][[toupper(id)]][[p_lst[[cli]][[1]][[2]]]], by = "DATE")
+        st_dt <- c('%-6s', rep('%7s', 3))
+      } else {
+        wdf <- meteo_lst[["data"]][[toupper(id)]][[p_lst[[cli]][[1]]]]
+        st_dt <- c('%-6s', rep('%7s', 2))
+      }
+      ##Writing file for each variable and station
+      s2 <- wdf %>%
+        mutate(year = year(DATE), day = yday(DATE)) %>% 
+        select(year, day, contains(p_lst[[cli]][[1]])) %>% 
+        mutate_at(vars(contains(p_lst[[cli]][[1]])), ~format(round(as.numeric(.), 3), nsmall = 3)) %>% 
+        map2_df(., st_dt, ~sprintf(.y, .x)) %>%
+        apply(., 1, paste, collapse = ' ')
+      write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    }
+    print(paste0(cli, " files were successfully written."))
+  }
+  
+  ##Updating all required files
+  ##Preparing GIS info for find nearest 
+  wst_sf <- st_as_sf(station_names, coords = c("LONG", "LAT"), crs = 4326)
+  ##Defining spacing of output files and updating each file
+  spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4))
+  update_wst_txt('aquifer.con', write_path, wst_sf, spacing)
+  update_wst_txt('hru.con', write_path, wst_sf, spacing)
+  spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 2))
+  update_wst_txt('reservoir.con', write_path, wst_sf, spacing)
+  update_wst_txt('chandeg.con', write_path, wst_sf, spacing)
+  spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 46))
+  update_wst_txt('rout_unit.con', write_path, wst_sf, spacing)
+  
+  print(paste0("Climate data were successfully written in ", write_path))
+}
+
 # Preparing soils -----------------------------------------------
 
 #' Function to prepare user soil table for SWAT model
