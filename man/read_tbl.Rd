@@ -4,16 +4,18 @@
 \alias{read_tbl}
 \title{Loading SWAT+ text files into dataframe}
 \usage{
-read_tbl(tbl_name, proj_path, row_data_start, row_col_names)
+read_tbl(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
 }
 \arguments{
 \item{tbl_name}{character, name of the file to be read eaxmple ('rout_unit.con').}
 
 \item{proj_path}{character, path to SWAT+ txtinout folder (example "my_model").}
 
-\item{row_data_start}{numeric, row number from which data are being written.}
+\item{row_data_start}{numeric, row number from which data are being written. Optional,
+\code{default = 3}.}
 
-\item{row_col_names}{numeric, row nu,mber in which column names are being written.}
+\item{row_col_names}{numeric, row nu,mber in which column names are being written.
+Optional, \code{default = 2}.}
 }
 \value{
 dataframe with information from text file

@@ -458,6 +458,30 @@ write_weather_template <- function(meteo_lst, write_path = "", f_name = "weather
   return(paste0("Writing was successful. Your file is in ", f))
 }
 
+#' Transform dataframe into text and writes into existing file
+#'
+#' @param write_path  character, path to SWAT+ txtinout folder (example "my_model").
+#' @param fname character, file name.
+#' @param df dataframe 
+#' @param spacing character, example spacing <- c('%-30s', rep('%-13s', 2), '%-15s', '%-3s')
+#' @importFrom purrr map2_df
+#' @return updated text file
+#' @keywords internal
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' spacing <- c(rep('%10s', 5))
+#' df_to_txt("output", "time.sim", df, spacing)
+#' }
+
+df_to_txt <- function(write_path, fname, df, spacing){
+  txt <- df %>%
+    map2_df(., spacing, ~sprintf(.y, .x)) %>%
+    apply(., 1, paste, collapse = ' ')
+  write.table(txt, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+}
+
 # WGN helpers -----------------------------------------------------------------
 
 #' Function to calculate pcp_skew parameter

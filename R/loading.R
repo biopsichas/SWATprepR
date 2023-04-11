@@ -144,8 +144,10 @@ load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRa
 #'
 #' @param tbl_name character, name of the file to be read eaxmple ('rout_unit.con').
 #' @param proj_path character, path to SWAT+ txtinout folder (example "my_model").
-#' @param row_data_start numeric, row number from which data are being written.
+#' @param row_data_start numeric, row number from which data are being written. Optional, 
+#'  \code{default = 3}.
 #' @param row_col_names numeric, row nu,mber in which column names are being written.
+#'  Optional, \code{default = 2}.
 #' @importFrom vroom vroom_lines
 #' @importFrom stringr str_trim str_split
 #' @importFrom dplyr %>% mutate across all_of bind_rows
@@ -158,7 +160,7 @@ load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRa
 #' df <- read_tbl('rout_unit.con', 'model_folder', 3, 2) 
 #' }
 
-read_tbl <- function(tbl_name, proj_path, row_data_start, row_col_names) {
+read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2) {
   tbl_path <- paste(proj_path, tbl_name, sep = '/')
   ##Reading column names
   col_names <- vroom_lines(tbl_path, skip = row_col_names - 1, n_max = 1) %>%

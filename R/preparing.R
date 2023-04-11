@@ -598,9 +598,10 @@ load_climate_lst <- function(dir_path, location){
 #' stands for all available in data).
 #' @param period_ends character, date string (example '2020-12-31'). Optional (\code{default = NA}, 
 #' stands for all available in data).
-#' @importFrom purrr map map2_df 
+#' @importFrom purrr map
 #' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains
 #' @importFrom sf st_as_sf
+#' @importFrom lubridate year
 #' @return Fill or update multiple weather related weather text files.
 #' @export
 #'
@@ -674,16 +675,10 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     s1 <- df1[df1$ID == id,]
     s2 <- subset(df2[df2$ID == id,], select = -ID)
     ##Heading for ID
-    s1 <- s1 %>%
-      map2_df(., st_hd, ~sprintf(.y, .x)) %>%
-      apply(., 1, paste, collapse = ' ')
-    write.table(s1, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    df_to_txt(write_path, fname, s1, st_hd)
     ##Parameters for layer
     write.table(paste(sprintf(st_dt, names(s2)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    s2 <- s2 %>%
-      map2_df(., st_dt, ~sprintf(.y, .x)) %>%
-      apply(., 1, paste, collapse = ' ')
-    write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    df_to_txt(write_path, fname, s2, st_dt)
   }
   print(paste0(fname, " file was successfully written."))
   
@@ -709,10 +704,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   st_hd <- c('%-26s', '%6s', rep('%25s', 7))
   write.table(paste(sprintf(st_hd, names(weather_sta_cli)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   ##Filing file with dataframe information
-  s2 <- weather_sta_cli %>%
-    map2_df(., st_hd, ~sprintf(.y, .x)) %>%
-    apply(., 1, paste, collapse = ' ')
-  write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  df_to_txt(write_path, fname, weather_sta_cli, st_hd)
   print(paste0(fname, " file was successfully written."))
   
   ##Writing weather variable files
@@ -749,10 +741,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
       st_hd <- c('%-6s', rep('%7s', 4))
       write.table(paste(sprintf(st_hd, names(s2)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       ##Info for a station
-      s2 <- s2 %>%
-        map2_df(., st_hd, ~sprintf(.y, .x)) %>%
-        apply(., 1, paste, collapse = ' ')
-      write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      df_to_txt(write_path, fname, s2, st_hd)
       ##Identifying temperature as should be joined two variables
       if(cli == "tmp"){
         wdf <- meteo_lst[["data"]][[toupper(id)]][[p_lst[[cli]][[1]][[1]]]] %>% 
@@ -763,13 +752,11 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
         st_dt <- c('%-6s', rep('%7s', 2))
       }
       ##Writing file for each variable and station
-      s2 <- wdf %>%
+      wdf <- wdf %>%
         mutate(year = year(DATE), day = yday(DATE)) %>% 
         select(year, day, contains(p_lst[[cli]][[1]])) %>% 
-        mutate_at(vars(contains(p_lst[[cli]][[1]])), ~format(round(as.numeric(.), 3), nsmall = 3)) %>% 
-        map2_df(., st_dt, ~sprintf(.y, .x)) %>%
-        apply(., 1, paste, collapse = ' ')
-      write.table(s2, paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        mutate_at(vars(contains(p_lst[[cli]][[1]])), ~format(round(as.numeric(.), 3), nsmall = 3)) 
+      df_to_txt(write_path, fname, wdf, st_dt)
     }
     print(paste0(cli, " files were successfully written."))
   }
@@ -787,10 +774,30 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 46))
   update_wst_txt('rout_unit.con', write_path, wst_sf, spacing)
   
+  ##Creating temp folder to save all updated files before overwriting them into main directory
+  f_dir <- paste(write_path, "temp", sep = '/')
+  if(!dir.exists(f_dir)){
+    dir.create(f_dir)
+  } 
+  ##Modifying time.sim to be same as weather data
+  fname <- "time.sim"
+  if(!file.exists(paste(write_path, fname, sep = "/"))){
+    warning(paste("'time.sim' file was not found in", write_path, "and was not updated. 
+                Please make sure 'yrc_start' is", year(period_starts), "and 'yrc_end' is", year(period_ends), "."))
+  } else {
+    time_sim <- read_tbl(fname, write_path) %>% 
+      mutate(yrc_start = year(period_starts), 
+             yrc_end = year(period_ends))
+    write.table(paste0(fname, hd_txt), paste(f_dir, fname, sep = "/"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    st_hd <- c(rep('%10s', 5))
+    write.table(paste(sprintf(st_hd, names(time_sim)), collapse = ' '), paste(f_dir, fname, sep = "/"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    df_to_txt(f_dir, fname, time_sim, st_hd)
+    print(paste0(fname, " file was successfully written."))
+  }
   ##Coping files from temp folder into main and deleting temp folder
-  con_files <- list.files(paste(write_path, "temp", sep = "/"))
-  invisible(file.copy(paste(write_path, "temp" , con_files, sep = "/"), write_path, overwrite = TRUE))
-  unlink(paste(write_path, "temp", sep = "/"),recursive = TRUE)
+  con_files <- list.files(f_dir)
+  invisible(file.copy(paste(f_dir, con_files, sep = "/"), write_path, overwrite = TRUE))
+  unlink(paste(f_dir), recursive = TRUE)
   print(paste0("Climate data were successfully written in ", write_path))
 }
 
@@ -1189,7 +1196,7 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @importFrom dplyr mutate_all %>% 
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom stringr str_extract
-#' @importFrom purrr map2_chr map2_df
+#' @importFrom purrr map2_chr
 #' @importFrom readr write_lines parse_number
 #' @importFrom utils read.csv2
 #' @return soils.sol SWAT+ model input file
@@ -1261,15 +1268,9 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
     s1 <- df1[i,]
     s2 <- df2[df2$SNAM == s1$SNAM, c_names]
     ##Parameters for profile
-    s1 <- s1 %>%
-      map2_df(., sol_val1, ~sprintf(.y, .x)) %>%
-      apply(., 1, paste, collapse = ' ')
-    write_lines(s1, nfile, append = TRUE)
+    df_to_txt(path, 'soils.sol',  s1, sol_val1)
     ##Parameters for layer
-    s2 <- s2 %>%
-      map2_df(., sol_val2, ~sprintf(.y, .x)) %>%
-      apply(., 1, paste, collapse = ' ')
-    write_lines(s2, nfile, append = TRUE)
+    df_to_txt(path, 'soils.sol',  s2, sol_val2)
   }
   print("File conversion from usersoil csv to soils.sol finished successfully.")
   print(paste0("Prepared result in ", nfile))
