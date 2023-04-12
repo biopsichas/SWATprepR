@@ -1,0 +1,48 @@
+---
+title: "Climate data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Text
+
+```{r fig-cloud, echo=FALSE, out.width='100%', fig.align = 'center'}
+knitr::include_graphics('cloud.png')
+```
+
+Text
+
+```{r ext_cli, message = FALSE, warning = FALSE}
+library(svatools)
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+climate_lst <- load_climate_lst("../output/climate/CORDEX-BC", basin_path)
+```
+Text
+
+```{r plot_cli, message = FALSE, warning = FALSE}
+plot_weather(climate_lst[["rcp85"]][["1"]],"TMP_MAX", "year", "max")
+```
+
+Text
+
+```{r get_cli, message = FALSE, warning = FALSE}
+f_dir <- "../output/overwrite/tmp"
+files_to_copy <- paste(f_dir, c("aquifer.con", "chandeg.con", "hru.con", "reservoir.con", "rout_unit.con", "time.sim"), sep="/")
+for (rcp in c("rcp26", "rcp45", "rcp85")){
+  for (rcm in as.character(c(1:6))){
+    for(p in list(c("H", "1988-01-01", "2020-12-31"), c("N", "2032-01-01", "2065-12-31"), c("E", "2067-01-01", "2099-12-31"))){
+      cli_dir <- paste("../output/cli", rcp, paste0("rcm", rcm), p[1], sep = "/")
+      dir.create(cli_dir, recursive = TRUE)
+      file.copy(files_to_copy, paste(cli_dir, c("aquifer.con", "chandeg.con", "hru.con", "reservoir.con", "rout_unit.con", "time.sim"), sep = "/"), overwrite = TRUE)
+      prepare_climate(climate_lst[[rcp]][[rcm]], cli_dir, p[2], p[3])
+      print(paste(rcp, "rcm", rcm, p[1], p[2], "-", p[3], "set prepared."))
+    }
+  }
+}
+
+```

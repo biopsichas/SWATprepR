@@ -785,16 +785,12 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     warning(paste("'time.sim' file was not found in", write_path, "and was not updated. 
                 Please make sure 'yrc_start' is", year(period_starts), "and 'yrc_end' is", year(period_ends), "."))
   } else {
-    if(!file.exists(f_write)){
-      file.create(f_write)
-    } else {
-      unlink(f_write)
-      invisible(file.create(f_write))
-    }
+    f_write <- paste(f_dir, fname, sep = "/")
+    file.create(f_write)
     time_sim <- read.delim(paste(write_path, fname, sep = "/"))
     write.table(paste0(fname, hd_txt), f_write, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     st_hd <- c(rep('%10s', 5))
-    write.table(paste(sprintf(st_hd, unlist(strsplit(time_sim[1,1], "\\s+"))[-1]), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(paste(sprintf(st_hd, unlist(strsplit(time_sim[1,1], "\\s+"))), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     time_sim_v <- as.numeric(unlist(strsplit(time_sim[2,1], "\\s+"))[-1])
     time_sim_v[c(2, 4)] <- c(year(period_starts), year(period_ends))
     write.table(paste(sprintf(st_hd, time_sim_v), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -945,7 +941,6 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
                         df_hsg[i,c(paste0("SOL_Z", 1:df_hsg$NLAYERS[i]),paste0("SOL_K", 1:df_hsg$NLAYERS[i]))]))
     }
     soilp$HYDGRP <- c
-    soilp <- soilp[,!(names(soilp) %in% c("Impervious", "Depth", "Drained"))]
     print("Soil hydrological groups were calculated.")
   }
   
