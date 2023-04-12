@@ -356,6 +356,7 @@ update_wst_id <- function(tname, db_path, wst_cli){
 #' @param wst_sf sf dataframe with weather station information. Should contain "name" and "geometry" columns. 
 #' @param spacing character, should contain information about spacing between columns in the file. 
 #' Example c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4)).
+#' @param folder_to_save character, folder to save function results. Optional, \code{default = "temp"}.
 #' @importFrom dplyr mutate_at vars one_of
 #' @importFrom sf st_as_sf st_nearest_feature
 #' @importFrom purrr map2_df
@@ -372,7 +373,7 @@ update_wst_id <- function(tname, db_path, wst_cli){
 #' update_wst_txt("reservoir.con", "model_folder", wst_sf, spacing)
 #' }
 
-update_wst_txt <- function(fname, write_path, wst_sf, spacing){
+update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = "temp"){
   ##Making heading text
   text_l <-  paste0(fname,": ", "rewritten by svatools R package ", Sys.time(), " for SWAT+ rev.60.5.4")
   ##Reading file into dataframe
@@ -393,7 +394,7 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing){
     apply(., 1, paste, collapse = '  ') %>% 
     str_replace_all("NA", "") ##Removing NAs
   ##Creating temp directory to to save results 
-  f_dir <- paste(write_path, "temp", sep = '/')
+  f_dir <- paste(write_path, folder_to_save, sep = '/')
   f_write <- paste(f_dir, fname, sep = '/')
   if(!dir.exists(f_dir)){
     dir.create(f_dir)

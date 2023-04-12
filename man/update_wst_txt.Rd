@@ -4,7 +4,7 @@
 \alias{update_wst_txt}
 \title{Updating wst_id information in model text files}
 \usage{
-update_wst_txt(fname, write_path, wst_sf, spacing)
+update_wst_txt(fname, write_path, wst_sf, spacing, folder_to_save = "temp")
 }
 \arguments{
 \item{fname}{character, model file name (example 'aquifer.con').}
@@ -15,6 +15,8 @@ update_wst_txt(fname, write_path, wst_sf, spacing)
 
 \item{spacing}{character, should contain information about spacing between columns in the file.
 Example c('\%8s', '\%-12s', rep('\%12s', 5), '\%8s', '\%16s', rep('\%8s', 4)).}
+
+\item{folder_to_save}{character, folder to save function results. Optional, \code{default = "temp"}.}
 }
 \value{
 Updated text file, which would have updated station names

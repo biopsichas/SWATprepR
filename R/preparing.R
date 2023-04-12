@@ -785,19 +785,25 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     warning(paste("'time.sim' file was not found in", write_path, "and was not updated. 
                 Please make sure 'yrc_start' is", year(period_starts), "and 'yrc_end' is", year(period_ends), "."))
   } else {
-    time_sim <- read_tbl(fname, write_path) %>% 
-      mutate(yrc_start = year(period_starts), 
-             yrc_end = year(period_ends))
-    write.table(paste0(fname, hd_txt), paste(f_dir, fname, sep = "/"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    if(!file.exists(f_write)){
+      file.create(f_write)
+    } else {
+      unlink(f_write)
+      invisible(file.create(f_write))
+    }
+    time_sim <- read.delim(paste(write_path, fname, sep = "/"))
+    write.table(paste0(fname, hd_txt), f_write, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     st_hd <- c(rep('%10s', 5))
-    write.table(paste(sprintf(st_hd, names(time_sim)), collapse = ' '), paste(f_dir, fname, sep = "/"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    df_to_txt(f_dir, fname, time_sim, st_hd)
+    write.table(paste(sprintf(st_hd, unlist(strsplit(time_sim[1,1], "\\s+"))), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    time_sim_v <- as.numeric(unlist(strsplit(time_sim[2,1], "\\s+"))[-1])
+    time_sim_v[c(2, 4)] <- c(year(period_starts), year(period_ends))
+    write.table(paste(sprintf(st_hd, time_sim_v), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     print(paste0(fname, " file was successfully written."))
   }
   ##Coping files from temp folder into main and deleting temp folder
-  con_files <- list.files(f_dir)
-  invisible(file.copy(paste(f_dir, con_files, sep = "/"), write_path, overwrite = TRUE))
+  invisible(file.copy(paste(f_dir, list.files(f_dir), sep = "/"), write_path, overwrite = TRUE))
   unlink(paste(f_dir), recursive = TRUE)
+  ##Done
   print(paste0("Climate data were successfully written in ", write_path))
 }
 

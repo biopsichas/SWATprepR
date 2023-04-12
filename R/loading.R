@@ -171,7 +171,6 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
   tbl <- vroom_lines(tbl_path, skip = row_data_start - 1) %>%
     str_trim(.) %>%
     str_split(., '\t[:space:]+|[:space:]+')
-  
   ##Checking if all columns have names
   col_length_true <- max(unlist(map(tbl, length)),rm.na=TRUE)
   col_length_catched <- length(col_names)
