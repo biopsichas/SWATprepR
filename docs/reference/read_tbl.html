@@ -61,7 +61,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_tbl</span><span class="op">(</span><span class="va">tbl_name</span>, <span class="va">proj_path</span>, <span class="va">row_data_start</span>, <span class="va">row_col_names</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_tbl</span><span class="op">(</span><span class="va">tbl_name</span>, <span class="va">proj_path</span>, row_data_start <span class="op">=</span> <span class="fl">3</span>, row_col_names <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,11 +75,13 @@
 
 
 <dt>row_data_start</dt>
-<dd><p>numeric, row number from which data are being written.</p></dd>
+<dd><p>numeric, row number from which data are being written. Optional,
+<code>default = 3</code>.</p></dd>
 
 
 <dt>row_col_names</dt>
-<dd><p>numeric, row nu,mber in which column names are being written.</p></dd>
+<dd><p>numeric, row nu,mber in which column names are being written.
+Optional, <code>default = 2</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

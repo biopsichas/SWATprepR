@@ -936,12 +936,13 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
   
   ##Calculating soil hydro groups
   if(hsg){
+    df_hsg <- left_join(df_save, soilp %>% select(SNAM, starts_with("SOL_K")), by = "SNAM")
     c <- c()
-    for (i in 1:nrow(df_save)){
-      c <- c(c, get_hsg(df_save[i,"Impervious"], 
-                        df_save[i,"Depth"], 
-                        df_save[i,"Drained"], 
-                        df_save[i,c(paste0("SOL_Z", 1:df_save$NLAYERS[i]),paste0("SOL_K", 1:df_save$NLAYERS[i]))]))
+    for (i in 1:nrow(df_hsg)){
+      c <- c(c, get_hsg(df_hsg[i,"Impervious"], 
+                        df_hsg[i,"Depth"], 
+                        df_hsg[i,"Drained"], 
+                        df_hsg[i,c(paste0("SOL_Z", 1:df_hsg$NLAYERS[i]),paste0("SOL_K", 1:df_hsg$NLAYERS[i]))]))
     }
     soilp$HYDGRP <- c
     soilp <- soilp[,!(names(soilp) %in% c("Impervious", "Depth", "Drained"))]
@@ -997,7 +998,7 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
 #' @importFrom tidyselect all_of
 #' @importFrom Rdpack reprompt
 #' @return dataframe with fully formatted and filled table of soil parameters for SWAT model.
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' \dontrun{
@@ -1090,7 +1091,7 @@ get_soil_parameters <- function(soilp){
 #' @param drn character for tile drainage status. Only two entry options possible: "Y" for drained areas, "N" for areas without working tile drains.
 #' @param t one row dataframe with all SOL_Z and SOL_K values for soil type.
 #' @return character of soil hydrologic group A, B, C or D
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' df <- data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_K3 = 2, 

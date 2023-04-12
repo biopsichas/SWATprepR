@@ -1,3 +1,7 @@
+# svatools 0.1.0
+
+* A new `prepare_climate()` function was added.
+
 # svatools 0.0.9 
 
 * New functions `get_usersoil_table()`, `load_climate_lst()` and `plot_wgn_comparison()` were added. 
