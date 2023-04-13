@@ -397,7 +397,7 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
 #' @param title character, information to be added in figure title
 #' @importFrom dplyr %>%  filter select mutate bind_rows
 #' @importFrom tidyr pivot_longer
-#' @importFrom ggplot2 ggplot geom_bar facet_wrap ggtitle aes theme_minimal
+#' @importFrom ggplot2 ggplot geom_bar facet_wrap ggtitle aes theme_minimal labs
 #' @return ggplot figure of bar plots 
 #' @export
 #'
@@ -447,10 +447,10 @@ plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type
     mutate(source = type2)
   
   ##Bar plot
-  fig <- ggplot(bind_rows(df1,df2), aes(x = month, y = values, fill = source))+
+  fig <- ggplot(bind_rows(df1,df2), aes(x = as.factor(month), y = values, fill = source))+
     geom_bar(stat='identity', position = "dodge")+
     facet_wrap(~par, scales = "free")+
-    ggtitle(paste(type1, "vs.", type2,  title))+
+    labs(title=paste(type1, "vs.", type2,  title), x ="Months", y = "Values")+
     theme_minimal()
   
   return(fig)
