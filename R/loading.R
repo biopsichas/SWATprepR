@@ -17,11 +17,11 @@
 #' @examples
 #' ##Two types of templates could be used
 #' # 1) Example of template for weather data
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' str(met_lst)
 #' ## 2) Example of template for calibration data
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' str(cal_data)
 
@@ -88,7 +88,7 @@ load_template <- function(template_path, epsg_code = 4326){
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' stations <- load_stations(temp_path, 3035)
 #' str(stations)
 #' library(sf)
@@ -117,7 +117,7 @@ load_stations <- function(template_path, epsg_code){
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- paste0(system.file("extdata", package = "svatools"), "/CORDEX-BC")
+#' temp_path <- paste0(system.file("extdata", package = "SWATprepR"), "/CORDEX-BC")
 #' cli_lst <- load_climate(temp_path)
 #' str(cli_lst)
 #' }
@@ -142,7 +142,7 @@ load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRa
 
 #' Loading SWAT+ text files into dataframe
 #'
-#' @param tbl_name character, name of the file to be read eaxmple ('rout_unit.con').
+#' @param tbl_name character, name of the file to be read example ('rout_unit.con').
 #' @param proj_path character, path to SWAT+ txtinout folder (example "my_model").
 #' @param row_data_start numeric, row number from which data are being written. Optional, 
 #'  \code{default = 3}.
@@ -183,6 +183,11 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
   } else {
     is_num <- tbl[[1]] %>% as.numeric() %>% suppressWarnings() %>% 
       map_lgl(., ~!is.na(.x)) %>% which()
+  }
+  ##Preventing any duplicated columns from messing things up
+  if(any(duplicated(col_names))){
+    ind <- which(duplicated(col_names))
+    col_names[ind] <- paste0(col_names[ind],"2")
   }
   ##Returning dataframe
   tbl <- tbl %>%

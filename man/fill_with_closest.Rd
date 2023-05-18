@@ -24,7 +24,7 @@ Filling missing variables from the closest stations, which has data.
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
 }

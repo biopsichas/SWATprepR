@@ -31,7 +31,7 @@ Extract rotation information from raster file
 \dontrun{
 library(sf)
 ##Loading land use/crop layer
-lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
 lu <- st_read(lu_path,  quiet = TRUE) \%>\% mutate(id = row_number())
 ##Preparing lookup table
 lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 

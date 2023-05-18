@@ -22,8 +22,10 @@ character of soil hydrologic group A, B, C or D
 Function to get soil hydrologic groups
 }
 \examples{
+\dontrun{
 df <- data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_K3 = 2, 
                  SOL_Z1 = 250, SOL_Z2 = 700, SOL_Z3 = 1000)
 get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", df)
+}
 }
 \keyword{internal}

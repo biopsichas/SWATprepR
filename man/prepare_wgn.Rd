@@ -49,7 +49,7 @@ Function to generate wgn data for the model
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 TMP_MAX <- met_lst$data$ID10$TMP_MAX
 TMP_MIN <- met_lst$data$ID10$TMP_MIN

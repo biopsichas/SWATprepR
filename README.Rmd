@@ -1,10 +1,10 @@
 
 ---
-title: "Introduction to svatools"
+title: "Introduction to SWATprepR"
 <!-- output: rmarkdown::html_vignette -->
 output: github_document
 vignette: >
-  %\VignetteIndexEntry{Introduction to svatools}
+  %\VignetteIndexEntry{Introduction to SWATprepR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 development:
@@ -20,17 +20,17 @@ knitr::opts_chunk$set(
 library(badger)
 ```
 
-# svatools
+# SWATprepR
 
-`r badge_devel("biopsichas/svatools", "gold")`
-`r badge_last_commit("biopsichas/svatools", "green")`
+`r badge_devel("biopsichas/SWATprepR", "gold")`
+`r badge_last_commit("biopsichas/SWATprepR", "green")`
 `r badge_lifecycle(stage = "stable")`
 `r badge_repostatus("active")`
-`r badge_code_size("biopsichas/svatools")`
+`r badge_code_size("biopsichas/SWATprepR")`
 `r badge_license("MIT")`
-`r badge_doi("https://doi.org/10.5281/zenodo.7436013", "yellow")`
+`r badge_doi("https://doi.org/10.5281/zenodo.7296033", "yellow")`
 
-The goal of `svatools` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
+The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for preparing management schedules for SWAT model;
 - [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) - R tool for sensitivity analyse, model calibration and validation;
@@ -41,11 +41,11 @@ Detailed information about packages, workflow steps, input data, SWAT+ parameter
 
 ## Installation
 
-You can install the development version of svatools from [GitHub](https://github.com/) with:
+You can install the development version of SWATprepR from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("biopsichas/svatools")
+devtools::install_github("biopsichas/SWATprepR")
 # euptf2 package is needed and used for soil parameter functions
 devtools::install_github("tkdweber/euptf2")
 ```
@@ -55,14 +55,14 @@ devtools::install_github("tkdweber/euptf2")
 All the data required to run and test package is installed with package in extdata folder. Exact location on computer could be found running lines below. Please run it on your system to get it for you.   
 
 ```{r data}
-library(svatools)
-temp_path <- system.file("extdata", package = "svatools")
+library(SWATprepR)
+temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
 ```
 
 ## Templates
 
-In order to use *svatools* package functions with your data you should prepare your data to be inline with templates we have provided in *extdata* folder. Such are:
+In order to use *SWATprepR* package functions with your data you should prepare your data to be inline with templates we have provided in *extdata* folder. Such are:
 
 - **calibration_data.xlsx** - template for loading calibration (water flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.

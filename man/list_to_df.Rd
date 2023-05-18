@@ -17,7 +17,7 @@ Transforming list to dataframe
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 df <- list_to_df(met_lst$data$ID1)
 }

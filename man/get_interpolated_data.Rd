@@ -29,9 +29,9 @@ Main interpolation function
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 }

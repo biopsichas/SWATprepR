@@ -25,15 +25,15 @@ Transforming list of sp dataframes to list of list
 \examples{
 \dontrun{
 ###First step to get interpolation results
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
 
 ###Second step converting interpolation results to list of list format.
-start_date <- svatools:::get_dates(met_lst)$min_date
-end_date <- svatools:::get_dates(met_lst)$max_date
+start_date <- SWATprepR:::get_dates(met_lst)$min_date
+end_date <- SWATprepR:::get_dates(met_lst)$max_date
 int_met_lst <- transform_to_list(result, start_date, end_date)
 }
 }

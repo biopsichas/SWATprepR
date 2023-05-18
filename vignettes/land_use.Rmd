@@ -29,11 +29,11 @@ These GIS layers should be adjusted to fit structure of example data or the scri
 
 ```{r lu, message = FALSE, warning = FALSE}
 ##Loading libraries
-library(svatools)
+library(SWATprepR)
 library(tidyverse)
 library(sf)
 ##Loading data
-lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
 lu <- st_read(lu_path,  quiet = TRUE)
 ##Adding IDs to land use field data and selected required columns
 lu <- mutate(lu, id = row_number()) %>% 
@@ -110,7 +110,7 @@ parcels <- lu["id"] %>%
   st_transform(4326)
 ##Preparing basin data 
 output_path <- "../output/"
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 catchment <- st_read(basin_path, quiet = TRUE) %>% 
   select() %>% 
   mutate(name = "Upper_Zglowiaczka") %>% 
@@ -126,7 +126,7 @@ st_write(catchment, paste0(output_path, "catchment.shp"), append = F)
 Running [Google Earth Engine-based](https://code.earthengine.google.com/) script prepared by @meszaros2022 generates *.tif* raster file with bands for each year land use/crop types (represented by numeric codes). One year example of classification results are provided below. 
 
 ```{r fig-lu, echo=FALSE, out.width='80%', fig.align = 'center'}
-knitr::include_graphics('Rplot1.png')
+knitr::include_graphics('fig_lu.png')
 ```
 
 For this *.tif* file [extract_rotation](../reference/extract_rotation.html) function can be applied to extract all crop rotation information. This information is delivered in a format directly usable by [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) input data preparation scripts, which are applied to generate SWAT+ management crop [rotation schedules](https://swatplus.gitbook.io/docs/user/editor/inputs/land-use-management#management-schedules). In our example complex rotations for period 2015-2022 were extracted for each field from remote sensing classification results. Results were saved in a new shape file. Attribute table example is printed below.
@@ -150,7 +150,7 @@ st_write(lu_rot , paste0(output_path, "lu_rot.shp"), append = F)
 Example of prepared attribute table is provided below. It fulfills requirements set in [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395) section 4.1.1. 
 
 ```{r lu_results_print, message = FALSE, warning = FALSE}
-lu_rot_df <- read.csv(system.file("extdata", "lu_rot.csv", package = "svatools"))
+lu_rot_df <- read.csv(system.file("extdata", "lu_rot.csv", package = "SWATprepR"))
 print(head(lu_rot_df, 10))
 ```
 

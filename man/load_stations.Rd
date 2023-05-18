@@ -19,7 +19,7 @@ Reading station data from excel templates
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 stations <- load_stations(temp_path, 3035)
 str(stations)
 library(sf)

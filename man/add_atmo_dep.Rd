@@ -23,7 +23,7 @@ Update sqlite database with atmospheric deposition data
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 df <- get_atmo_dep(basin_path)
 db_path <- "./output/test/project.sqlite"
 add_atmo_dep(df, db_path)

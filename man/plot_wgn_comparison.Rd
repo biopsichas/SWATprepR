@@ -43,7 +43,7 @@ Plot wgn parameters comparison
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 4326)
 plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
 }

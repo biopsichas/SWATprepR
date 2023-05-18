@@ -30,7 +30,7 @@ Extract EMEP atmospheric deposition data for a catchment
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 df <- get_atmo_dep(basin_path)
 ##Plot results
 ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+

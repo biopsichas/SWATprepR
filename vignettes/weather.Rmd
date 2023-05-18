@@ -12,8 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 Loading weather data from templates could by done with the same [load_template](../reference/load_template.html) function as loading calibration data. However, data should for each meteorological station should be separated into different sheets. All data are loaded into nested list of list format, which could be used to run other functions. 
 
 ```{r met_load, message = FALSE, warning = FALSE}
-library(svatools)
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+library(SWATprepR)
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 ```
 
@@ -29,7 +29,7 @@ plot_weather(met_lst, "PCP", "month", "sum")
 Another function [plot_weather_compare](../reference/plot_weather_compare.html) allows comparing two meteorological datasets of same time scale. Potential examples of its usage could be different. One could be comparing different datasets in order to decide, which one should be used in modeling. Another example might be to examine how cleaning operations improved original data. Moreover, this function could be helpful in examining climate data downscaling or bias-correction results comparing them with observed data. Same options for aggregation as in [plot_weather_compare](../reference/plot_weather_compare.html) function can be used. 
 
 ```{r met_plot_comp, message = FALSE, warning = FALSE}
-temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "svatools")
+temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATprepR")
 met_lst2 <- load_template(temp_path2, 3035)
 plot_weather_compare(met_lst, met_lst2, "PCP", "month", "mean", "clean", "raw")
 ```
@@ -42,7 +42,7 @@ In cases where too few stations are available in a selected catchment or huge da
 library(mapview)
 library(sf)
 library(dplyr)
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 basin <-st_transform(st_read(basin_path), 4326) %>% 
   mutate(NAME = "Basin")
 stations <- st_transform(met_lst$stations, 4326)
@@ -53,15 +53,15 @@ For such need function [interpolate](../reference/interpolate.html) was prepared
 
 Function parameters are *grid_spacing*, *p_vector* - character vector representing weather variables to interpolate (optional, default all variables selected c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ), *idw_exponent* - numeric value for exponent parameter to be used in interpolation  (optional, default value is 2). 
 
-After running [interpolate](../reference/interpolate.html) function the [transform_to_list](../reference/transform_to_list.html) function could be used to transform interpolation results to list of list format, which is used with other functions (after loading weather data from template). So all the other functions can be applied. Transformation function requires dates for the beginning and the end of time series. This info can be extracted from loaded weather data (used in an interpolation) with the internal function `svatools:::get_dates`. 
+After running [interpolate](../reference/interpolate.html) function the [transform_to_list](../reference/transform_to_list.html) function could be used to transform interpolation results to list of list format, which is used with other functions (after loading weather data from template). So all the other functions can be applied. Transformation function requires dates for the beginning and the end of time series. This info can be extracted from loaded weather data (used in an interpolation) with the internal function `SWATprepR:::get_dates`. 
 
 ```{r met_interpolation, eval=FALSE, message = FALSE, warning = FALSE}
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-result <- svatools::interpolate(met_lst, basin_path, DEM_path, 2000) 
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+result <- SWATprepR::interpolate(met_lst, basin_path, DEM_path, 2000) 
 
 ##To transform interpolation results to list of lists, which could be used with other weather functions. 
-start_date <- svatools:::get_dates(met_lst)$min_date
-end_date <- svatools:::get_dates(met_lst)$max_date
+start_date <- SWATprepR:::get_dates(met_lst)$min_date
+end_date <- SWATprepR:::get_dates(met_lst)$max_date
 met_lst_int <- transform_to_list(result, start_date, end_date)
 ```
 

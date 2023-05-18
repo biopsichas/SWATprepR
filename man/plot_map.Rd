@@ -23,9 +23,9 @@ Preparing interactive map of monitoring points
 }
 \examples{
 library(sf)
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
-reach_path <- system.file("extdata", "GIS/reaches.shp", package = "svatools")
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
+reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 cal_data <- load_template(temp_path, 4326)
 reach <- st_transform(st_read(reach_path), 4326)
 basin <-st_transform(st_read(basin_path), 4326)

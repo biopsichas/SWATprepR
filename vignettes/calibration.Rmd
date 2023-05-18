@@ -13,8 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 If data are prepared according to given templates, they can be loaded directly with package function [load_template](../reference/load_template.html) function. Two data types are loaded. First is station information (location, name, ID). Second, is values monitoring values with IDs to relate to station, variable names, dates and values. 
 
 ```{r cal_load, message = FALSE, warning = FALSE}
-library(svatools)
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+library(SWATprepR)
+library(sf)
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path, 4326)
 str(cal_data)
 ```
@@ -25,7 +26,7 @@ Two functions could be applied for data cleaning. First is [clean_wq](../referen
 
 ```{r cal_clean_zero, message = FALSE, warning = FALSE}
 ##Zeros is replaced with min(Value)/2
-cal_data$data <- clean_wq(cal_data$data, 0.5)
+cal_data$data <- clean_wq(cal_data$data)
 ```
 
 Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation).
@@ -87,8 +88,8 @@ The last function in the package for plotting calibration data is [plot_map](../
 ```{r plot_map, message = FALSE, warning = FALSE}
 library(sf) 
 ##Loading and converting coordinate system of GIS data. EPSG 4326 coordinate system should be used to get right plot. 
-reach_path <- system.file("extdata", "GIS/reaches.shp", package = "svatools")
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 reach <- st_transform(st_read(reach_path, quiet = TRUE), 4326)
 basin <-st_transform(st_read(basin_path, quiet = TRUE), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)

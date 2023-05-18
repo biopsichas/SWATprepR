@@ -4,12 +4,12 @@
 \alias{clean_wq}
 \title{Clean water quality data from most typical issues}
 \usage{
-clean_wq(df, zero_to_min = 1)
+clean_wq(df, zero_to_min = 0.5)
 }
 \arguments{
 \item{df}{dataframe with water quality data with  with columns c("Station", "DATE", "Variables", "Values", "Source").}
 
-\item{zero_to_min}{numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 1.}
+\item{zero_to_min}{numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 0.5.}
 }
 \value{
 cleaned dataframe
@@ -18,7 +18,7 @@ cleaned dataframe
 Clean water quality data from most typical issues
 }
 \examples{
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 cal_data$data <- clean_wq(cal_data$data)
 }

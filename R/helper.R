@@ -254,15 +254,15 @@ df_t <- function(sp_df){
 #' @examples
 #' \dontrun{
 #' ###First step to get interpolation results
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
-#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' result <- interpolate(met_lst, "./output/",  basin_path, DEM_path, 2000) 
 #' 
 #' ###Second step converting interpolation results to list of list format.
-#' start_date <- svatools:::get_dates(met_lst)$min_date
-#' end_date <- svatools:::get_dates(met_lst)$max_date
+#' start_date <- SWATprepR:::get_dates(met_lst)$min_date
+#' end_date <- SWATprepR:::get_dates(met_lst)$max_date
 #' int_met_lst <- transform_to_list(result, start_date, end_date)
 #' }
 
@@ -304,7 +304,7 @@ transform_to_list <- function(list_sp, start_date, end_date){
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' df <- list_to_df(met_lst$data$ID1)
 #' }
@@ -375,7 +375,7 @@ update_wst_id <- function(tname, db_path, wst_cli){
 
 update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = "temp"){
   ##Making heading text
-  text_l <-  paste0(fname,": ", "rewritten by svatools R package ", Sys.time(), " for SWAT+ rev.60.5.4")
+  text_l <-  paste0(fname,": ", "rewritten by SWATprepR R package ", Sys.time(), " for SWAT+ rev.60.5.4")
   ##Reading file into dataframe
   f <- read_tbl(fname, write_path, 3, 2) %>% 
     mutate_at(vars(one_of(c("area", "lat", "lon", "elev", "frac"))), ~format(round(as.numeric(.), 5), nsmall = 5)) %>% 
@@ -642,7 +642,7 @@ my.pcpmhhr <- function(x, na.rm = FALSE){ # this is an alternative way to calcul
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' lst <- clean_outliers(cal_data$data)
 #' ##Looking at data to be removed
@@ -671,16 +671,16 @@ clean_outliers <- function(df, times_sd = 3){
 #' Clean water quality data from most typical issues
 #'
 #' @param df dataframe with water quality data with  with columns c("Station", "DATE", "Variables", "Values", "Source").
-#' @param zero_to_min numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 1. 
+#' @param zero_to_min numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 0.5. 
 #' @return cleaned dataframe
 #' @export
 #' @importFrom dplyr mutate left_join distinct filter summarise select group_by
 #' @examples
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' cal_data$data <- clean_wq(cal_data$data)
 
-clean_wq <- function(df, zero_to_min = 1){
+clean_wq <- function(df, zero_to_min = 0.5){
   ##Cleaning common problems
   if(inherits(df$Values, "character")){
     df <- df %>% 
@@ -691,6 +691,8 @@ clean_wq <- function(df, zero_to_min = 1){
   } else if (!inherits(df$Values, "numeric")){
     stop("'Values' column data type should be 'numeric' or 'character'!!!")
   }
+  ##Dropping NAs
+  df <- drop_na(df, Values)
   ##Negative to positive
   df[df$Values < 0, c("Values")] <- abs(df[df$Values < 0, c("Values")])
   ##Fixing N and P units

@@ -17,11 +17,11 @@ The preparation of soil data and parameters could be done using following workfl
 
 ### Loading libraries and paths to data
 
-Workflow presented here needs 6 R packages. However, only `svatools` and `euptf2` libraries are required for the population of soil parameter's table with  [get_usersoil_table](../reference/get_usersoil_table.html) presented in [Adding soil parameters to user table](#par_make) step. Input for this step could be prepared in various ways. Here is presented just one of the way to understand better all work process to develop soil parameters table.  
+Workflow presented here needs 6 R packages. However, only `SWATprepR` and `euptf2` libraries are required for the population of soil parameter's table with  [get_usersoil_table](../reference/get_usersoil_table.html) presented in [Adding soil parameters to user table](#par_make) step. Input for this step could be prepared in various ways. Here is presented just one of the way to understand better all work process to develop soil parameters table.  
 
 ```{r soil_load, message = FALSE, warning = FALSE}
 ##Required
-library(svatools)
+library(SWATprepR)
 library(euptf2)
 ##Optional
 library(sf)
@@ -31,21 +31,21 @@ library(stars)
 
 ##Required
 ##Path to soil distribution shape file
-soil_path <- system.file("extdata", "GIS/soils.shp", package = "svatools")
+soil_path <- system.file("extdata", "GIS/soils.shp", package = "SWATprepR")
 ##Path to soil lookup initial parameters with SOL_Z, CLAY, SILT, OC parameters filled.
-lookup_path <- system.file("extdata", "soil_lookup.xlsx", package = "svatools")
+lookup_path <- system.file("extdata", "soil_lookup.xlsx", package = "SWATprepR")
 ##Path to tile drainage shape file
-drainage_path <- system.file("extdata", "GIS/drained.shp", package = "svatools")
+drainage_path <- system.file("extdata", "GIS/drained.shp", package = "SWATprepR")
 
 ##Optional
 ##Path to water level depth shape file
-water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "svatools")
+water_l_path <- system.file("extdata", "GIS/water_level.shp", package = "SWATprepR")
 ##Path to DEM raster file
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
+DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
 ##Path to catchment boundary shape file (which in this case used as impervious layer data)
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 ##Path to soil hydro groups (if available)
-hsg_path <- system.file("extdata", "GIS/hydgrp.shp", package = "svatools")
+hsg_path <- system.file("extdata", "GIS/hydgrp.shp", package = "SWATprepR")
 ```
 
 ### Preparing input data
@@ -140,7 +140,7 @@ cowplot::plot_grid(p4, p5, ncol = 2,
 
 ### Preparing initial user soil table
 
-This part prepares input for the following [parameter generation part](#par_make), which actually uses `svatools` package functions to populate usersoil table. Workflow provided up to here was done to form input to *usertable*, which could be used with [get_usersoil_table](../reference/get_usersoil_table.html) function. However, such this information could be prepared with other means than R, which might be more convenient to user and then loaded into R environment. The only requirements for table to have these parameters filled:
+This part prepares input for the following [parameter generation part](#par_make), which actually uses `SWATprepR` package functions to populate usersoil table. Workflow provided up to here was done to form input to *usertable*, which could be used with [get_usersoil_table](../reference/get_usersoil_table.html) function. However, such this information could be prepared with other means than R, which might be more convenient to user and then loaded into R environment. The only requirements for table to have these parameters filled:
 
 - *SNAM* soil type text with last three parts separated by **_** representing impervious layer, water level and drainage classes;
 - *NLAYERS* numeric value for soil type representing number of soil layers;
@@ -194,7 +194,7 @@ In case some soil types do have have required soil parameters [get_usersoil_tabl
 
 ```{r soil_overwrite, message = FALSE, warning = FALSE}
 ##Example data loaded to be used for overwriting parameters in the user table
-rep_pars_path <- system.file("extdata", "soil_parameters.xlsx", package = "svatools")
+rep_pars_path <- system.file("extdata", "soil_parameters.xlsx", package = "SWATprepR")
 replace_pars <- read_excel(rep_pars_path)
 
 ##Extracting soil type codes for each soil layer 

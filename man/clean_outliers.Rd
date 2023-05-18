@@ -21,7 +21,7 @@ list of two dataframes. \emph{newdf} dataframe contains dataframe cleaned from o
 Function to clean outliers outside by some standard deviations
 }
 \examples{
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 lst <- clean_outliers(cal_data$data)
 ##Looking at data to be removed

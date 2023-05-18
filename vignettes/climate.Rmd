@@ -43,7 +43,7 @@ There is no direct way of using `NetCDF` data in the SWAT model. Therefore tools
 First step to prepare SWAT+ climate input data is to download *XX-gridded.zip* file for your case study site and to unzip it. Then locate *CORDEX-BC* folder. Data extraction from `NetCDF` is done with [load_climate_lst](../reference/load_climate_lst.html) function, which only needs path to your basin shape file and path to *CORDEX-BC* folder. Following lines provides an example how to use it.
 
 ```{r ext_cli, eval = FALSE, message = FALSE, warning = FALSE}
-library(svatools)
+library(SWATprepR)
 basin_path <- "GIS/basin.shp"
 cordex_path <- "climate/CORDEX-BC"
 climate_lst <- load_climate_lst(cordex_path, basin_path)
@@ -89,7 +89,7 @@ plot_wgn_comparison(climate_lst[["rcp85"]][["1"]], met_lst, "ID4", "ID2", "Clima
 knitr::include_graphics('fig_wng.png')
 ```
 
-Other functions from [Weather data section](../articles/weather.html) are also applicable. This allows to update SWAT+ *.sqlite* [database](https://biopsichas.github.io/svatools/articles/weather.html#wgn-input-function) with climate data, prepare [weather generator](https://biopsichas.github.io/svatools/articles/weather.html#wgn-input-function) parameters, etc.
+Other functions from [Weather data section](../articles/weather.html) are also applicable. This allows to update SWAT+ *.sqlite* [database](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) with climate data, prepare [weather generator](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) parameters, etc.
 
 ### Preparing SWAT+ input climate sets
 
@@ -108,7 +108,7 @@ for (rcp in c("rcp26", "rcp45", "rcp85")){
   ##Each rcm
   for (rcm in as.character(c(1:6))){
     ##Each period
-    for(p in list(c("H", "1988-01-01", "2020-12-31"), c("N", "2032-01-01", "2065-12-31"), c("E", "2067-01-01", "2099-12-31"))){
+    for(p in list(c("H", "1988-01-01", "2020-12-31"), c("N", "2033-01-01", "2065-12-31"), c("E", "2067-01-01", "2099-12-31"))){
       ##Creating new directory
       cli_dir <- paste("../output/cli", rcp, paste0("rcm", rcm), p[1], sep = "/")
       dir.create(cli_dir, recursive = TRUE)

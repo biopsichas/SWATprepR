@@ -66,9 +66,9 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
-#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' get_interpolated_data(met_lst, grd, "PCP", read_sf(basin_path), DEM_path, 2)
 #' }
@@ -121,9 +121,9 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' @export
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
-#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "svatools")
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' interpolate(met_lst, basin_path, DEM_path, 2000) 
 #' }
@@ -177,7 +177,7 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
 #' }
@@ -243,7 +243,7 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
 #' @export
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "svatools")
+#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' TMP_MAX <- met_lst$data$ID10$TMP_MAX
 #' TMP_MIN <- met_lst$data$ID10$TMP_MIN
@@ -376,7 +376,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' @export 
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' df <- get_atmo_dep(basin_path)
 #' ##Plot results
 #' ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+
@@ -479,7 +479,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #'
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools") 
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
 #' data_path <- "climate/CORDEX-BC"
 #' result <- load_climate_lst(data_path, basin_path)
 #' }
@@ -602,6 +602,7 @@ load_climate_lst <- function(dir_path, location){
 #' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains
 #' @importFrom sf st_as_sf
 #' @importFrom lubridate year
+#' @importFrom utils read.delim
 #' @return Fill or update multiple weather related weather text files.
 #' @export
 #'
@@ -644,7 +645,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   }
 
   ##Heading in weather files
-  hd_txt <-  paste0(": written by svatools R package on ", Sys.time(), " for SWAT+ rev.60.5.4")
+  hd_txt <-  paste0(": written by SWATprepR R package on ", Sys.time(), " for SWAT+ rev.60.5.4")
   ##Filtering list to a defined period
   meteo_lst$data <- map(meteo_lst$data, ~map(., ~filter(., DATE >= period_starts & DATE <= period_ends)))
   ##Preparing wgn parameters
@@ -726,7 +727,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   for(cli in names(weather_sta_cli[c(3:7)])){
     ##Writing reference file (where all variable files are listed)
     fname <- paste0(cli, ".cli")
-    text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " file names - file written by svatools R package ", Sys.time())
+    text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " file names - file written by SWATprepR R package ", Sys.time())
     write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     write.table("filename", paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     write.table(weather_sta_cli[cli], paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -735,7 +736,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
       s2 <- subset(df1_cli[df1_cli$ID == id,], select = -ID)
       fname <- paste0("sta_", id, ".", cli)
       ##Heading line
-      text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " data - file written by svatools R package ", Sys.time())
+      text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " data - file written by SWATprepR R package ", Sys.time())
       write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       ##Heading names
       st_hd <- c('%-6s', rep('%7s', 4))
@@ -1089,9 +1090,11 @@ get_soil_parameters <- function(soilp){
 #' @keywords internal
 #'
 #' @examples
+#' \dontrun{
 #' df <- data.frame(SOL_K1 = 10, SOL_K2 = 1, SOL_K3 = 2, 
 #'                  SOL_Z1 = 250, SOL_Z2 = 700, SOL_Z3 = 1000)
 #' get_hsg(d_imp = ">100cm", d_wtr = "<60cm", drn = "Y", df)
+#' }
 
 get_hsg <- function(d_imp, d_wtr, drn, t){
   r <- NULL
@@ -1248,7 +1251,7 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
   df[c(9:11,13:dim(df)[2])] <- mutate_all(mutate_all(df[c(9:11,13:dim(df)[2])], 
                                                      function(x) as.numeric(as.character(x))), ~sprintf(., fmt = '%#.5f'))
   ##First line to be printed into file
-  text_l <- paste0("soils.sol: written by svatools R package ", Sys.time(), " for SWAT+ rev.60.5.4")
+  text_l <- paste0("soils.sol: written by SWATprepR R package ", Sys.time(), " for SWAT+ rev.60.5.4")
   ##Heading to be printed into file
   sol_names <- c_write_names %>%
     map2_chr(., sol_nam, ~sprintf(.y, .x)) %>%
@@ -1368,14 +1371,14 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
       df1$nbyr <- ceiling(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1))
       file_n <- paste0("sta_", tolower(n), ".", p_lst[["TMP_MAX"]][[1]])
       ##Head line in file
-      text_l <- paste0(file_n, ": ", p_lst[["TMP_MAX"]][[2]], " data - file written by svatools R package ", Sys.time())
+      text_l <- paste0(file_n, ": ", p_lst[["TMP_MAX"]][[2]], " data - file written by SWATprepR R package ", Sys.time())
       ##Writing temperature file per station
       write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
       write.table(df[c(1:4)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       ##Writing .cli files
       if(!file.exists(paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"))){
-        text_l <- paste0(p_lst[["TMP_MAX"]][[1]], ".cli", ": ", p_lst[["TMP_MAX"]][[2]], " file names - file written by svatools R package ", Sys.time())
+        text_l <- paste0(p_lst[["TMP_MAX"]][[1]], ".cli", ": ", p_lst[["TMP_MAX"]][[2]], " file names - file written by SWATprepR R package ", Sys.time())
         write.table(text_l, paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
         write.table("filename", paste0(write_path, p_lst[["TMP_MAX"]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       }
@@ -1392,14 +1395,14 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
         mutate(year = year(DATE), day = yday(DATE)) 
       df1$nbyr <- round(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1), 0)
       file_n <- paste0("sta_", tolower(n), ".", p_lst[[p]][[1]])
-      text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by svatools R package ", Sys.time())
+      text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by SWATprepR R package ", Sys.time())
       ##Writing file per parameter for each station
       write.table(text_l, paste0(write_path, file_n), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       suppressWarnings(write.table(df1, paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
       write.table(df[c("year", "day", p)], paste0(write_path, file_n), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       ##Writing .cli files
       if(!file.exists(paste0(write_path, p_lst[[p]][[1]], ".cli"))){
-        text_l <- paste0(p_lst[[p]][[1]], ".cli", ": ", p_lst[[p]][[2]], " file names - file written by svatools R package ", Sys.time())
+        text_l <- paste0(p_lst[[p]][[1]], ".cli", ": ", p_lst[[p]][[2]], " file names - file written by SWATprepR R package ", Sys.time())
         write.table(text_l, paste0(write_path, p_lst[[p]][[1]], ".cli"), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
         write.table("filename", paste0(write_path, p_lst[[p]][[1]], ".cli"), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
       }
@@ -1457,7 +1460,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
 #' @export 
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools")
+#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' df <- get_atmo_dep(basin_path)
 #' db_path <- "./output/test/project.sqlite"
 #' add_atmo_dep(df, db_path)
@@ -1500,7 +1503,7 @@ add_atmo_dep <- function(df, db_path, t_ext = "year"){
   ##Adding parameter names in the end
   d$par <- rownames(d)
   ##Writing file
-  write.table(paste0("'atmodep.cli' file was written by svatools R package ", Sys.time()), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(paste0("'atmodep.cli' file was written by SWATprepR R package ", Sys.time()), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   suppressWarnings(write.table(df, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
   write.table(f_name, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(d, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -1544,7 +1547,7 @@ add_atmo_dep <- function(df, db_path, t_ext = "year"){
 #' \dontrun{
 #' library(sf)
 #' ##Loading land use/crop layer
-#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
 #' lu <- st_read(lu_path,  quiet = TRUE)
 #' ##Preparing lookup table
 #' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
@@ -1591,7 +1594,7 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 #' \dontrun{
 #' library(sf)
 #' ##Loading land use/crop layer
-#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
 #' lu <- st_read(lu_path,  quiet = TRUE) %>% mutate(id = row_number())
 #' ##Preparing lookup table
 #' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 

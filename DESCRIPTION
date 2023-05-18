@@ -1,5 +1,5 @@
 Type: Package
-Package: svatools
+Package: SWATprepR
 Title: SWAT+ input data preparation tool
 Version: 0.1.0
 Date: 2023-04-10
@@ -9,8 +9,8 @@ Author: c(person("Svajunas", "Plunge",
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
 Description: Tool to help with SWAT+ model users with input data preparation. 
 License: MIT + file LICENSE
-URL: https://github.com/biopsichas/svatools
-BugReports: https://github.com/biopsichas/svatools/issues
+URL: https://github.com/biopsichas/SWATprepR
+BugReports: https://github.com/biopsichas/SWATprepR/issues
 Imports:
     comprehenr,
     DBI,

@@ -20,7 +20,7 @@ plotly object of interactive figure.
 Plotting calibration data
 }
 \examples{
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "svatools")
+temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 plot_cal_data(cal_data$data, stations = c("1", "2", "3","10"), variables =
 c("PT", "Q"))

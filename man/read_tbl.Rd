@@ -7,7 +7,7 @@
 read_tbl(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
 }
 \arguments{
-\item{tbl_name}{character, name of the file to be read eaxmple ('rout_unit.con').}
+\item{tbl_name}{character, name of the file to be read example ('rout_unit.con').}
 
 \item{proj_path}{character, path to SWAT+ txtinout folder (example "my_model").}
 

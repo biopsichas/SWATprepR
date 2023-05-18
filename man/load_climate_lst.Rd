@@ -25,7 +25,7 @@ Extract climate data into nested list of lists
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "svatools") 
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
 data_path <- "climate/CORDEX-BC"
 result <- load_climate_lst(data_path, basin_path)
 }

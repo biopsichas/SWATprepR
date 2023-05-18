@@ -1,16 +1,16 @@
-citHeader('To cite the svatools package in publications use:')
+citHeader('To cite the SWATprepR package in publications use:')
 
 citEntry(entry='Manual',
-         title = 'svatools - tools for SWAT+ input data preparation, visualization and model output assessment',
+         title = 'SWATprepR - tools for SWAT+ input data preparation, visualization and model output assessment',
          author= 'Svajunas Plunge and Ekaterina Rets',
          year  = '2023',
          note  = 'R package',
-	     url = 'https://biopsichas.github.io/svatools/',
+	     url = 'https://biopsichas.github.io/SWATprepR/',
 		 doi = '10.5281/zenodo.7296034',      
 
          textVersion = paste('Plunge, Svajunas and Rets, Ekaterina (2023),',
 		 'R package to aid with SWAT+ preparation',
 		 'R package.',
-		 'URL https://biopsichas.github.io/svatools/',
+		 'URL https://biopsichas.github.io/SWATprepR/',
 		 '10.5281/zenodo.7296034.')
 )

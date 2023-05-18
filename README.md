@@ -1,20 +1,20 @@
-Introduction to svatools
+Introduction to SWATprepR
 ================
 
-# svatools
+# SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-0.1.0-gold.svg)](https://github.com/biopsichas/svatools)
-[![](https://img.shields.io/github/last-commit/biopsichas/svatools.svg)](https://github.com/biopsichas/svatools/commits/green)
+[![](https://img.shields.io/badge/devel%20version-0.1.0-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/github/languages/code-size/biopsichas/svatools.svg)](https://github.com/biopsichas/svatools)
+[![](https://img.shields.io/github/languages/code-size/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7436013-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7436013)
 
-The goal of `svatools` is to help with the [SWAT+
+The goal of `SWATprepR` is to help with the [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation.
 There are mostly functions, which were developed for the implementation
 of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These
@@ -39,12 +39,12 @@ parameters, model calibration, validation, etc., could be found in the
 
 ## Installation
 
-You can install the development version of svatools from
+You can install the development version of SWATprepR from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("biopsichas/svatools")
+devtools::install_github("biopsichas/SWATprepR")
 # euptf2 package is needed and used for soil parameter functions
 devtools::install_github("tkdweber/euptf2")
 ```
@@ -56,15 +56,15 @@ in extdata folder. Exact location on computer could be found running
 lines below. Please run it on your system to get it for you.
 
 ``` r
-library(svatools)
-temp_path <- system.file("extdata", package = "svatools")
+library(SWATprepR)
+temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
-#> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/svatools/extdata"
+#> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"
 ```
 
 ## Templates
 
-In order to use *svatools* package functions with your data you should
+In order to use *SWATprepR* package functions with your data you should
 prepare your data to be inline with templates we have provided in
 *extdata* folder. Such are:
 

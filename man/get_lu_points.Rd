@@ -39,7 +39,7 @@ Preparing training points for remote sensing algorithm
 \dontrun{
 library(sf)
 ##Loading land use/crop layer
-lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "svatools")
+lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
 lu <- st_read(lu_path,  quiet = TRUE)
 ##Preparing lookup table
 lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
