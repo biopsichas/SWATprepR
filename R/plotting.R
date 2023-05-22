@@ -244,6 +244,8 @@ plot_map <- function(df, df_station, rch, shp){
   if (st_crs(rch)$input == "EPSG:4326" & 
       st_crs(shp)$input == "EPSG:4326" & 
       st_crs(df_station)$input == "EPSG:4326"){
+    if(!"id" %in% colnames(rch)){rch$id <- NA}
+    if(!"type" %in% colnames(rch)){rch$type <- NA}
     p_all <- lapply(df_station$ID, plot_ts_fig, df = df)
     leaflet() %>%
       addProviderTiles("OpenStreetMap", group = "OSM") %>%
@@ -251,7 +253,8 @@ plot_map <- function(df, df_station, rch, shp){
       addProviderTiles("OpenTopoMap", group = "Topography") %>%
       addPolygons(data = shp, color = "blue", weight = 1,
                   opacity = 1.0, fillOpacity = 0.1, group = "Basin") %>%
-      addPolylines(data = rch, color = "black", weight = 1, group = "Reaches") %>%
+      addPolylines(data = rch, color = "black", weight = 2, opacity = 0.5, group = "Reaches", 
+                   label = ~paste0("Reach ID: ", rch$id, ", type: ", rch$type)) %>%
       addMarkers(
         data = df_station,
         layerId=~ID,
