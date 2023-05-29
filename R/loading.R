@@ -196,3 +196,92 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
     mutate(across(all_of(is_num), ~ as.numeric(.x)))
   return(tbl)
 }
+
+#' Loading SWAT+ weather files to R
+#'
+#' @param input_folder character, path to folder with SWAT+ weather input files (example "my_model").
+#' @importFrom sf st_as_sf
+#' @importFrom stringr str_extract
+#' @importFrom dplyr bind_rows mutate select 
+#' @importFrom stats setNames
+#' @return nested list of lists with dataframes. Nested structure list -> stations, 
+#' list -> Variable -> Dataframe (DATE, VARIABLE).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' met_lst <- load_swat_weather("my_folder")
+#' }
+
+load_swat_weather <- function(input_folder){
+  print(paste0("Loading of SWAT+ weather data is started from ", input_folder, " directory."))
+  ##Identifying all weather files
+  fs <- list.files(input_folder, recursive = F, pattern="*.pcp|*.slr|*.hmd|*.tmp|*.wnd")
+  if(length(fs)==0){
+    stop(paste0("No SWAT+ weather files have been found in ", input_folder, " directory!!!"))
+  }
+  ##Preparing list and dics required for loop
+  rlist <- list() ##resulting nested list of lists
+  stations <- NULL ##dataframe for station data
+  p_lst <- list("pcp" = c("PCP"), 
+                "slr" = c("SLR"), 
+                "hmd" = c("RELHUM"), 
+                "tmp" = c("TMP_MAX", "TMP_MIN"), 
+                "wnd" = c("WNDSPD")) ##Parameters dics
+  s_info <- unlist(strsplit(input_folder, "/")) ##source information 
+  s_info <- paste0(s_info[c(length(s_info)-1, length(s_info))], collapse = '/')
+  nb <- length(fs)
+  ##Main loop
+  for (i in seq(1,nb)){
+    ##Getting variable type
+    f_type <- p_lst[sub(".*\\.", "", fs[i])][[1]]
+    ##Loading data from text file
+    df <- read_tbl(fs[i], input_folder)
+    ##Getting station ID and saving it into dafaframe
+    id <- str_extract(toupper(fs[i]), "ID([\\d]+)")
+    if(!is.na(id)){
+      st_info <- data.frame(ID = id)
+    } else {
+      if(!is.null(stations)){
+        st_info <- data.frame(ID = max(as.numeric(str_extract(stations$ID, "(?<=ID)\\d+")))+1)
+      } else {
+        st_info <- data.frame(ID = 1)
+      }
+      id <- st_info$ID
+    }
+    ##Filling station information for the file laoded
+    st_info[c("Name", "Elevation", "Source", "Long", "Lat")] <- list(gsub("\\..*","",fs[i]), 
+                                                                     as.character(df[[1,"elev"]]), 
+                                                                     s_info, 
+                                                                     as.numeric(df[[1,"lon"]]),  
+                                                                     as.numeric(df[[1,"lat"]]))
+    st_info <- st_as_sf(st_info, coords = c("Long", "Lat"), crs = 4326, remove = F) 
+    ##Checking is station information alreade in stations dataframe
+    if(!st_info$geometry %in% stations$geometry){
+      if(!is.null(stations)){
+        stations <- bind_rows(stations, st_info)
+      } else {
+        stations <- st_info
+      }
+    }
+    ##Identifying if file is for temperature or other parameters, processing and saving time series data
+    if(length(f_type)==1){
+      ts <- df[2:dim(df)[1], 1:3] %>% 
+        mutate(DATE = as.POSIXct(strptime(paste(nbyr, tstep), format="%Y %j", tz = "UTC"))) %>% 
+        select(DATE, lat) %>% 
+        setNames(c("DATE",f_type)) 
+      rlist[[id]][[f_type]] <- ts
+    } else if(length(f_type)==2){
+      ts <- df[2:dim(df)[1], 1:4] %>% 
+        mutate(DATE = as.POSIXct(strptime(paste(nbyr, tstep), format="%Y %j", tz = "UTC"))) %>% 
+        select(DATE, lat, lon) %>% 
+        setNames(c("DATE",f_type)) 
+      rlist[[id]][[f_type[1]]] <- ts[,c("DATE", f_type[1])]
+      rlist[[id]][[f_type[2]]] <- ts[,c("DATE", f_type[2])]
+    }
+    cat("\014")
+    print(paste0(format(round(100*i/nb, 2), nsmall = 2), "% of data is loaded."))
+  }
+  print("Data loading finished succesfully.")
+  return(list(stations = stations, data = rlist))
+}
