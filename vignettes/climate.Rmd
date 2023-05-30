@@ -12,35 +12,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-Climate data in the [OPTAIN project](https://www.optain.eu/) for each case study site could be obtained from
-[UFZ-Cloud](https://nc.ufz.de/s/KA9Cr2bbtALGMHr/authenticate/showShare). It is located under *WPs&Tasks\>WP3\>Task_3\_2\>data* path. 
+Intensification of climate change is raising multiple questions for water management, which require preparation and running climate scenarios within different studies. Necessary global or regional climate model set have to located, selected, most of the time bias-corrected or downscaled with monitoring data. In the final step, prepared climate weather datasets should be transformed into SWAT+ text file format. Model also requires that weather generator and other files are updated for correct representation of climate scenario. This section only covers the final step of climate data conversion into SWAT+ model input and updating of relevant files. 
 
+## Ipput format
 
-```{r fig-cloud, echo=FALSE, out.width='100%', out.height ='100%', fig.align = 'center'}
-knitr::include_graphics('fig_cloud.png')
-```
+`SWATprepR` functions can be applied on weather data delivered in two type of input formats:
 
-Numbers are referring to a case study number and *gridded.zip* files contains `NetCDF` files with climate data for each case study basin. Data are provided for precipitation, solar radiation, relative humidity, min, max, mean temperature and wind speed variables. Time period covered is starting from 1981-01-01 while ending 2099 or 2100. Three representative concentration pathways (RCPs) available (RCP2.6, RCP4.5, RCP8.5) and six regional climate models (RCMs). Detained information about RCMs is provided in the table below.
+1. `NetCDF` files delivered with *.nc* files. In this case required variables should be save into files saved with following names:
+    + Daily precipitation - *prec.nc*; 
+    + Relative humidity - *relHum.nc*;
+    + Solar radiation - *solarRad.nc*;
+    + Maximum daily temperature - *Tmax.nc*;
+    + Minimum daily temperature - *Tmin.nc*;
+    + Average wind speed - *windSpeed.nc*.
+2. SWAT+ weather input text files. In this case following file endings represent different parameters:
+    + Daily precipitation - *.pcp*; 
+    + Relative humidity - *.hmd*;
+    + Solar radiation - *slr*;
+    + Minimum and maximum daily temperature - *.tmp*;
+    + Minimum daily temperature - *.wnd*.
 
-| Model number | Driving Model (GCM) | Ensemble |    RCM     |  End date  |
-|:------------:|:-------------------:|:--------:|:----------:|:----------:|
-|      1       |      EC-EARTH       | r12i1p1  | CCLM4-8-17 | 31.12.2100 |
-|      2       |      EC-EARTH       |  r3i1p1  |  HIRHAM5   | 31.12.2100 |
-|      3       |     HadGEM2-ES      |  r1i1p1  |  HIRHAM5   | 30.12.2099 |
-|      4       |     HadGEM2-ES      |  r1i1p1  |  RACMO22E  | 30.12.2099 |
-|      5       |     HadGEM2-ES      |  r1i1p1  |    RCA4    | 30.12.2099 |
-|      6       |     MPI-ESM-LR      |  r2i1p1  |  REMO2009  | 31.12.2100 |
+### Case 1 - extracting from NetCDF
 
-
-All RCMs data were bias-corrected to the [ERA5-Land](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview) climate data. Description of data preparation and analysis of they is provided in the project deliverable [D3.1: Climate scenarios for integrated modelling](https://www.optain.eu/sites/default/files/delivrables/OPTAIN%20D3.1%20-%20Climate%20scenarios%20for%20integrated%20modelling.pdf).
-
-## NetCDF to SWAT+ input
-
-There is no direct way of using `NetCDF` data in the SWAT model. Therefore tools have been prepared for the users and provided included this package.
-
-### Extracting from NetCDF
-
-First step to prepare SWAT+ climate input data is to download *XX-gridded.zip* file for your case study site and to unzip it. Then locate *CORDEX-BC* folder. Data extraction from `NetCDF` is done with [load_climate_lst](../reference/load_climate_lst.html) function, which only needs path to your basin shape file and path to *CORDEX-BC* folder. Following lines provides an example how to use it.
+`NetCDF` data can't be directly used in SWAT+ model. Thus `SWATperpR` package provides [load_climate_lst](../reference/load_climate_lst.html) function to extract weather data from *.nc* file into R format user by this package. This function only needs path to your basin shape file and path to folder with *.nc* files. Following lines provides an example how to use it.
 
 ```{r ext_cli, eval = FALSE, message = FALSE, warning = FALSE}
 library(SWATprepR)
@@ -51,38 +45,59 @@ climate_lst <- load_climate_lst(cordex_path, basin_path)
 
 The function creates virtual stations for each `NetCDF` grid cell, which basin boundary touches. Virtual stations coordinates are defined as center of grid cell. Then for each of this virtual station data are extracted and saved in the list of list format. 
 
-```{r fig-basin, echo=FALSE, out.width='100%', out.height ='100%', fig.align = 'center'}
+```{r fig-basin, echo=FALSE, out.width='70%', out.height ='70%', fig.align = 'center'}
 knitr::include_graphics('fig_basin.png')
 ```
 
-### Evaluating climate data
+[load_climate_lst](../reference/load_climate_lst.html) function also could extract data for specific stations. In case nested list of lists with dataframes should be provided (common format used in this package and could be prepared by [load_template](../reference/load_template.html) function). 
 
-Extraction result is arranged in specific format. *RCP -\> RCM* are the top levels of the list format. Then format is same as with other meteorological data used in
-this package.
+Nested structure:
 
--   Meteo data list
-    -   *stations* sf Data frame (ID, Name, Elevation, Source, geometry,
-        Long, Lat)
-    -   *data* -\> Station ID -\> Variable -\> Data frame (DATE, Variable)
++ *meteo_lst*
+    + *data*
+        + Station ID
+            + VARIABLE
+                + Dataframe (DATE, VARIABLE). 
+    + *stations*
+        + Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat) 
 
+```{r ext_cli2, eval = FALSE, message = FALSE, warning = FALSE}
+temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+met_lst <- load_template(temp_path, 3035)
+climate_lst <- load_climate_lst(cordex_path, met_lst)
+```
 
-Therefore other package function as [plot_weather](../reference/plot_weather.html) could be used to examine function results or to compare to measurement data, for instance with [plot_weather_compare](../reference/plot_weather_compare.html).
+###  Case 2 - preparing climate set from SWAT+ format
+
+If case climate dataset is already in SWAT+ format it could be loaded into R nested list format with [load_swat_weather](../reference/load_swat_weather.html) function. This function allow loading any SWAT+ weather data. The only input is input folder. Function will read and load all SWAT+ input weather files available in this folder. 
+
+```{r ext_cli3, eval = FALSE, message = FALSE, warning = FALSE}
+input_folder <- "my_climate_data"
+climate_lst <- load_swat_weather(input_folder)
+```
+
+Following functions presented in this page  are independent of the way clomate data are loaded into R. 
+
+## Examining climate data
+
+Loaded climate can be examined with functions available in the package. For instance package function as [plot_weather](../reference/plot_weather.html) could be used to examine function results or to compare to measurement data, for instance with [plot_weather_compare](../reference/plot_weather_compare.html).
 
 ```{r plot_cli, eval = FALSE, message = FALSE, warning = FALSE}
-plot_weather(climate_lst[["rcp85"]][["1"]],"TMP_MAX", "year", "max")
+plot_weather(climate_lst, "TMP_MAX", "year", "max")
 ```
 
-```{r fig-temp, echo=FALSE, out.width='100%', out.height ='100%', fig.align = 'center'}
+```{r fig-temp, echo=FALSE, out.width='70%', out.height ='70%', fig.align = 'center'}
 knitr::include_graphics('fig_temp.png')
 ```
-[plot_wgn_comparison](../reference/plot_wgn_comparison.html) function might be useful to get climate set statistical comparison with motoring data. 
+
+Another [plot_wgn_comparison](../reference/plot_wgn_comparison.html) function might be useful to get statistical comparison of climate data with motoring data. Function automatically cuts climate data for available monitoring data time interval. Thus comparison is only for same time period data.  
 
 ```{r plot_wng, eval = FALSE, message = FALSE, warning = FALSE}
 ##Loading data from the template with load_template function
 temp_path <- "my_folder/weather_data.xlsx"
 met_lst <- load_template(temp_path, 4326)
 ##And plotting comparison of statistical values with climate data
-plot_wgn_comparison(climate_lst[["rcp85"]][["1"]], met_lst, "ID4", "ID2", "Climate set", "Monitoring data", "comparison")
+plot_wgn_comparison(climate_lst, met_lst, , "ID20", "ID2", "Climate rcp26m1", "Monitoring data", "comparison")
 ```
 
 ```{r fig-wng, echo=FALSE, out.width='100%', out.height ='100%', fig.align = 'center'}
@@ -91,11 +106,11 @@ knitr::include_graphics('fig_wng.png')
 
 Other functions from [Weather data section](../articles/weather.html) are also applicable. This allows to update SWAT+ *.sqlite* [database](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) with climate data, prepare [weather generator](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) parameters, etc.
 
-### Preparing SWAT+ input climate sets
+## Preparing SWAT+ input climate sets for scenarios
 
-Nevertheless [prepare_climate](../reference/prepare_climate.html) function could be used to directly prepare/update model input text files needed to run each climate scenario. Nothing else is needed just to replace model input files with prepared set of files. 
+[prepare_climate](../reference/prepare_climate.html) function is used prepare/update model input text files needed to run climate scenarios. Nothing else is needed just to replace model input files with prepared set of files. 
 
-Following lines runs [prepare_climate](../reference/prepare_climate.html) function in several loops and prepares all climate data input sets and folder structure.  
+Following lines runs [prepare_climate](../reference/prepare_climate.html) function example in several loops and prepares all climate data input sets, folder structure in one go.  
 
 ```{r get_cli, eval = FALSE, message = FALSE, warning = FALSE}
 ##Path to your SWAT+ model project directory
@@ -114,8 +129,10 @@ for (rcp in c("rcp26", "rcp45", "rcp85")){
       dir.create(cli_dir, recursive = TRUE)
       ##Coping files to update
       file.copy(files_to_copy, paste(cli_dir, c("aquifer.con", "chandeg.con", "hru.con", "reservoir.con", "rout_unit.con", "time.sim"), sep = "/"), overwrite = TRUE)
+      
       ##Running function to prepare climate input for scenario
-      prepare_climate(climate_lst[[rcp]][[rcm]], cli_dir, p[2], p[3])
+      climate_lst <- load_swat_weather(paste0(rcp, rcm, collapse = "/"))
+      prepare_climate(climate_lst, cli_dir, p[2], p[3])
       print(paste(rcp, "rcm", rcm, p[1], p[2], "-", p[3], "set prepared."))
     }
   }
