@@ -84,7 +84,7 @@ write.csv(wgn$wgn_data, "wgn_data.csv", row.names = FALSE, quote = FALSE)
 
 ## Writing
 
-### SWAT+ input and updating .sqlite database 
+### SWAT+ input .sqlite database 
 
 [add_weather](../reference/add_weather.html) function can be used to write all weather files into project's folder and update tables in project's sqlite database with weather, weather generator and relation to weather station information.  
 
@@ -92,4 +92,18 @@ write.csv(wgn$wgn_data, "wgn_data.csv", row.names = FALSE, quote = FALSE)
 ##Path to .sqlite
 db_path <- "./output/test/project.sqlite"
 add_weather(db_path, met_lst, wgn)
+```
+
+### SWAT+ input text files
+
+[prepare_climate](../reference/prepare_climate.html) function can be used to prepare/update SWAT+ model input text files for weather data. The function prepares following files:
+
++ Weather time series input files: *.pcp*, *.slr*, *.hmd*, *.tmp*, *.wnd*;
++ Reference files for weather files: *wnd.cli*, *tmp.cli*, *pcp.cli*, *slr.cli*, *hmd.cli*;
++ Weather generator files: *weather-sta.cli*, *weather-wgn.cli*.
+
+The function also updates *aquifer.con*, *chandeg.con*, *hru.con*, *reservoir.con*, *rout_unit.con* and *time.sim* SWAT+ model input files. Following line provide an example, how it could be applied. 
+
+```{r update2, eval=FALSE, message = FALSE, warning = FALSE}
+prepare_climate(met_lst, "txtinout", "1991-01-01", "2020-12-31")
 ```
