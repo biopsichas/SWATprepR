@@ -251,7 +251,7 @@ load_swat_weather <- function(input_folder){
     }
     ##Filling station information for the file laoded
     st_info[c("Name", "Elevation", "Source", "Long", "Lat")] <- list(gsub("\\..*","",fs[i]), 
-                                                                     as.character(df[[1,"elev"]]), 
+                                                                     as.numeric(df[[1,"elev"]]), 
                                                                      s_info, 
                                                                      as.numeric(df[[1,"lon"]]),  
                                                                      as.numeric(df[[1,"lat"]]))
