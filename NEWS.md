@@ -1,3 +1,8 @@
+# SWATprepR 0.1.1
+
+* A new function `load_swat_weather()` added.
+* *Climate projections* article page updated. 
+
 # SWATprepR 0.1.0
 
 * A new `prepare_climate()` function was added.

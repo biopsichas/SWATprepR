@@ -128,6 +128,8 @@ files_to_copy <- paste(project_dir, c("aquifer.con", "chandeg.con", "hru.con", "
 for (rcp in c("rcp26", "rcp45", "rcp85")){
   ##Each rcm
   for (rcm in as.character(c(1:6))){
+    ##Loading climate data from SWAT+ input files
+    climate_lst <- load_swat_weather(paste("my_climate_data_folder", rcp, rcm, sep = "/"))
     ##Each period
     for(p in list(c("H", "1988-01-01", "2020-12-31"), c("N", "2033-01-01", "2065-12-31"), c("E", "2067-01-01", "2099-12-31"))){
       ##Creating new directory
@@ -135,9 +137,7 @@ for (rcp in c("rcp26", "rcp45", "rcp85")){
       dir.create(cli_dir, recursive = TRUE)
       ##Coping files to update
       file.copy(files_to_copy, paste(cli_dir, c("aquifer.con", "chandeg.con", "hru.con", "reservoir.con", "rout_unit.con", "time.sim"), sep = "/"), overwrite = TRUE)
-      
       ##Running function to prepare climate input for scenario
-      climate_lst <- load_swat_weather(paste("my_climate_data_folder", rcp, rcm, sep = "/"))
       prepare_climate(climate_lst, cli_dir, p[2], p[3])
       print(paste(rcp, "rcm", rcm, p[1], p[2], "-", p[3], "set prepared."))
     }
