@@ -58,7 +58,11 @@ All the data required to run and test package are installed with package
 in the extdata folder. Exact location on computer could be found running
 lines below. Please run it on your system to find it for you.
 
-    #> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"
+``` r
+library(SWATprepR)
+temp_path <- system.file("extdata", package = "SWATprepR")
+print(temp_path)
+```
 
 ## Templates
 

@@ -57,7 +57,7 @@ devtools::install_github("tkdweber/euptf2")
 
 All the data required to run and test package are installed with package in the extdata folder. Exact location on computer could be found running lines below. Please run it on your system to find it for you.   
 
-```{r data, echo = FALSE}
+```{r data, eval = FALSE}
 library(SWATprepR)
 temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
