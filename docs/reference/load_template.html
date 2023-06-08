@@ -110,14 +110,13 @@ or nested list of dataframes with each parameter in separate dataframe.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID5 data."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID6 data."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID7 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID14 data."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Loading of data is finished."</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">met_lst</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ stations: sf [14 × 7] (S3: sf/tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID       : chr [1:14] "ID1" "ID2" "ID3" "ID4" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Name     : chr [1:14] "RUDZK DUZY" "GLEBOKIE" "GLODOWO" "SOBIESIERNIE" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Elevation: chr [1:14] "98.7" "85.0" "99.0" "80.0" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Elevation: num [1:14] 98.7 85 99 80 89 76 99 89 84 109 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Source   : chr [1:14] "ODR" "IMGW" "IMGW" "IMGW" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geometry :sfc_POINT of length 14; first list element:  'XY' num [1:2] 4892472 3300305</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Long     : num [1:14] 4892472 4891414 4941373 4890114 4899376 ...</span>
@@ -125,11 +124,11 @@ or nested list of dataframes with each parameter in separate dataframe.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "sf_column")= chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA NA NA NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:6] "ID" "Name" "Elevation" "Source" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ data    :List of 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID9 :List of 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SLR    : tibble [2,952 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:2952], format: "2014-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:2952] 1.32 2.83 2.73 2.08 2.25 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ data    :List of 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID9 :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SLR    : tibble [3,317 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:3317], format: "2014-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:3317] 1.32 2.83 2.73 2.08 2.25 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [3,317 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:3317], format: "2014-01-01" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:3317] 0.885 0.873 0.881 0.887 0.888 ...</span>
@@ -142,61 +141,52 @@ or nested list of dataframes with each parameter in separate dataframe.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [3,197 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:3197], format: "2014-05-01" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:3197] 0 1 0 0.2 0 0.2 1 0 0.8 0.2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [760 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:760], format: "2021-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:760] 1.89 1.1 2.68 2.36 1.85 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID3 :List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [6,726 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:6726], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:6726] 6.6 4.4 7.5 6.2 6.6 6.2 5 7 4.6 3.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [6,726 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:6726], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:6726] 1 1.6 1.5 3.3 2.5 2.5 2.8 3.5 1.6 1.1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [1,154 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:1154], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:1154] 0.91 0.903 0.86 0.828 0.823 0.92 0.923 0.895 0.943 0.96 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID10:List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [1,948 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:1948], format: "2016-06-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:1948] 25.3 23.8 23.5 26 23.6 19 21.4 26.7 20 21.3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [1,948 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:1948], format: "2016-06-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:1948] 14.3 14.5 13 11.8 10.7 8.9 6.1 8 10.1 8.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [1,947 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:1947], format: "2016-06-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:1947] 0.787 0.806 0.646 0.646 0.551 0.541 0.486 0.546 0.601 0.62 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [1,932 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:1932], format: "2016-06-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:1932] 3.4 3.2 3.6 1.5 3.1 3.4 1.6 2.6 2.3 4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID11:List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SLR   : tibble [6,940 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:6940], format: "2000-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:6940] 1.16 0.85 0.77 0.55 0.82 1.02 0.77 2.72 0.54 0.99 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [7,598 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:7598], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:7598] 6.6 4.4 7.5 6.2 6.6 6.2 5 7 4.6 3.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [7,598 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:7598], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:7598] 1 1.6 1.5 3.3 2.5 2.5 2.8 3.5 1.6 1.1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [7,812 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:7812], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:7812] 0 0.2 2.1 1.5 2.9 1.9 5 6.3 0.1 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID10:List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [2,191 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:2191], format: "2016-06-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:2191] 25.3 23.8 23.5 26 23.6 19 21.4 26.7 20 21.3 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [2,191 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:2191], format: "2016-06-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:2191] 14.3 14.5 13 11.8 10.7 8.9 6.1 8 10.1 8.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [2,191 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:2191], format: "2016-06-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:2191] 0.787 0.806 0.646 0.646 0.551 0.541 0.486 0.546 0.601 0.62 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [2,178 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:2178], format: "2016-06-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:2178] 3.4 3.2 3.6 1.5 3.1 3.4 1.6 2.6 2.3 4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [2,188 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:2188], format: "2016-06-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:2188] 0 0.2 0 0 0 0 0 11.6 0 2.9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID11:List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ MAXHHR: tibble [4,040 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:4040], format: "2008-06-06" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ MAXHHR: num [1:4040] 0 0 0 0 0 0 0 0.9 0.1 0.2 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP   : tibble [4,040 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:4040], format: "2008-06-06" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:4040] 0 0 0 0 0 0 0 2.8 0.1 0.3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID12:List of 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [8,571 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:8571], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:8571] 6.8 4.7 8.1 6.6 7.4 5.6 6.6 8.1 5.5 6 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [8,571 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:8571], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:8571] 1.1 0.4 1.1 3.2 1.6 2.2 2.7 4.7 1.7 1.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [6,574 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:6574], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:6574] 0.903 0.94 0.83 0.825 0.755 0.908 0.935 0.9 0.975 0.983 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [6,574 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:6574], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:6574] 2 1.7 3.7 4.3 7.3 3.7 3 5 2 1.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ MAXHHR : tibble [3,187 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:3187], format: "2012-06-13" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ MAXHHR: num [1:3187] 6.6 8.5 0.2 3.8 4.4 0.1 0 9.9 2.9 0.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [3,187 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:3187], format: "2012-06-13" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:3187] 13 21.3 0.3 10.9 7.8 0.1 0 34.1 21.1 0.9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID12:List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [9,151 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:9151], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:9151] 6.8 4.7 8.1 6.6 7.4 5.6 6.6 8.1 5.5 6 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [9,151 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:9151], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:9151] 1.1 0.4 1.1 3.2 1.6 2.2 2.7 4.7 1.7 1.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ MAXHHR : tibble [3,011 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:3011], format: "2012-06-13" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ MAXHHR: num [1:3011] 6.6 8.5 0.2 3.8 4.4 0.1 0 9.9 2.9 0.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [9,151 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9151], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9151] 0 0.3 2.7 1 2.7 2.5 3.8 12 1.1 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID13:List of 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [8,379 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:8379], format: "1998-01-01" ...</span>
@@ -206,69 +196,53 @@ or nested list of dataframes with each parameter in separate dataframe.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:8380] 1.1 0.5 1.5 3.5 2.2 2.7 2.7 4.5 2.6 1.9 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SLR    : tibble [6,915 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:6915], format: "2000-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:6915] 1.45 0.97 0.55 0.31 1.15 0.96 0.71 2.6 2.52 1.06 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [8,358 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:8358], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:8358] 0.949 0.923 0.826 0.809 0.706 0.928 0.911 0.873 0.973 0.994 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [8,401 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:8401], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:8401] 2.5 3.5 4.9 5.5 7.5 6.4 5.1 6.5 2.5 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID1 :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:6915] 1.552 1.038 0.589 0.332 1.23 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [8,363 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:8363], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:8363] 0.949 0.923 0.826 0.809 0.706 0.928 0.911 0.873 0.973 0.994 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:9131] 2.5 3.5 4.9 5.5 7.5 6.4 5.1 6.5 2.5 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID1 :List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [930 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:930], format: "2018-10-27" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:930] 11.2 7.9 10.1 19.6 15.4 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [868 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:868], format: "2018-10-27" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:868] 4.67 0.64 1.8 10.09 4.57 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [565 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:565], format: "2018-10-27" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:565] 0.716 0.877 0.983 0.81 0.712 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WNDSPD : tibble [930 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:930], format: "2018-10-27" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ WNDSPD: num [1:930] 1.09 1.47 3.04 2.97 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [384 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:384], format: "2019-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:384] 4.3 1.1 1.8 2.5 5.9 1.2 0.7 1.5 3.3 0.1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID8 :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [864 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:864], format: "2019-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:864] 4.3 1.1 0 1.8 2.5 0 0 5.9 1.2 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID8 :List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MAX: tibble [1,171 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:1171], format: "2018-01-01" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MAX: num [1:1171] 9.68 3.79 4.13 7.41 7.63 7.54 4.05 1.45 2.14 1.27 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TMP_MIN: tibble [1,165 × 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE   : POSIXct[1:1165], format: "2018-01-01" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ TMP_MIN: num [1:1165] 2.59 0.36 0.21 3.95 3.47 2 -2.74 -6.5 -4.29 -0.33 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM : tibble [1,171 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:1171], format: "2018-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:1171] 0.875 0.969 0.974 0.897 0.903 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [402 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:402], format: "2018-04-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:402] 6.8 1.6 7 8.4 3.6 4.2 0.6 2.4 27.2 0.2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP    : tibble [1,083 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:1083], format: "2018-04-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:1083] 6.8 0 0 0 0 0 0 0 0 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID2 :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [8,673 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:8673], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:8673] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9131] 0 0 0 0 0 0 0 0 0 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID4 :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [8,673 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:8673], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:8673] 0 0 2.2 0 3.5 1.3 9.2 6.3 0.4 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9131] 0 0 2.2 0 3.5 1.3 9.2 6.3 0.4 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID5 :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [8,673 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:8673], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:8673] 0 0 2.1 0.3 4.7 0.8 2.5 13.5 0.6 0.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9131] 0 0 2.1 0.3 4.7 0.8 2.5 13.5 0.6 0.7 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID6 :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [8,673 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:8673], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:8673] 0.5 0 2.2 0 3.6 1.2 3.2 7 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9131] 0.5 0 2.2 0 3.6 1.2 3.2 7 0 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID7 :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [8,673 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:8673], format: "1998-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:8673] 0 0 2.8 0.3 3.1 2.1 1.5 11.6 1 0.2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ID14:List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SLR   : tibble [365 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:365], format: "2022-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SLR : num [1:365] 0.683 0.798 0.671 1.203 1.064 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ RELHUM: tibble [365 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE  : POSIXct[1:365], format: "2022-01-01" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ RELHUM: num [1:365] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ PCP: tibble [9,131 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ DATE: POSIXct[1:9131], format: "1998-01-01" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ PCP : num [1:9131] 0 0 2.8 0.3 3.1 2.1 1.5 11.6 1 0.2 ...</span>
 <span class="r-in"><span><span class="co">## 2) Example of template for calibration data</span></span></span>
 <span class="r-in"><span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"calibration_data.xlsx"</span>, package <span class="op">=</span> <span class="st">"SWATprepR"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cal_data</span> <span class="op">&lt;-</span> <span class="fu">load_template</span><span class="op">(</span><span class="va">temp_path</span><span class="op">)</span></span></span>

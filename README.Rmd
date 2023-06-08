@@ -32,9 +32,9 @@ library(badger)
 
 The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 
-- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[Currently requires access to OPTAIN https://git.ufz.de/optain] - R tool for building SWAT+ setups;
+- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[For access please inquire at *christoph.schuerz@ufz.de*.] - R tool for building SWAT+ setups;
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for preparing management schedules for SWAT model;
-- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr)^[Currently requires access to OPTAIN https://git.ufz.de/optain] - A collection of functions in R and routines for SWAT model calibration and model diagnostics;
+- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of functions in R and routines for SWAT model calibration and model diagnostics;
 - [SWATrunR (former SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) - R tool for sensitivity analyse, model calibration and validation.
 
 <img src="man/figures/swativerse.png" title="SWAT packages for R" alt="swativerse logo" width="80%" style="display: block; margin: auto;" />
@@ -57,7 +57,7 @@ devtools::install_github("tkdweber/euptf2")
 
 All the data required to run and test package are installed with package in the extdata folder. Exact location on computer could be found running lines below. Please run it on your system to find it for you.   
 
-```{r data, eval = FALSE}
+```{r data}
 library(SWATprepR)
 temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)

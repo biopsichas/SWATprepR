@@ -91,11 +91,11 @@
 <p>The goal of <code>SWATprepR</code> is to help with the <a href="https://swat.tamu.edu/software/plus/" class="external-link">SWAT+ model</a> input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the <a href="https://www.optain.eu/" class="external-link">OPTAIN project</a>. These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by <a href="https://www.ufz.de/index.php?en=49467" class="external-link">Christoph Schuerz</a>. Therefore, we highly recommend trying and using these tools:</p>
 <ul>
 <li>
-<a href="https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script" class="external-link">SWATbuildR</a><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Currently requires access to OPTAIN &lt;a href="https://git.ufz.de/optain" class="external-link uri"&gt;https://git.ufz.de/optain&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a> - R tool for building SWAT+ setups;</li>
+<a href="https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script" class="external-link">SWATbuildR</a><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;For access please inquire at &lt;em&gt;&lt;a href="mailto:christoph.schuerz@ufz.de" class="email"&gt;christoph.schuerz@ufz.de&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;'><sup>1</sup></a> - R tool for building SWAT+ setups;</li>
 <li>
 <a href="http://chrisschuerz.github.io/SWATfarmR/" class="external-link">SWATfarmR</a> - R tool for preparing management schedules for SWAT model;</li>
 <li>
-<a href="https://git.ufz.de/schuerz/swatdoctr" class="external-link">SWATdoctR</a><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Currently requires access to OPTAIN &lt;a href="https://git.ufz.de/optain" class="external-link uri"&gt;https://git.ufz.de/optain&lt;/a&gt;&lt;/p&gt;'><sup>2</sup></a> - A collection of functions in R and routines for SWAT model calibration and model diagnostics;</li>
+<a href="https://git.ufz.de/schuerz/swatdoctr" class="external-link">SWATdoctR</a> - A collection of functions in R and routines for SWAT model calibration and model diagnostics;</li>
 <li>
 <a href="https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html" class="external-link">SWATrunR (former SWATplusR)</a> - R tool for sensitivity analyse, model calibration and validation.</li>
 </ul>
@@ -115,7 +115,11 @@
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
 <p>All the data required to run and test package are installed with package in the extdata folder. Exact location on computer could be found running lines below. Please run it on your system to find it for you.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/SWATprepR" class="external-link">SWATprepR</a></span><span class="op">)</span></span>
+<span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"SWATprepR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">temp_path</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="templates">Templates<a class="anchor" aria-label="anchor" href="#templates"></a>

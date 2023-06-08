@@ -27,8 +27,8 @@ recommend trying and using these tools:
   R tool for building SWAT+ setups;
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
   preparing management schedules for SWAT model;
-- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr)[^2] - A collection
-  of functions in R and routines for SWAT model calibration and model
+- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of
+  functions in R and routines for SWAT model calibration and model
   diagnostics;
 - [SWATrunR (former
   SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
@@ -62,6 +62,7 @@ lines below. Please run it on your system to find it for you.
 library(SWATprepR)
 temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
+#> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"
 ```
 
 ## Templates
@@ -79,6 +80,4 @@ prepare your data to be inline with templates we have provided in
 Data prepared according to templates can be directly loaded into R and
 all the functions applied as described.
 
-[^1]: Currently requires access to OPTAIN <https://git.ufz.de/optain>
-
-[^2]: Currently requires access to OPTAIN <https://git.ufz.de/optain>
+[^1]: For access please inquire at *<christoph.schuerz@ufz.de>*.
