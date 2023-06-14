@@ -7,36 +7,25 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Introduction
+
+Calibration and validation data are required for model input. However, these data are necessary for assessing model performance. As it is usually collected and prepared during data gathering stage, `SWATprepR` includes functions to quickly load into R, assess, plot and clean monitoring data. For more information about required data and calibration/validation step please see chapter 6 in [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395).  
 
 ## Loading
 
-If data are prepared according to given templates, they can be loaded directly with package function [load_template](../reference/load_template.html) function. Two data types are loaded. First is station information (location, name, ID). Second, is values monitoring values with IDs to relate to station, variable names, dates and values. 
+Data, which are prepared according to given templates (*'calibration_data.xlsx'*), can be loaded directly with package function [load_template](../reference/load_template.html). Two data types are loaded. First is station information (location, name, ID). Second is values from those monitoring stations with IDs to relate to station, variable names, dates and values. Function needs only paths to the template and EPSG code (if different from 4326) for point coordinates. 
 
 ```{r cal_load, message = FALSE, warning = FALSE}
 library(SWATprepR)
 library(sf)
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-cal_data <- load_template(temp_path, 4326)
+cal_data <- load_template(temp_path, epsg_code = 4326)
+```
+
+Example of loaded data structure presented below.
+
+```{r cal_load2, message = FALSE, warning = FALSE}
 str(cal_data)
-```
-
-## Cleaning
-
-Two functions could be applied for data cleaning. First is [clean_wq](../reference/clean_wq.html) function, which could be applied for fixing most common water data issues as fixing data formats, units (e.g. NO~3~, to N-NO~3~), instead of LOD/LOQ values using LOD or LOQ divided by 2, replacing zeros from water quality variables with minimum value (multiplied by selected coefficient) for variable.
-
-```{r cal_clean_zero, message = FALSE, warning = FALSE}
-##Zeros is replaced with min(Value)/2
-cal_data$data <- clean_wq(cal_data$data)
-```
-
-Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation).
-
-```{r cal_clean_outlier, message = FALSE, warning = FALSE}
-lst <- clean_outliers(cal_data$data)
-##Looking at data to be removed
-print(head(lst$dropped))
-##Updating data
-cal_data$data <- lst$newdf
 ```
 
 ## Plotting 
@@ -93,4 +82,23 @@ basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 reach <- st_transform(st_read(reach_path, quiet = TRUE), 4326)
 basin <-st_transform(st_read(basin_path, quiet = TRUE), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)
+```
+
+## Cleaning
+
+Two functions could be applied for data cleaning. First is [clean_wq](../reference/clean_wq.html) function, which could be applied for fixing most common water data issues as fixing data formats, units (e.g. NO~3~, to N-NO~3~), instead of LOD/LOQ values using LOD or LOQ divided by 2, replacing zeros from water quality variables with minimum value (multiplied by selected coefficient) for variable.
+
+```{r cal_clean_zero, message = FALSE, warning = FALSE}
+##Zeros is replaced with min(Value)/2
+cal_data$data <- clean_wq(cal_data$data)
+```
+
+Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation).
+
+```{r cal_clean_outlier, message = FALSE, warning = FALSE}
+lst <- clean_outliers(cal_data$data)
+##Looking at data to be removed
+print(head(lst$dropped))
+##Updating data
+cal_data$data <- lst$newdf
 ```
