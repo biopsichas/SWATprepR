@@ -270,6 +270,10 @@ load_swat_weather <- function(input_folder){
         mutate(DATE = as.POSIXct(strptime(paste(nbyr, tstep), format="%Y %j", tz = "UTC"))) %>% 
         select(DATE, lat) %>% 
         setNames(c("DATE",f_type)) 
+      ##If PCP below 0.2, than 0
+      if(f_type == "PCP" && min(ts[["PCP"]], na.rm = TRUE) < 0.2){
+        ts$PCP <- ifelse(ts[["PCP"]] < 0.2, 0, ts[["PCP"]])
+      }
       rlist[[id]][[f_type]] <- ts
     } else if(length(f_type)==2){
       ts <- df[2:dim(df)[1], 1:4] %>% 
@@ -280,7 +284,7 @@ load_swat_weather <- function(input_folder){
       rlist[[id]][[f_type[2]]] <- ts[,c("DATE", f_type[2])]
     }
     cat("\014")
-    print(paste0(format(round(100*i/nb, 2), nsmall = 2), "% of data is loaded."))
+    print(paste0(format(round(100*i/nb, 2), nsmall = 2), "% of data are loaded."))
   }
   print("Data loading finished succesfully.")
   return(list(stations = stations, data = rlist))
@@ -288,7 +292,7 @@ load_swat_weather <- function(input_folder){
 
 # Loading other --------------------------------------------------------------------
 
-#' Extract EMEP atmospheric deposition data for a catchment
+#' Extract EMEP atmospheric deposition data for a catchment1:3
 #'
 #' @param catchment_boundary_path path to basin boundary shape file.
 #' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').
