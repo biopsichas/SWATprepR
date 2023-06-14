@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-0.1.0-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-0.1.1-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -12,7 +12,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![](https://img.shields.io/github/languages/code-size/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
-[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7436013-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7436013)
+[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7296033-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7296033)
 
 The goal of `SWATprepR` is to help with the [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation.
@@ -23,15 +23,18 @@ main tools developed by [Christoph
 Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly
 recommend trying and using these tools:
 
-- [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
-  preparing management schedules for SWAT model;
-- [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
-  R tool for sensitivity analyse, model calibration and validation;
 - [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)[^1] -
   R tool for building SWAT+ setups;
-- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr)[^2] - A collection
-  of functions in R and routines for SWAT model calibration and model
-  diagnostics.
+- [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
+  preparing management schedules for SWAT model;
+- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of
+  functions in R and routines for SWAT model calibration and model
+  diagnostics;
+- [SWATrunR (former
+  SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
+  R tool for sensitivity analyse, model calibration and validation.
+
+<img src="man/figures/swativerse.png" title="SWAT packages for R" alt="swativerse logo" width="80%" style="display: block; margin: auto;" />
 
 Detailed information about packages, workflow steps, input data, SWAT+
 parameters, model calibration, validation, etc., could be found in the
@@ -51,9 +54,9 @@ devtools::install_github("tkdweber/euptf2")
 
 ## Data
 
-All the data required to run and test package is installed with package
-in extdata folder. Exact location on computer could be found running
-lines below. Please run it on your system to get it for you.
+All the data required to run and test package are installed with package
+in the extdata folder. Exact location on computer could be found running
+lines below. Please run it on your system to find it for you.
 
 ``` r
 library(SWATprepR)
@@ -71,13 +74,10 @@ prepare your data to be inline with templates we have provided in
 - **calibration_data.xlsx** - template for loading calibration (water
   flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
-- **soil_lookup.xlsx** - example of loading soil parameters dataset.
+- **usersoils.csv** - example of loading soil parameters dataset.
 - **GIS/** - folder with GIS layers needed to run some functions.
-- **CORDEX-BC/** - folder with example climate data.
 
 Data prepared according to templates can be directly loaded into R and
 all the functions applied as described.
 
-[^1]: Currently requires access to OPTAIN <https://git.ufz.de/optain>
-
-[^2]: Currently requires access to OPTAIN <https://git.ufz.de/optain>
+[^1]: For access please inquire at *<christoph.schuerz@ufz.de>*.
