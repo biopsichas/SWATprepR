@@ -292,7 +292,7 @@ load_swat_weather <- function(input_folder){
 
 # Loading other --------------------------------------------------------------------
 
-#' Extract EMEP atmospheric deposition data for a catchment1:3
+#' Extract EMEP atmospheric deposition data for a catchment
 #'
 #' @param catchment_boundary_path path to basin boundary shape file.
 #' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').

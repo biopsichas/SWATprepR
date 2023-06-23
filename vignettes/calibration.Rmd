@@ -7,45 +7,34 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Introduction
+
+Calibration and validation data are required for model input. However, these data are necessary for assessing model performance. As it is usually collected and prepared during data gathering stage, `SWATprepR` includes functions to quickly load into R, assess, plot and clean monitoring data. For more information about required data and calibration/validation step please see chapter 6 in [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395).  
 
 ## Loading
 
-If data are prepared according to given templates, they can be loaded directly with package function [load_template](../reference/load_template.html) function. Two data types are loaded. First is station information (location, name, ID). Second, is values monitoring values with IDs to relate to station, variable names, dates and values. 
+Data, which are prepared according to given template (*'calibration_data.xlsx'*), can be loaded directly with package function [load_template](../reference/load_template.html). Funtion loads data into a list with two dataframes. First one is for station information (location, name, ID). Second - for values from those monitoring stations with IDs to relate to station, variable names, dates and values. Function needs only path to a template and EPSG code (if different from 4326) for setting correctly point coordinates. 
 
 ```{r cal_load, message = FALSE, warning = FALSE}
 library(SWATprepR)
 library(sf)
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-cal_data <- load_template(temp_path, 4326)
+cal_data <- load_template(temp_path, epsg_code = 4326)
+```
+
+Example of loaded data structure presented below.
+
+```{r cal_load2, message = FALSE, warning = FALSE}
 str(cal_data)
-```
-
-## Cleaning
-
-Two functions could be applied for data cleaning. First is [clean_wq](../reference/clean_wq.html) function, which could be applied for fixing most common water data issues as fixing data formats, units (e.g. NO~3~, to N-NO~3~), instead of LOD/LOQ values using LOD or LOQ divided by 2, replacing zeros from water quality variables with minimum value (multiplied by selected coefficient) for variable.
-
-```{r cal_clean_zero, message = FALSE, warning = FALSE}
-##Zeros is replaced with min(Value)/2
-cal_data$data <- clean_wq(cal_data$data)
-```
-
-Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation).
-
-```{r cal_clean_outlier, message = FALSE, warning = FALSE}
-lst <- clean_outliers(cal_data$data)
-##Looking at data to be removed
-print(head(lst$dropped))
-##Updating data
-cal_data$data <- lst$newdf
 ```
 
 ## Plotting 
 
-Plotting is valuable tool to examine data and identify potential problems.
+The first thing after loading data is plotting it to assess its quality.
 
 ### Timeseries
 
-There are several ways package could be used to plot loaded calibration data. Data for multiple stations could be plotted using [plot_cal_data](../reference/plot_cal_data.html) function. This way function should be used only for stations with relatively few data points to screen for data coverage and potential problems.
+There are several ways package could be used to plot loaded calibration data. Data for multiple stations could be interectively plotted using [plot_cal_data](../reference/plot_cal_data.html) function. This function should be used on several stations with relatively few data points to screen for data coverage and potential problems.
 
 ```{r plot_cal_mult, message = FALSE, warning = FALSE}
 plot_cal_data(cal_data$data, c("3","10"))
@@ -59,7 +48,7 @@ plot_cal_data(cal_data$data, c("4"))
 
 ### Monthly summary
 
-Sometimes for the evaluation of data quality monthly plots can be useful. Such plots allow to see if monitoring results corresponds to other data sources and processes, which should be taking place in the monitored catchment. [plot_monthly](../reference/plot_monthly.html) function can be used to plot monthly aggregates. 
+Sometimes for the evaluation of data quality monthly plots can be useful. Such plots allow to see if monitoring results corresponds to other data sources and processes, which should be taking place in a monitored catchment. [plot_monthly](../reference/plot_monthly.html) function can be used to interactively plot monthly aggregates. 
 
 ```{r plot_cal_mon, message = FALSE, warning = FALSE}
 plot_monthly(cal_data$data, station = "4")
@@ -67,7 +56,7 @@ plot_monthly(cal_data$data, station = "4")
 
 ### Fractions
 
-Possible problems could be observed plotting how mineral and total parts of nutrients changes. There is function for this. [plot_fractions](../reference/plot_fractions.html) could be used for nitrogen and for phosphorus. Function provides monthly regression and monthly fraction figures.
+Possible problems could be observed plotting how mineral and total parts of nutrients compares between months. [plot_fractions](../reference/plot_fractions.html) could be used for nitrogen and phosphorus. Function provides monthly regression and monthly fraction figures.
 
 Example of function use with nitrogen.
 
@@ -75,7 +64,7 @@ Example of function use with nitrogen.
 plot_fractions(cal_data$data, station = c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 ```
 
-Example of function use with nitrogen.
+Example of function use with phosphorus.
 
 ```{r plot_cal_p, message = FALSE, warning = FALSE}
 plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
@@ -83,7 +72,7 @@ plot_fractions(cal_data$data, station = c("4"), c("PT"), c("P-PO4"))
 
 ### Maps
 
-The last function in the package for plotting calibration data is [plot_map](../reference/plot_map.html). This function allows to plot catchment boundary, all monitoring stations and monitoring data within those station (press on monitoring station). This allow examination of spatial and temporal dimensions of existing data at the same time. 
+The last function in the package for plotting calibration data is [plot_map](../reference/plot_map.html). This function allows to plot catchment boundary, all monitoring stations and monitoring data within those station (to see data press on monitoring station). This allow examination of spatial and temporal dimensions of existing data at the same time. 
 
 ```{r plot_map, message = FALSE, warning = FALSE}
 library(sf) 
@@ -93,4 +82,33 @@ basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 reach <- st_transform(st_read(reach_path, quiet = TRUE), 4326)
 basin <-st_transform(st_read(basin_path, quiet = TRUE), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)
+```
+
+## Cleaning
+
+Two functions could be applied for data cleaning. First is [clean_wq](../reference/clean_wq.html) function, which could be applied for fixing most common water data issues as fixing data formats, units (e.g. NO~3~, to N-NO~3~), instead of LOD/LOQ values using LOD or LOQ divided by 2, replacing zeros from water quality variables with minimum value (multiplied by selected coefficient) for variable.
+
+```{r cal_clean_zero, message = FALSE, warning = FALSE}
+##Zeros is replaced with min(Value)/2
+cal_data$data <- clean_wq(cal_data$data)
+```
+
+Second function [clean_outliers](../reference/clean_outliers.html) allows removal of suspicious values defined as being outside selected range (mean - standard deviation; mean + standard deviation). This function provides list of two dataframes. One is for data to be removed, the other - for data to be left. 
+
+```{r cal_clean_outlier, message = FALSE, warning = FALSE}
+lst <- clean_outliers(cal_data$data)
+```
+
+Example of data to be removed. 
+
+```{r cal_clean_outlier2, message = FALSE, warning = FALSE}
+##Looking at data to be removed
+print(head(lst$dropped))
+```
+
+To remove outliers from data following line could be used.
+
+```{r cal_clean_outlier3, message = FALSE, warning = FALSE}
+##Updating data
+cal_data$data <- lst$newdf
 ```
