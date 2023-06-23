@@ -102,7 +102,7 @@ add_weather(db_path, met_lst, wgn)
 + Reference files for weather files: *wnd.cli*, *tmp.cli*, *pcp.cli*, *slr.cli*, *hmd.cli*;
 + Weather generator files: *weather-sta.cli*, *weather-wgn.cli*.
 
-The function also updates *aquifer.con*, *chandeg.con*, *hru.con*, *reservoir.con*, *rout_unit.con* and *time.sim* SWAT+ model input files. Following line provide an example, how it could be applied. 
+The function also updates *aquifer.con*, *chandeg.con*, *hru.con*, *reservoir.con*, *rout_unit.con* and *time.sim* SWAT+ model input files. If these files have to be updated, they should be is the same directory, which is provided for the function. Following line provide an example, how it could be applied. 
 
 ```{r update2, eval=FALSE, message = FALSE, warning = FALSE}
 prepare_climate(met_lst, "txtinout", "1991-01-01", "2020-12-31")

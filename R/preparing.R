@@ -1166,7 +1166,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
     for(p in pars){
       df <- meteo_lst[["data"]][[n]][[p]] %>% 
         mutate(year = year(DATE), day = yday(DATE)) 
-      df1$nbyr <- round(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1), 0)
+      df1$nbyr <- ceiling(interval(df[[1,"DATE"]], df[[nrow(df),"DATE"]]) / years(1))
       file_n <- paste0("sta_", tolower(n), ".", p_lst[[p]][[1]])
       text_l <- paste0(file_n, ": ", p_lst[[p]][[2]], " data - file written by SWATprepR R package ", Sys.time())
       ##Writing file per parameter for each station
