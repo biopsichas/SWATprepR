@@ -18,14 +18,14 @@ Intensification of climate change is raising multiple questions for water manage
 
 `SWATprepR` functions can be applied on weather data delivered in two type of input formats:
 
-1. `NetCDF` files delivered with *.nc* files. In this case required variables should be saved into files saved with following names:
+1. `NetCDF` files delivered with *.nc* files (*Case 1*). In this case required variables should be saved into files saved with following names:
     + Daily precipitation - *prec.nc*; 
     + Relative humidity - *relHum.nc*;
     + Solar radiation - *solarRad.nc*;
     + Maximum daily temperature - *Tmax.nc*;
     + Minimum daily temperature - *Tmin.nc*;
     + Average wind speed - *windSpeed.nc*.
-2. SWAT+ weather input text files. In this case following file endings represent different parameters:
+2. SWAT+ weather input text files (*Case 2*). In this case following file endings represent different parameters:
     + Daily precipitation - *.pcp*; 
     + Relative humidity - *.hmd*;
     + Solar radiation - *slr*;
@@ -34,13 +34,13 @@ Intensification of climate change is raising multiple questions for water manage
 
 ### Case 1 - extracting from NetCDF
 
-`NetCDF` data can't be directly used in SWAT+ model. Thus `SWATperpR` package provides [load_climate_lst](../reference/load_climate_lst.html) function to extract weather data from *.nc* file into R format used by this package. This function only needs a path to your basin shape file and a path to folder with *.nc* files. Following lines provides an example how to use it.
+`NetCDF` data can't be directly used in SWAT+ model. Thus `SWATperpR` package provides [load_netcdf_weather](../reference/load_netcdf_weather.html) function to extract weather data from *.nc* file into R format used by this package. This function only needs a path to your basin shape file and a path to folder with *.nc* files. Following lines provides an example how to use it.
 
 ```{r ext_cli, eval = FALSE, message = FALSE, warning = FALSE}
 library(SWATprepR)
 basin_path <- "GIS/basin.shp"
 cordex_path <- "climate/CORDEX-BC"
-climate_lst <- load_climate_lst(cordex_path, basin_path)
+climate_lst <- load_netcdf_weather(cordex_path, basin_path)
 ```
 
 The function creates virtual stations for each `NetCDF` grid cell touching basin boundary touches. Virtual stations coordinates are defined as center of grid cell centers. Then, for each of these virtual stations, data are extracted and saved in the nested list format. 
@@ -49,7 +49,7 @@ The function creates virtual stations for each `NetCDF` grid cell touching basin
 knitr::include_graphics('fig_basin.png')
 ```
 
-[load_climate_lst](../reference/load_climate_lst.html) function could also extract data for specific stations. In this case nested lists with dataframes should be provided (common format used in this package that could be prepared by [load_template](../reference/load_template.html) function). 
+[load_netcdf_weather](../reference/load_netcdf_weather.html) function could also extract data for specific stations. In this case nested lists with dataframes should be provided (common format used in this package that could be prepared by [load_template](../reference/load_template.html) function). 
 
 Nested structure:
 
@@ -64,7 +64,7 @@ Nested structure:
 ```{r ext_cli2, eval = FALSE, message = FALSE, warning = FALSE}
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
-climate_lst <- load_climate_lst(cordex_path, met_lst)
+climate_lst <- load_netcdf_weather(cordex_path, met_lst)
 ```
 
 ###  Case 2 - preparing climate set from SWAT+ format

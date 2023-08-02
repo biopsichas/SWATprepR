@@ -250,7 +250,7 @@ df_t <- function(sp_df){
 #' @return meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @export
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' ###First step to get interpolation results

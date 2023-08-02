@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,9 +117,9 @@ SWAT+ model input and updating of relevant files.</p>
 delivered in two type of input formats:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>NetCDF</code> files delivered with <em>.nc</em> files. In this
-case required variables should be saved into files saved with following
-names:
+<code>NetCDF</code> files delivered with <em>.nc</em> files
+(<em>Case 1</em>). In this case required variables should be saved into
+files saved with following names:
 <ul>
 <li>Daily precipitation - <em>prec.nc</em>;</li>
 <li>Relative humidity - <em>relHum.nc</em>;</li>
@@ -129,8 +129,8 @@ names:
 <li>Average wind speed - <em>windSpeed.nc</em>.</li>
 </ul>
 </li>
-<li>SWAT+ weather input text files. In this case following file endings
-represent different parameters:
+<li>SWAT+ weather input text files (<em>Case 2</em>). In this case
+following file endings represent different parameters:
 <ul>
 <li>Daily precipitation - <em>.pcp</em>;</li>
 <li>Relative humidity - <em>.hmd</em>;</li>
@@ -144,23 +144,23 @@ represent different parameters:
 <h3 id="case-1---extracting-from-netcdf">Case 1 - extracting from NetCDF<a class="anchor" aria-label="anchor" href="#case-1---extracting-from-netcdf"></a>
 </h3>
 <p><code>NetCDF</code> data can’t be directly used in SWAT+ model. Thus
-<code>SWATperpR</code> package provides <a href="../reference/load_climate_lst.html">load_climate_lst</a> function
-to extract weather data from <em>.nc</em> file into R format used by
-this package. This function only needs a path to your basin shape file
-and a path to folder with <em>.nc</em> files. Following lines provides
-an example how to use it.</p>
+<code>SWATperpR</code> package provides <a href="../reference/load_netcdf_weather.html">load_netcdf_weather</a>
+function to extract weather data from <em>.nc</em> file into R format
+used by this package. This function only needs a path to your basin
+shape file and a path to folder with <em>.nc</em> files. Following lines
+provides an example how to use it.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/SWATprepR" class="external-link">SWATprepR</a></span><span class="op">)</span></span>
 <span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="st">"GIS/basin.shp"</span></span>
 <span><span class="va">cordex_path</span> <span class="op">&lt;-</span> <span class="st">"climate/CORDEX-BC"</span></span>
-<span><span class="va">climate_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_climate_lst.html">load_climate_lst</a></span><span class="op">(</span><span class="va">cordex_path</span>, <span class="va">basin_path</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">climate_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_netcdf_weather.html">load_netcdf_weather</a></span><span class="op">(</span><span class="va">cordex_path</span>, <span class="va">basin_path</span><span class="op">)</span></span></code></pre></div>
 <p>The function creates virtual stations for each <code>NetCDF</code>
 grid cell touching basin boundary touches. Virtual stations coordinates
 are defined as center of grid cell centers. Then, for each of these
 virtual stations, data are extracted and saved in the nested list
 format.</p>
 <p><img src="fig_basin.png" width="70%" height="70%" style="display: block; margin: auto;"></p>
-<p><a href="../reference/load_climate_lst.html">load_climate_lst</a>
+<p><a href="../reference/load_netcdf_weather.html">load_netcdf_weather</a>
 function could also extract data for specific stations. In this case
 nested lists with dataframes should be provided (common format used in
 this package that could be prepared by <a href="../reference/load_template.html">load_template</a> function).</p>
@@ -195,7 +195,7 @@ this package that could be prepared by <a href="../reference/load_template.html"
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"weather_data.xlsx"</span>, package <span class="op">=</span> <span class="st">"SWATprepR"</span><span class="op">)</span></span>
 <span><span class="va">met_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_template.html">load_template</a></span><span class="op">(</span><span class="va">temp_path</span>, <span class="fl">3035</span><span class="op">)</span></span>
-<span><span class="va">climate_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_climate_lst.html">load_climate_lst</a></span><span class="op">(</span><span class="va">cordex_path</span>, <span class="va">met_lst</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">climate_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_netcdf_weather.html">load_netcdf_weather</a></span><span class="op">(</span><span class="va">cordex_path</span>, <span class="va">met_lst</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="case-2---preparing-climate-set-from-swat-format">Case 2 - preparing climate set from SWAT+ format<a class="anchor" aria-label="anchor" href="#case-2---preparing-climate-set-from-swat-format"></a>

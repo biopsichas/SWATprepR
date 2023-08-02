@@ -167,7 +167,7 @@ while(i != 5){
 ##Write the column names and the final file
 colnames(df) <- c("lu", paste0("y_", seq(1983,2022)), "geometry")
 ##To get 33 years exact
-df <- df[-c(2:8)]
+df <- df[-c(2:6, 40:41)]
 st_write(df, paste0(output_path, "lu_rot_final.shp"), append = F)
 ```
 

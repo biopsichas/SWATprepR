@@ -252,4 +252,7 @@
   <url>
     <loc>/reference/load_swat_weather.html</loc>
   </url>
+  <url>
+    <loc>/reference/load_netcdf_weather.html</loc>
+  </url>
 </urlset>

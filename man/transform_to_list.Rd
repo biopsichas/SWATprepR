@@ -37,3 +37,4 @@ end_date <- SWATprepR:::get_dates(met_lst)$max_date
 int_met_lst <- transform_to_list(result, start_date, end_date)
 }
 }
+\keyword{internal}

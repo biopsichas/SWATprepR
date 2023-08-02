@@ -159,7 +159,12 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
   }
   cat("\014") 
   print("Interpolation is finished.")
-  return(results)
+  ##Converting into list of lists 
+  start_date <- get_dates(meteo_lst)$min_date
+  end_date <- get_dates(meteo_lst)$max_date
+  meteo_lst_int <- transform_to_list(results, start_date, end_date)
+  print("Results converted into nested list format.")
+  return(meteo_lst_int)
 }
 
 # Weather data -----------------------------------------------
@@ -1401,11 +1406,11 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
   lu_rot <- df[c("id", "type")] %>% 
     left_join(st_drop_geometry(centroid), by = "id") %>% 
     mutate_at(vars(all_of(c)), ~lookup$type[match(., lookup$lc1)]) %>% 
-    mutate(lu = ifelse(type %in% lu_constant, type, paste0("f", id))) %>% 
+    mutate(lu = ifelse(type %in% lu_constant, type, paste0("field_", id))) %>% 
     dplyr::select(lu, type, starts_with("y_"), geometry)
   
   ##Removing rotations for constant land uses/crops
-  lu_rot[!startsWith(lu_rot$lu, "f"), c] <- NA
+  lu_rot[!startsWith(lu_rot$lu, "field_"), c] <- NA
   print("Extraction finished succesfully")
   return(lu_rot)
 }

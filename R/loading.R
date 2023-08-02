@@ -412,10 +412,10 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' \dontrun{
 #' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
 #' data_path <- "climate/CORDEX-BC"
-#' result <- load_climate_lst(data_path, basin_path)
+#' result <- load_netcdf_weather(data_path, basin_path)
 #' }
 
-load_climate_lst <- function(dir_path, location){
+load_netcdf_weather <- function(dir_path, location){
   ##Checking inputs
   if(!is.character(dir_path)){
     stop("Your input to function parameter 'dir_path' is not character!!! Please correct this.")

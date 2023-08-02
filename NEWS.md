@@ -1,3 +1,10 @@
+# SWATprepR 0.1.2
+
+* `transform_to_list()` function made internal and integrated into `interpolate()` function.
+* `load_climate_lst()` renamed to `load_netcdf_weather()`.
+* A small correction in `extract_rotation()`.
+* Updated *Land use*, *Climate projections* and *Weather data* pages.
+
 # SWATprepR 0.1.1
 
 * A new function `load_swat_weather()` added.
