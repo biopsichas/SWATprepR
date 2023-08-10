@@ -1415,4 +1415,86 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
   return(lu_rot)
 }
 
+# Point source data -----------------------------------------------
+
+#' Prepare point source data model text files
+#'
+#' @param pt_lst  nested list of lists with dataframes. 
+#' Nested structure pt_lst -> data -> Dataframe (name,	DATE,	flo, ...)
+#' pt_lst -> st -> Dataframe (name, Lat, Long)
+#' @param project_path character, path to SWAT+ txtinout folder (example "my_model"). 
+#' @param write_path character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}. 
+#' @importFrom sf st_as_sf st_nearest_feature st_crs st_drop_geometry
+#' @importFrom lubridate year
+#'
+#' @return text files for SWAT+ model in write_path
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+#' pnt_data <- load_template(temp_path)
+#' prepare_pt_source(pnt_data, "txtinout")
+#' }
+
+prepare_pt_source <- function(pt_lst, project_path, write_path = project_path){
+  if(project_path == write_path){
+    print(paste0("Files in ", project_path, " will be overwritten!!!"))
+  }
+  id <- 0
+  for(i in unique(pt_lst$data$ob_name)){
+    ri <- pt_lst$data[pt_lst$data$ob_name == i,]
+    t <- find_time_step(ri[2, "DATE"], ri[1, "DATE"])
+    fname <- paste0(i, ".rec")
+    ri$ob_typ <- paste0(ri$ob_typ, "_", t$typ)
+    f_path <- paste0(write_path, "/", fname)
+    f_rec_path <- paste0(write_path, "/", "recall.rec")
+    f_con_path <- paste0(write_path, "/", "recall.con")
+    s <- c(rep('%4s', 2), rep('%6s', 3), rep('%10s', 19))
+    text_l <- paste0(": file was written by SWATprepR R package ", Sys.time())
+    ri <- ri[, !(colnames(ri) == "DATE")]
+    write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+                quote = FALSE)
+    write.table(dim(ri)[1], f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(paste(sprintf(s, names(ri)), collapse = ' '), f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, 
+                col.names = FALSE, quote = FALSE)
+    df_to_txt(write_path, fname, ri, s)
+    print(paste0(fname, " file was successfully written."))
+    if(id == 0){
+      write.table(paste0("recall.rec", text_l), f_rec_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                  col.names = FALSE, quote = FALSE)
+      write.table(paste(sprintf(c(rep('%10s', 4)), c("id", "name", "rec_typ", "file")), collapse = ' '), f_rec_path, 
+                  append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      write.table(paste0("recall.con", text_l), f_con_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                  col.names = FALSE, quote = FALSE)
+      write.table(paste(sprintf(c(rep('%10s', 17)), c('id', 'name', 'gis_id', 'area', 'lat', 'lon', 'elev', 'rec', 'wst', 'cst', 
+                                                      'ovfl', 'rule', 'out_tot', 'obj_typ', 'obj_id', 'hyd_typ', 'frac')), 
+                        collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+                  quote = FALSE)
+      cha_table <- read_tbl("chandeg.con", project_path) %>% 
+        st_as_sf(coords = c("lon", "lat"), crs = st_crs(pt_lst$st)$input) %>% 
+        .[st_nearest_feature(pt_lst$st, .),] %>% 
+        st_drop_geometry
+    } 
+    id <- id + 1
+    write.table(paste(sprintf(c(rep('%10s', 4)), c(id, i, t$rec_typ, fname)), collapse = ' '), f_rec_path, append = TRUE, 
+                sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(paste(sprintf(c(rep('%10s', 17)), c(id, i, cha_table[id, "gis_id"][[1]], "0.00001", pt_lst$st[pt_lst$st$name == i, "Lat"][[1]], 
+                                                    pt_lst$st[pt_lst$st$name == i, "Long"][[1]], cha_table[id, "elev"][[1]], id, 
+                                                    "null", cha_table[id, "cst"][[1]], cha_table[id, "ovfl"][[1]],
+                                                    cha_table[id, "rule"][[1]], cha_table[id, "out_tot"][[1]], cha_table[id, "obj_typ"][[1]], 
+                                                    cha_table[id, "id"][[1]], cha_table[id, "hyd_typ"][[1]], cha_table[id, "frac"][[1]])), 
+                      collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  }
+  print(paste0("recall.rec", " file was successfully written."))
+  print(paste0("recall.con", " file was successfully written."))
+  
+  file_cio <- readLines(paste0(project_path, "/", "file.cio"))
+  if(!grepl("recall.rec", file_cio[11], fixed = TRUE)){
+    file_cio[11] <- "recall            recall.rec        "
+    writeLines(file_cio, paste0(project_path, "/", "file.cio"))
+    print(paste0("file.cio", " file was successfully updated."))
+  }
+  print(paste0("Point source files for model have been successfully prepared and written in ", write_path, " folder."))
+}
 

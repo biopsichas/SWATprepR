@@ -12,6 +12,7 @@
 #' @importFrom dplyr mutate %>%
 #' @importFrom readxl read_xlsx excel_sheets
 #' @importFrom tidyr drop_na
+#' @importFrom lubridate yday month day year
 #' @export 
 #'
 #' @examples
@@ -37,6 +38,14 @@ load_template <- function(template_path, epsg_code = 4326){
   if(length(ids) == 1 && ids == "Data"){
     r <- read_xlsx(template_path, ids) %>%
       mutate(DATE = as.POSIXct(DATE, "%Y-%m-%d", tz = "UTC"))
+    ##Identifying point source template and adding missing columns
+    if("flo" %in% names(r)){
+      pars <- c("jday",	"mo", "day_mo",	"yr",	"ob_typ",	"ob_name", "flo",	"sed",	"orgn", "sedp",	"no3",	"solp",	"chla",	"nh3",	"no2",	
+                "cbod",	"dox",	"sand",	"silt", "clay",	"sag", "lag",	"gravel", "tmp")
+      r[setdiff(pars, names(r))] <- 0  
+      r[,c("ob_name", "ob_typ", "jday", "mo", "day_mo", "yr")] <- data.frame(r$name, "pt", yday(r$DATE), month(r$DATE), day(r$DATE), year(r$DATE))
+      r <- select(r, all_of(c(pars, "DATE")))
+    }
     ##Loading data with many data sheets
   }else if(length(ids) > 0){
     r <- list()

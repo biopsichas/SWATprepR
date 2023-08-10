@@ -127,6 +127,46 @@ min_ks <- function(df, max_depth){
   return((min(df[,ind])/0.4167)/8.64)
 }
 
+#' Identify time step 
+#'
+#' @param d_after single value data frame with later date 
+#' @param d_before single value data frame with earlier date 
+#' @return list with 'typ' code and 'rec_typ' code
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#' find_time_step(r[2, "DATE"], r[1, "DATE"])
+#' }
+
+find_time_step <- function(d_after, d_before){
+  t_diff <- d_after - d_before
+  u_diff <- units(t_diff$DATE)
+  t_diff <- as.numeric(d_after - d_before)
+  if(u_diff == "days"){
+    if(t_diff >= 62){
+      typ <- "yr"
+      rec_typ <- 3
+    } else if(is.na(t_diff)){
+      typ <- "aa"
+      rec_typ <- 3
+    } else if(t_diff > 1 & t_diff < 62){
+      typ <- "mo"
+      rec_typ <- 2
+    } else if ((t_diff = 1)){
+      typ <- "dy"
+      rec_typ <- 1
+    } else {
+      stop("Please check dates as no time step could be identified!!!")
+    }
+  } else if (u_diff %in% c("hours", "minutes", "seconds")){
+    typ <- "sd"
+    rec_typ <- 0
+  } else {
+    stop("Please check dates as no time step could be identified!!!")
+  }
+  return(list(typ = typ, rec_typ = rec_typ))
+}
+
 # Interpolation --------------------------------------------------------------------
 
 #' Prepare grid for interpolation
