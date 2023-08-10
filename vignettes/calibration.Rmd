@@ -13,7 +13,7 @@ Calibration and validation data are required for model input. However, these dat
 
 ## Loading
 
-Data, which are prepared according to given template (*'calibration_data.xlsx'*), can be loaded directly with package function [load_template](../reference/load_template.html). Funtion loads data into a list with two dataframes. First one is for station information (location, name, ID). Second - for values from those monitoring stations with IDs to relate to station, variable names, dates and values. Function needs only path to a template and EPSG code (if different from 4326) for setting correctly point coordinates. 
+Data, which are prepared according to given template (*'calibration_data.xlsx'*), can be loaded directly with package function [load_template](../reference/load_template.html). Function loads data into a list with two dataframes. First one is for station information (location, name, ID). Second - for values from those monitoring stations with IDs to relate to station, variable names, dates and values. Function needs only path to a template and EPSG code (if different from 4326) for setting correctly point coordinates. 
 
 ```{r cal_load, message = FALSE, warning = FALSE}
 library(SWATprepR)

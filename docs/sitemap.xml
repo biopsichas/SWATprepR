@@ -37,6 +37,9 @@
     <loc>/articles/climate.html</loc>
   </url>
   <url>
+    <loc>/articles/psources.html</loc>
+  </url>
+  <url>
     <loc>/news/index.html</loc>
   </url>
   <url>
@@ -254,5 +257,11 @@
   </url>
   <url>
     <loc>/reference/load_netcdf_weather.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_time_step.html</loc>
+  </url>
+  <url>
+    <loc>/reference/prepare_ps.html</loc>
   </url>
 </urlset>

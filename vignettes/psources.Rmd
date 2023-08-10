@@ -1,0 +1,54 @@
+---
+title: "Point sources"
+output: html_document
+bibliography: REFERENCES.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Point sources are generally municipal or industrial wastewater treatment plants that discharge treated sewage into the stream network. Discharge locations, as well as the volume of effluents and the chemical characteristics of discharged water, are needed for the modeling.
+
+## Loading
+
+Data prepared according to the provided template (*'pnt_data.xlsx'*) can be directly loaded using the same package function,  [load_template](../reference/load_template.html). This function loads the data into a list with two dataframes. The first one contains basic point source information (name and coordinates), while the second one contains parameter data (date, flow, sediments, etc.) about the point sources. The data must be structured with headings and units as outlined in [the SWAT+ documentation](https://swatplus.gitbook.io/swat+-documentation/introduction/point-sources-and-inlets/filename.rec). The function requires only the path to the completed point source template and, if different from 4326, the EPSG code for accurately setting point coordinates.
+
+```{r ps, message = FALSE, warning = FALSE}
+library(SWATprepR)
+library(mapview)
+library(sf)
+library(tidyverse)
+temp_path <- system.file("extdata", "pnt_data.xlsx", package = "SWATprepR")
+pnt_data <- load_template(temp_path)
+```
+
+## Plotting
+
+After loading, point source data could be examined using general R packages. For instance, data could be plotted on the map with catchment boundaries to check if coordinates for point sources are correct.
+
+```{r ps_map, message = FALSE, warning = FALSE}
+basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+basin <-st_transform(st_read(basin_path, quiet = TRUE), 4326) %>% 
+  mutate(NAME = "Basin")
+mapview(pnt_data$stations) + mapview(basin)
+```
+
+Additionally, the data could be examined in a time series plot using a simple ggplot.
+
+```{r ps_data, message = FALSE, warning = FALSE}
+ggplot(pnt_data$data[c("ob_name", "yr", "flo")], aes(yr, flo, colour = ob_name))+
+  geom_line()+
+  labs(x = "Year", y = "Flow m3/year", color='Point source')+
+  theme_bw()
+```
+
+## Writing SWAT+ model files
+
+SWAT+ model files could be prepared or updated using a single function called [prepare_ps](../reference/prepare_ps.html). This function only requires a loaded point source data object and the path to the model setup folder. The function will prepare or update the *'.rec'*, *'recall.rec'*, *'recall.con'*, and *'file.cio'* model files. 
+
+```{r ps_write, eval= FALSE, message = FALSE, warning = FALSE}
+prepare_ps(pnt_data, "output")
+```

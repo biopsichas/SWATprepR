@@ -1,3 +1,8 @@
+# SWATprepR 0.1.3
+
+* `load_template()` function extended to load point source data template. 
+* `prepare_ps()` function added to write point source SWAT+ model input files.
+
 # SWATprepR 0.1.2
 
 * `transform_to_list()` function made internal and integrated into `interpolate()` function.

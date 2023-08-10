@@ -1437,7 +1437,7 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #' prepare_pt_source(pnt_data, "txtinout")
 #' }
 
-prepare_pt_source <- function(pt_lst, project_path, write_path = project_path){
+prepare_ps <- function(pt_lst, project_path, write_path = project_path){
   if(project_path == write_path){
     print(paste0("Files in ", project_path, " will be overwritten!!!"))
   }
