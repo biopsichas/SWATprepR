@@ -299,6 +299,119 @@ load_swat_weather <- function(input_folder){
   return(list(stations = stations, data = rlist))
 }
 
+#' Loading SWAT+ weather files to R (>20 times faster version)
+#'
+#' @param input_folder character, path to folder with SWAT+ weather input files (example "my_model").
+#' @importFrom sf st_as_sf
+#' @importFrom purrr map pmap map_df map2
+#' @importFrom vroom vroom_lines
+#' @importFrom stringr str_extract
+#' @importFrom dplyr bind_rows mutate select group_by ungroup everything
+#' @importFrom tibble enframe
+#' @importFrom tidyr unnest spread
+#' @return nested list of lists with dataframes. Nested structure list -> stations, 
+#' list -> Variable -> Dataframe (DATE, VARIABLE).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' met_lst <- load_swat_weather2("my_folder")
+#' }
+
+load_swat_weather2 <- function(input_folder){
+  ##Set function execution timer
+  start_t <- Sys.time()
+  print(paste0("Loading of SWAT+ weather data is started from ", input_folder, " directory."))
+  ##Identifying all weather files
+  fs <- list.files(input_folder, recursive = F, pattern="*.pcp|*.slr|*.hmd|*.tmp|*.wnd")
+  ##Check if any files found in directory.
+  if(length(fs)==0){
+    stop(paste0("No SWAT+ weather files have been found in ", input_folder, " directory!!!"))
+  }
+  ##Reading and setting lists to work on
+  ##Preparing dics files types to variables
+  p_lst <- list("pcp" = c("PCP"), 
+                "slr" = c("SLR"), 
+                "hmd" = c("RELHUM"), 
+                "tmp" = c("TMP_MAX", "TMP_MIN"), 
+                "wnd" = c("WNDSPD")) ##Parameters dics
+  ##Reading scenario info from directories 2 last levels
+  s_info <- unlist(strsplit(input_folder, "/")) ##source information 
+  s_info <- paste0(s_info[c(length(s_info)-1, length(s_info))], collapse = '/')
+  ##Preparing list of variables for each file
+  f_type <- map(fs, ~p_lst[sub(".*\\.", "",.x)][[1]])
+  ##Preparing list of file names
+  f_name <- map(fs, ~gsub("\\..*","",.x))
+  ##Reading ids from file names
+  id <- map(fs, ~str_extract(toupper(.), "ID([\\d]+)"))
+  ##Check if ids are in names
+  if(length(id)==0){
+    stop("File names should contain 'id' or 'ID' text + number to identify station. Please correct this!!!")
+  }
+  ##Reading all files into list of lists
+  rlist <- map(fs, ~vroom_lines(paste0(input_folder,"/",.x), skip = 2))
+  
+  ##Preparing 
+  ##Preparing station info dataframe
+  st_info <- pmap(list(id, rlist, f_name), function(x, y, z){
+    l <- as.numeric(unlist(strsplit(y[1], " +")))
+    list("ID" = x, "Name" = z, "Elevation" = l[5], "Source" = s_info, "Long" = l[4], "Lat" =l[3])}) %>% 
+    map_df(bind_rows) %>% 
+    unique %>% 
+    st_as_sf(coords = c("Long", "Lat"), crs = 4326, remove = F)
+  
+  ##Transforming data in main list of list 
+  rlist <- rlist %>% 
+    map(~.x[c(2:length(.x))]) %>% ##Dropping line with coordinate info
+    map(~strsplit(.x, " +")) %>% ##Splitting characters in lines by space
+    map(enframe) %>% ##Putting into dataframe
+    map(~unnest(.x,value) %>%  ##Splitting column with nested lists into multiple columns
+          group_by(name) %>%
+          mutate(col=seq_along(name)) %>%
+          spread(key=col, value=value) %>% 
+          ungroup) %>% 
+    map2(f_type, function(x, y){ 
+      colnames(x) <- c("n", "y", "d", y)
+      d <- as.POSIXct(strptime(paste(x$y, x$d), format="%Y %j", tz = "UTC")) ##Converting year + day into date
+      x <- lapply(x[y],as.numeric) ##Variable columns into numeric type
+      x[["DATE"]] <- d 
+      as.data.frame(x) %>% 
+        select(DATE, everything()) ##Building new dataframe and selecting columns
+    })
+  
+  ##Transforming list into nested list of list LIST>ID>VARIABLE>DATAFRAME
+  ##Final list of lists used in collecting transformed lists in correct form
+  cc <- c()
+  ##For each station id
+  for(id1 in unique(unlist(id))){
+    l <- rlist[which(id == id1)]; v <- f_type[which(id == id1)]; c <- c()
+    ##For each variable
+    for(i in seq(1:length(v))){
+      ll <- l[i]; vv <- v[[i]]
+      if(length(vv) == 1){
+        names(ll) <- vv
+        ##If PCP < 0.2 assign 0
+        if(vv == "PCP" && min(ll[[1]][[vv]], na.rm = TRUE) < 0.2){
+          ll[[vv]][[vv]] <- ifelse(ll[[vv]][[vv]] < 0.2, 0, ll[[vv]][[vv]])
+        }
+        c <- c(c, ll)
+        ##Splitting temperatire min and max
+      } else if (length(vv) == 2){
+        for(n in vv){
+          ll1 <- list(ll[[1]][c("DATE", n)])
+          names(ll1) <- n
+          c <- c(c, ll1)
+        }
+      }
+    }
+    ##Collecting results of transformation
+    cc[[id1]] <- c
+  }
+  diff_t <- Sys.time() - start_t
+  print(paste0("Data loading succesfully finished in ", round(as.numeric(diff_t), 2), " ", units(diff_t), "."))
+  return(list(stations = st_info, data = cc))
+}
+
 # Loading other --------------------------------------------------------------------
 
 #' Extract EMEP atmospheric deposition data for a catchment

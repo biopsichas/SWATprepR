@@ -1,3 +1,7 @@
+# SWATprepR 0.1.4
+
+* `load_swat_weather2()` function was added to provide quicker option for weather file loading. More 20 times faster comparing to `load_swat_weather()` function. 
+
 # SWATprepR 0.1.3
 
 * `load_template()` function extended to load point source data template. 
