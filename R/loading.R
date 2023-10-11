@@ -345,7 +345,7 @@ load_swat_weather2 <- function(input_folder){
   ##Reading ids from file names
   id <- map(fs, ~str_extract(toupper(.), "ID([\\d]+)"))
   ##Check if ids are in names
-  if(length(id)==0){
+  if (is.na(unique(unlist(id)))){
     stop("File names should contain 'id' or 'ID' text + number to identify station. Please correct this!!!")
   }
   ##Reading all files into list of lists
@@ -355,7 +355,8 @@ load_swat_weather2 <- function(input_folder){
   ##Preparing station info dataframe
   st_info <- pmap(list(id, rlist, f_name), function(x, y, z){
     l <- as.numeric(unlist(strsplit(y[1], " +")))
-    list("ID" = x, "Name" = z, "Elevation" = l[5], "Source" = s_info, "Long" = l[4], "Lat" =l[3])}) %>% 
+    if(is.na(l[1])){i <- 1} else {i <- 0} ##in case there is gap (not number) in the station info line
+    list("ID" = x, "Name" = z, "Elevation" = l[5+i], "Source" = s_info, "Long" = l[4+i], "Lat" =l[3+i])}) %>% 
     map_df(bind_rows) %>% 
     unique %>% 
     st_as_sf(coords = c("Long", "Lat"), crs = 4326, remove = F)
