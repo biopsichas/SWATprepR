@@ -568,7 +568,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     file.create(f_write)
     time_sim <- read.delim(paste(write_path, fname, sep = "/"))
     write.table(paste0(fname, hd_txt), f_write, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    st_hd <- c(rep('%10s', 5))
+    st_hd <- c(rep('%9s', 5))
     write.table(paste(sprintf(st_hd, unlist(strsplit(time_sim[1,1], "\\s+"))), collapse = ' '), f_write, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     time_sim_v <- as.numeric(unlist(strsplit(time_sim[2,1], "\\s+"))[-1])
     time_sim_v[c(2, 4)] <- c(year(period_starts), year(period_ends))
