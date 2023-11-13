@@ -545,16 +545,16 @@ load_netcdf_weather <- function(dir_path, location){
   }
   fs <- list.files(dir_path, recursive = T)
   if(length(fs)==0){
-    stop(paste0("No netCDF data were found on ", dir_path, " path!!! 
-                Please check your path and consult function documentation."))
+    stop(paste0("No netCDF data were found on ", dir_path, 
+                " path!!! \n Please check your path and consult function documentation."))
   }
-  if(!is.character(location)|is.list(location)){
+  if(!is.character(location)&!is.list(location)){
     stop(paste0("`location` parameter input is ", class(location), 
-                "Only possible inputs are of character or list type. 
+                ". Only possible inputs are of character or list type. \n 
                 Please consult function documentation."))
   }
   ##In case path to shape is given
-  if (is(class(location), "character")){
+  if (is.character(location)){
     basin <- st_read(location, quiet = TRUE) %>% 
       st_transform(4326)
     ##Grid vector created
@@ -581,7 +581,7 @@ load_netcdf_weather <- function(dir_path, location){
              Lat = unlist(map(geometry,2))) %>% 
       select(ID, Name, Elevation, Source, geometry, Long, Lat)
     ##If meteo_lst is used, use sf data.frame for stations 
-  } else if (is(class(location), "list")){
+  } else if (is.list(location)){
     st <-  location[["stations"]]
     if (!grepl("4326", st_crs(st)$input)){
       st <- st_transform(st, 4326)
