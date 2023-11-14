@@ -528,7 +528,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' @importFrom purrr map
 #' @return Nested lists of lists. First nesting level is for RCP, second for RCM model numbers,
 #' the rest is the same as in meteo_lst. This part could be used with other package functions 
-#' (example  plot_weather(result$rcp26$1), "PCP", "month", "sum").
+#' (example  plot_weather(result$rcp26$"1"), "PCP", "month", "sum").
 #' @export
 #'
 #' @examples

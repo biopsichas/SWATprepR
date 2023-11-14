@@ -18,7 +18,7 @@ with prepared excel template.}
 \value{
 Nested lists of lists. First nesting level is for RCP, second for RCM model numbers,
 the rest is the same as in meteo_lst. This part could be used with other package functions
-(example  plot_weather(result$rcp26$1), "PCP", "month", "sum").
+(example  plot_weather(result$rcp26$"1"), "PCP", "month", "sum").
 }
 \description{
 Extract climate data into nested list of lists
