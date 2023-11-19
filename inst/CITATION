@@ -2,7 +2,7 @@ citHeader('To cite the SWATprepR package in publications use:')
 
 citEntry(entry='Manual',
          title = 'SWATprepR - tools for SWAT+ input data preparation, visualization and model output assessment',
-         author= 'Svajunas Plunge and Ekaterina Rets',
+         author= 'Svajunas Plunge',
          year  = '2023',
          note  = 'R package',
 	     url = 'https://biopsichas.github.io/SWATprepR/',
