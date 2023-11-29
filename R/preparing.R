@@ -244,6 +244,7 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
 #' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
 #' @importFrom dplyr %>% rename mutate bind_rows select
 #' @importFrom lubridate month
+#' @importFrom readr parse_number
 #' @return list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data
 #' @export
 #' @examples
@@ -318,7 +319,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     print(paste0("Working on station ", stations[j], ":", st_df[st_df$ID == stations[j], "NAME"]))
     ##Adding station data
     wgn_stat <- st_df[st_df$ID == stations[j],]
-    wgn_stat$ID <- j
+    wgn_stat$ID <- parse_number(stations[j])
     ##Getting stations data
     df <- data[[stations[j]]]
     ##Filling list for particular station with missing variables (provided in function.)
@@ -351,7 +352,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     wgn_mon$slr_ave <- aggregate(SLR~mon, df, mean)[,2]
     wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]
     wgn_mon$wnd_ave <- aggregate(WNDSPD~mon, df, mean)[,2]
-    wgn_mon$wgn_id <- j
+    wgn_mon$wgn_id <- parse_number(stations[j])
     ##Saving results
     if(!is.null(res_wgn_mon)){
       res_wgn_mon <- bind_rows(res_wgn_mon, wgn_mon)

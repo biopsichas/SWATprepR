@@ -28,7 +28,7 @@ library(badger)
 `r badge_repostatus("active")`
 `r badge_code_size("biopsichas/SWATprepR")`
 `r badge_license("MIT")`
-`r badge_doi("https://doi.org/10.5281/zenodo.7296033", "yellow")`
+`r badge_doi("https://doi.org/10.5281/zenodo.10167075", "yellow")`
 
 The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 

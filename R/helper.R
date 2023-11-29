@@ -402,6 +402,7 @@ update_wst_id <- function(tname, db_path, wst_cli){
 #' @importFrom purrr map2_df
 #' @importFrom stringr str_replace_all
 #' @importFrom readr write_lines
+#' @importFrom tidyr replace_na
 #' @return Updated text file, which would have updated station names 
 #' (with nearest stations to features). 
 #' @export
@@ -424,11 +425,17 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = 
   f_sf <- st_as_sf(f, coords = c("lon", "lat"), crs = 4326)
   f$wst <-  wst_sf$name[st_nearest_feature(f_sf, wst_sf)]
   ##Preparing column name line
-  f_names <- colnames(f) %>%
-    map2_chr(., spacing, ~sprintf(.y, .x)) %>%
-    paste(., collapse = '  ')
-  f_names <- gsub('vvv[0-9]+', '', f_names)
+  ##To deal with irregular tables (not same number of column names and columns)
+  f_names <- colnames(f) %>% 
+    .[!grepl("vvv", .)] %>%
+    map2_chr(., spacing[c(1:length(.))] %>% replace_na(spacing[length(spacing)]), ~sprintf(.y, .x)) %>% 
+    paste(., collapse = '  ') 
   ##Preparing all other lines
+  if(length(spacing) - dim(f)[2]<0){
+    spacing <- c(spacing, rep(spacing[length(spacing)], dim(f)[2] - length(spacing)))
+  } else if(length(spacing) - dim(f)[2]>0){
+    spacing <- spacing[c(1:dim(f)[2])]
+  }
   f_lines <- f %>%
     map2_df(., spacing, ~sprintf(.y, .x)) %>%
     apply(., 1, paste, collapse = '  ') %>% 
@@ -449,7 +456,6 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = 
   write_lines(c(text_l, f_names, f_lines), f_write)
   print(paste0("Updated weather stations in ", fname, " file."))
 }
-
 
 #' Write weather meteo_lst into template .xlsx file
 #'

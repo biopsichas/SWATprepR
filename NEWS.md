@@ -1,3 +1,8 @@
+# SWATprepR 0.1.5
+
+* Bug fixes to `prepare_wgn()`, `prepare_climate()`,`load_netcdf_weather()` and other functions. 
+
+
 # SWATprepR 0.1.4
 
 * `load_swat_weather2()` function was added to provide quicker option for weather file loading. More 20 times faster comparing to `load_swat_weather()` function. 

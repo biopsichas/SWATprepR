@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-0.1.4-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-0.1.5-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -12,7 +12,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![](https://img.shields.io/github/languages/code-size/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
-[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7296033-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.7296033)
+[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.10167075-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.10167075)
 
 The goal of `SWATprepR` is to help with the [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation.
