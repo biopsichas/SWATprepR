@@ -1,8 +1,8 @@
 Type: Package
 Package: SWATprepR
 Title: SWAT+ input data preparation tool
-Version: 0.1.5
-Date: 2023-11-29
+Version: 0.1.6
+Date: 2023-12-04
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))
@@ -16,7 +16,6 @@ Imports:
     DBI,
     dplyr,
     elevatr,
-    euptf2,
     ggplot2,
     ggpmisc,
     gstat,
@@ -49,11 +48,10 @@ Suggests:
     rmarkdown,
     mapview,
     stars, 
-    tidyverse
+    tidyverse,
+    euptf2
 VignetteBuilder: 
     knitr
-Remotes:
-    github::tkdweber/euptf2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

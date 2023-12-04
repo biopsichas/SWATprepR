@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-0.1.5-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-0.1.6-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -44,14 +44,15 @@ parameters, model calibration, validation, etc., could be found in the
 
 You can install the development version of SWATprepR from
 [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that
-the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be
-installed first.
+running [`get_usersoil_table()`](../reference/get_usersoil_table.html)
+function the `euptf2` [package](https://github.com/tkdweber/euptf2) has
+to be installed.
 
 ``` r
-# The `euptf2` package is required and utilized for soil parameter functions (it should be installed first).
-devtools::install_github("tkdweber/euptf2")
-# Afterward, please continue with the installation of `SWATprepR`.
+# The installation of `SWATprepR`.
 devtools::install_github("biopsichas/SWATprepR")
+# The `euptf2` package has to be installed to utilize `get_usersoil_table()` function.
+devtools::install_github("tkdweber/euptf2")
 ```
 
 ## Data

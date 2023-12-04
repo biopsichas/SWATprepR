@@ -781,6 +781,9 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
 #' }
 
 get_soil_parameters <- function(soilp){
+  if (!requireNamespace("euptf2", quietly = TRUE)) {
+    stop("The euptf2 package must be installed to use this functionality. \n Please run devtools::install_github('tkdweber/euptf2')")
+  }
   soilp$rownum <- 1:nrow(soilp)
   sol_z <- names(soilp)[grep("SOL_Z.*", names(soilp))]
   soilp["SOL_ZMX"] <- do.call(pmax, c(soilp[sol_z], list(na.rm=TRUE)))
@@ -806,10 +809,10 @@ get_soil_parameters <- function(soilp){
       input[nrow(input)+1,] <- list(nrow(input)+1, 200, 1, 0.01, 1, 1, 98)
     }
     tryCatch({
-      pred_VG1 <- euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
+      pred_VG1 <- euptf2::euptfFun(ptf = "PTF07", predictor = input, target = "VG", query = "predictions")
     },
     error = function(e) {
-      stop("euptfFun function from euptf2 package couldn't be used. Please make sure euptf2 package is loaded.")
+      stop("euptfFun function from euptf2 package couldn't be used. Please make sure euptf2 package is correctly installed and could be loaded.")
     })
     names(pred_VG1)[2:6] <- c("THS","THR", "ALP", "N", "M")
     input <- input[c(1:nrow(input)-d),]
