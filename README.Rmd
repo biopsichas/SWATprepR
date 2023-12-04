@@ -44,7 +44,7 @@ Detailed information about packages, workflow steps, input data, SWAT+ parameter
 
 ## Installation
 
-You can install the development version of SWATprepR from [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that running [`get_usersoil_table()`](../reference/get_usersoil_table.html) function the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be installed. 
+You can install the development version of SWATprepR from [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that running [`get_usersoil_table()`](reference/get_usersoil_table.html) function the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be installed. 
 
 ``` r
 # The installation of `SWATprepR`.

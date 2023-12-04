@@ -42,6 +42,8 @@ Imports:
     utils,
     vroom,
     zoo
+Depends:
+    euptf2
 Suggests: 
     devtools,
     knitr,
@@ -49,7 +51,6 @@ Suggests:
     mapview,
     stars, 
     tidyverse,
-    euptf2
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

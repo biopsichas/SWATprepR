@@ -44,7 +44,7 @@ parameters, model calibration, validation, etc., could be found in the
 
 You can install the development version of SWATprepR from
 [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that
-running [`get_usersoil_table()`](../reference/get_usersoil_table.html)
+running [`get_usersoil_table()`](reference/get_usersoil_table.html)
 function the `euptf2` [package](https://github.com/tkdweber/euptf2) has
 to be installed.
 
