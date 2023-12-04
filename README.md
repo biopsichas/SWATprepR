@@ -43,13 +43,15 @@ parameters, model calibration, validation, etc., could be found in the
 ## Installation
 
 You can install the development version of SWATprepR from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that
+the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be
+installed first.
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("biopsichas/SWATprepR")
-# euptf2 package is needed and used for soil parameter functions
+# The `euptf2` package is required and utilized for soil parameter functions (it should be installed first).
 devtools::install_github("tkdweber/euptf2")
+# Afterward, please continue with the installation of `SWATprepR`.
+devtools::install_github("biopsichas/SWATprepR")
 ```
 
 ## Data
@@ -75,6 +77,7 @@ prepare your data to be inline with templates we have provided in
   flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
 - **usersoils.csv** - example of loading soil parameters dataset.
+- **pnt_data.xlsx** - example of point source dataset.
 - **GIS/** - folder with GIS layers needed to run some functions.
 
 Data prepared according to templates can be directly loaded into R and
