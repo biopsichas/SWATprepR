@@ -106,10 +106,18 @@ load_template <- function(template_path, epsg_code = 4326){
 #' }
 
 load_stations <- function(template_path, epsg_code){
-  read_xlsx(template_path, "Stations") %>% 
+  df <- read_xlsx(template_path, "Stations") 
+  if(epsg_code == 4326){
+    ## wgs84 min and max coordinates
+    if(min(df$Long) < -180 | max(df$Long) > 180 | min(df$Lat) < -90 | max(df$Lat) > 90){
+      warning("Your station coordinates are not in WGS84 system. Please check, correct your input data and reload template!!!") 
+    }
+  }
+  df <- df %>% 
     st_as_sf(coords = c("Long", "Lat"), crs = epsg_code) %>% 
     mutate(Long = unlist(map(geometry,1)),
            Lat = unlist(map(geometry,2)))
+  return(df)
 }
 
 #' Function loading climate data csv files
