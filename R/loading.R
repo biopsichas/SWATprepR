@@ -231,6 +231,7 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
 #' }
 
 load_swat_weather <- function(input_folder){
+  .Deprecated("load_swat_weather")
   print(paste0("Loading of SWAT+ weather data is started from ", input_folder, " directory."))
   ##Identifying all weather files
   fs <- list.files(input_folder, recursive = F, pattern="*.pcp|*.slr|*.hmd|*.tmp|*.wnd")

@@ -2,9 +2,14 @@
 % Please edit documentation in R/preparing.R
 \name{prepare_ps}
 \alias{prepare_ps}
-\title{Prepare point source data model text files}
+\title{Prepare point source data model text files.}
 \usage{
-prepare_ps(pt_lst, project_path, write_path = project_path)
+prepare_ps(
+  pt_lst,
+  project_path,
+  write_path = project_path,
+  cha_shape_path = FALSE
+)
 }
 \arguments{
 \item{pt_lst}{nested list of lists with dataframes.
@@ -14,12 +19,16 @@ pt_lst -> st -> Dataframe (name, Lat, Long)}
 \item{project_path}{character, path to SWAT+ txtinout folder (example "my_model").}
 
 \item{write_path}{character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}.}
+
+\item{cha_shape_path}{character, path to SWAT+ channel shapefile. 'id' column should be present in attributes with
+numeric values representing channel ids, the same as in 'chandeg.con' file. Optional (\code{default = FALSE}.}
 }
 \value{
 text files for SWAT+ model in write_path
 }
 \description{
-Prepare point source data model text files
+The function could be used to prepare the simple cases of point source data input
+with yearly values, where point sources are discharging to a single channels.
 }
 \examples{
 \dontrun{

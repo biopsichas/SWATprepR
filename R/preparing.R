@@ -1421,15 +1421,21 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 
 # Point source data -----------------------------------------------
 
-#' Prepare point source data model text files
+#' Prepare point source data model text files. 
+#' 
+#' The function could be used to prepare the simple cases of point source data input
+#' with yearly values, where point sources are discharging to a single channels. 
 #'
 #' @param pt_lst  nested list of lists with dataframes. 
 #' Nested structure pt_lst -> data -> Dataframe (name,	DATE,	flo, ...)
 #' pt_lst -> st -> Dataframe (name, Lat, Long)
 #' @param project_path character, path to SWAT+ txtinout folder (example "my_model"). 
-#' @param write_path character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}. 
-#' @importFrom sf st_as_sf st_nearest_feature st_crs st_drop_geometry
+#' @param write_path character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}.
+#' @param cha_shape_path character, path to SWAT+ channel shapefile. 'id' column should be present in attributes with 
+#' numeric values representing channel ids, the same as in 'chandeg.con' file. Optional (\code{default = FALSE}.  
+#' @importFrom sf st_as_sf st_nearest_feature st_crs st_drop_geometry st_transform read_sf
 #' @importFrom lubridate year
+#' @importFrom dplyr select left_join
 #'
 #' @return text files for SWAT+ model in write_path
 #' @export
@@ -1441,7 +1447,7 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #' prepare_pt_source(pnt_data, "txtinout")
 #' }
 
-prepare_ps <- function(pt_lst, project_path, write_path = project_path){
+prepare_ps <- function(pt_lst, project_path, write_path = project_path, cha_shape_path = FALSE){
   if(project_path == write_path){
     print(paste0("Files in ", project_path, " will be overwritten!!!"))
   }
@@ -1454,7 +1460,7 @@ prepare_ps <- function(pt_lst, project_path, write_path = project_path){
     f_path <- paste0(write_path, "/", fname)
     f_rec_path <- paste0(write_path, "/", "recall.rec")
     f_con_path <- paste0(write_path, "/", "recall.con")
-    s <- c(rep('%4s', 2), rep('%6s', 3), rep('%10s', 19))
+    s <- c(rep('%8s', 2), rep('%9s', 3), rep('%10s', 19))
     text_l <- paste0(": file was written by SWATprepR R package ", Sys.time())
     ri <- ri[, !(colnames(ri) == "DATE")]
     write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
@@ -1475,10 +1481,21 @@ prepare_ps <- function(pt_lst, project_path, write_path = project_path){
                                                       'ovfl', 'rule', 'out_tot', 'obj_typ', 'obj_id', 'hyd_typ', 'frac')), 
                         collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
                   quote = FALSE)
-      cha_table <- read_tbl("chandeg.con", project_path) %>% 
-        st_as_sf(coords = c("lon", "lat"), crs = st_crs(pt_lst$st)$input) %>% 
-        .[st_nearest_feature(pt_lst$st, .),] %>% 
-        st_drop_geometry
+      cha_table <- read_tbl("chandeg.con", project_path) 
+      if(!is.character(cha_shape_path)){
+        warning("No channel shapefile provided. Channel IDs will be assigned based on nearest center point in 'chandeg.con'.")
+        cha_table <- cha_table %>% 
+          st_as_sf(coords = c("lon", "lat"), crs = st_crs(pt_lst$st)$input) %>% 
+          .[st_nearest_feature(pt_lst$st, .),] %>% 
+          st_drop_geometry
+      } else {
+        cha <- read_sf(cha_shape_path) %>% 
+          st_transform(4326) %>% 
+          .[st_nearest_feature(pt_lst$st, .),] %>% 
+          st_drop_geometry %>% 
+          select(id) %>% 
+          left_join(cha_table, by = "id")
+      }
     } 
     id <- id + 1
     write.table(paste(sprintf(c(rep('%10s', 4)), c(id, i, t$rec_typ, fname)), collapse = ' '), f_rec_path, append = TRUE, 
@@ -1486,8 +1503,8 @@ prepare_ps <- function(pt_lst, project_path, write_path = project_path){
     write.table(paste(sprintf(c(rep('%10s', 17)), c(id, i, cha_table[id, "gis_id"][[1]], "0.00001", pt_lst$st[pt_lst$st$name == i, "Lat"][[1]], 
                                                     pt_lst$st[pt_lst$st$name == i, "Long"][[1]], cha_table[id, "elev"][[1]], id, 
                                                     "null", cha_table[id, "cst"][[1]], cha_table[id, "ovfl"][[1]],
-                                                    cha_table[id, "rule"][[1]], cha_table[id, "out_tot"][[1]], cha_table[id, "obj_typ"][[1]], 
-                                                    cha_table[id, "id"][[1]], cha_table[id, "hyd_typ"][[1]], cha_table[id, "frac"][[1]])), 
+                                                    cha_table[id, "rule"][[1]], 1, "sdc", 
+                                                    cha_table[id, "id"][[1]], "tot", 1)), 
                       collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   }
   print(paste0("recall.rec", " file was successfully written."))
