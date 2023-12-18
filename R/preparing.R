@@ -823,15 +823,15 @@ get_soil_parameters <- function(soilp){
     pred_VG$ALP <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 0.0069, pred_VG$ALP)
     pred_VG$N <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M <= 30), 1.4688, pred_VG$N)
     
-    pred_VG$THR <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.001, pred_VG$THR)
+    pred_VG$THR <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.000, pred_VG$THR)
     pred_VG$THS <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.835, pred_VG$THS)
     pred_VG$ALP <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 0.0113, pred_VG$ALP)
     pred_VG$N <- ifelse((((pred_VG$OC > 12 & is.na(pred_VG$USCLAY)) | (pred_VG$OC >= (12+pred_VG$USCLAY*0.1) & pred_VG$USCLAY < 60) | (pred_VG$OC >= 18 & pred_VG$USCLAY>=60)) & pred_VG$DEPTH_M > 30), 1.2256, pred_VG$N)
 
     FC <- pred_VG$THR+(pred_VG$THS-pred_VG$THR)*((1+(((pred_VG$N-1)/pred_VG$N)^(1-2*pred_VG$N)))^((1-pred_VG$N)/pred_VG$N))
-    WP <- pred_VG$THR+((pred_VG$THS-pred_VG$THR)/((1+pred_VG$THR*(15000^pred_VG$N))^(1-(1/pred_VG$N))))
+    WP <- pred_VG$THR+((pred_VG$THS-pred_VG$THR)/((1+pred_VG$ALP*(15000^pred_VG$N))^(1-(1/pred_VG$N))))
 
-    soilp[paste0("SOL_AWC", i)] <- FC-WP
+    soilp[paste0("SOL_AWC", i)] <- ifelse(FC-WP < 0, 0.001, FC-WP)
     soilp[paste0("SOL_K", i)] <- (4.65 * (10^4) * pred_VG$THS * (pred_VG$ALP^2))*0.41666001
 
     # compute albedo
