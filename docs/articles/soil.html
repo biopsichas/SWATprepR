@@ -199,9 +199,9 @@ organic carbon content (with division by <em>1.72</em> coefficient).</p>
 <span><span class="va">water_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">water_l_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span></span>
 <span><span class="va">drainage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">drainage_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span> </span>
 <span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">soil_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span> </span>
 <span><span class="va">hsg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">hsg_path</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3035</span><span class="op">)</span></span></code></pre></div>
 <p>All required GIS input data are presented in the maps below. Polygons
@@ -249,19 +249,39 @@ number humus class.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Printing example of soil codes before intersection</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##            Code</span></span>
-<span><span class="co">## 1   S3_S3_SL3_3</span></span>
-<span><span class="co">## 2  SL2_S3_SL3_3</span></span>
-<span><span class="co">## 3 SL3_SL3_SL3_1</span></span></code></pre>
+<pre><code><span><span class="co">##   OBJECTID          Code Shape_Leng Shape_Area</span></span>
+<span><span class="co">## 1        1   S3_S3_SL3_3   546.3484  11186.102</span></span>
+<span><span class="co">## 2        2  SL2_S3_SL3_3   356.2983   4183.884</span></span>
+<span><span class="co">## 3        3 SL3_SL3_SL3_1  2152.1265  99806.207</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Counting number of unique soil types in input soil data</span></span>
 <span><span class="va">soils_n1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unique</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">##Intersecting soil types with other layers</span></span>
 <span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">impervious</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">water_level</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">drainage</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">drainage</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>SNAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">Code</span>, <span class="st">"_"</span>, <span class="va">Impervious</span>, <span class="st">"_"</span>, <span class="va">Depth</span>, <span class="st">"_"</span>, <span class="va">Drained</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co">##Dealing with different possible geometries to clean up the layer produced by </span></span>
+<span><span class="co">##intersection. Following lines is needed to extract nested geometries and </span></span>
+<span><span class="co">##convert them into multipolygons.</span></span>
+<span><span class="va">soils_g1</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"GEOMETRYCOLLECTION"</span>, <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry_type.html" class="external-link">st_geometry_type</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_collection_extract.html" class="external-link">st_collection_extract</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"POLYGON"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="st">"MULTIPOLYGON"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##Selecting only polygons geometry types and converting them into multipolygons.</span></span>
+<span><span class="va">soils_g2</span> <span class="op">&lt;-</span> <span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"POINT|LINESTRING|GEOMETRYCOLLECTION"</span>, <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry_type.html" class="external-link">st_geometry_type</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="st">"MULTIPOLYGON"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##Binding all geometries together</span></span>
+<span><span class="va">soils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">soils_g1</span>, <span class="va">soils_g2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">soils</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span></span>
 <span><span class="co">##Counting number of unique soil types in generated soil data</span></span>
 <span><span class="va">soils_n2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">SNAM</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unique</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>After intersection with other GIS layers information for them is
@@ -272,17 +292,17 @@ well. For instance a new code is
 stay the same and the last three added should be depth to impervious
 layers, depth to water level and drainage status classes. It is
 important to point out that intersection with GIS layers in this example
-increased number of unique soil types from 171 to 542 and a new soil
+increased number of unique soil types from 171 to 543 and a new soil
 type distribution GIS data have been created.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##Example of new soil codes</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">soils</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                            SNAM</span></span>
-<span><span class="co">## 3 SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N</span></span>
-<span><span class="co">## 5 SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N</span></span>
-<span><span class="co">## 6 SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N</span></span></code></pre>
+<pre><code><span><span class="co">##                         SNAM</span></span>
+<span><span class="co">## 1 S1_S1_S1_5_&gt;100cm_&gt;100cm_N</span></span>
+<span><span class="co">## 2 S1_S1_S1_5_&gt;100cm_&gt;100cm_N</span></span>
+<span><span class="co">## 3 S1_S1_S1_5_&gt;100cm_&gt;100cm_N</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##Praparing figure of new soil data</span></span>
+<code class="sourceCode R"><span><span class="co">##Preparing figure of new soil data</span></span>
 <span><span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">soils</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">SNAM</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -358,27 +378,27 @@ functions.</p>
 <span><span class="co">##Saving and printing structure example of the required table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">usertable</span>, <span class="st">"../output/usersoils.csv"</span>, row.names<span class="op">=</span><span class="cn">FALSE</span>, quote<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">usertable</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 'data.frame':    542 obs. of  20 variables:</span></span>
-<span><span class="co">##  $ SNAM      : chr  "SL3_SL3_SL3_1_&gt;100cm_&gt;100cm_N" "SL4_SL4_SL4_3_&gt;100cm_&gt;100cm_N" "SL3_SL3_SL3_2_&gt;100cm_&gt;100cm_N" "SL2_SL4_SL4_2_&gt;100cm_&gt;100cm_N" ...</span></span>
+<pre><code><span><span class="co">## 'data.frame':    543 obs. of  20 variables:</span></span>
+<span><span class="co">##  $ SNAM      : chr  "S1_S1_S1_5_&gt;100cm_&gt;100cm_N" "LS2_S3_SL3_3_&gt;100cm_&gt;100cm_N" "Emt_Emt_Emt_7_&gt;100cm_&gt;100cm_N" "Mpl_S1_S1_8_&gt;100cm_&gt;100cm_N" ...</span></span>
 <span><span class="co">##  $ NLAYERS   : num  3 3 3 3 3 3 3 3 3 3 ...</span></span>
 <span><span class="co">##  $ Impervious: chr  "&gt;100cm" "&gt;100cm" "&gt;100cm" "&gt;100cm" ...</span></span>
 <span><span class="co">##  $ Depth     : chr  "&gt;100cm" "&gt;100cm" "&gt;100cm" "&gt;100cm" ...</span></span>
 <span><span class="co">##  $ Drained   : chr  "N" "N" "N" "N" ...</span></span>
 <span><span class="co">##  $ SOL_Z1    : num  250 250 250 250 250 250 250 250 250 250 ...</span></span>
-<span><span class="co">##  $ SAND1     : num  62.5 60.5 62.5 71.7 80.7 ...</span></span>
-<span><span class="co">##  $ SILT1     : num  25.4 27.8 25.4 22.1 14.8 ...</span></span>
-<span><span class="co">##  $ CLAY1     : num  12.07 11.69 12.07 6.11 4.45 ...</span></span>
-<span><span class="co">##  $ SOL_CBN1  : num  1.88 1.26 1.63 1.63 1.63 ...</span></span>
+<span><span class="co">##  $ SAND1     : num  95.4 80.7 0 89 74.5 ...</span></span>
+<span><span class="co">##  $ SILT1     : num  3.46 14.84 0 6 19.61 ...</span></span>
+<span><span class="co">##  $ CLAY1     : num  1.15 4.45 50 5 5.86 ...</span></span>
+<span><span class="co">##  $ SOL_CBN1  : num  0.628 1.256 8.721 5.814 1.256 ...</span></span>
 <span><span class="co">##  $ SOL_Z2    : num  750 750 750 750 750 750 750 750 750 750 ...</span></span>
-<span><span class="co">##  $ SAND2     : num  62.5 60.5 62.5 60.5 80.7 ...</span></span>
-<span><span class="co">##  $ SILT2     : num  25.4 27.8 25.4 27.8 14.8 ...</span></span>
-<span><span class="co">##  $ CLAY2     : num  12.07 11.69 12.07 11.69 4.45 ...</span></span>
-<span><span class="co">##  $ SOL_CBN2  : num  0.942 0.628 0.814 0.814 0.814 ...</span></span>
+<span><span class="co">##  $ SAND2     : num  95.4 87.3 0 95.4 62.5 ...</span></span>
+<span><span class="co">##  $ SILT2     : num  3.46 10.04 0 3.46 25.39 ...</span></span>
+<span><span class="co">##  $ CLAY2     : num  1.15 2.65 50 1.15 12.07 ...</span></span>
+<span><span class="co">##  $ SOL_CBN2  : num  0.314 0.628 4.36 2.907 0.628 ...</span></span>
 <span><span class="co">##  $ SOL_Z3    : num  1500 1500 1500 1500 1500 1500 1500 1500 1500 1500 ...</span></span>
-<span><span class="co">##  $ SAND3     : num  62.5 60.5 62.5 60.5 62.5 ...</span></span>
-<span><span class="co">##  $ SILT3     : num  25.4 27.8 25.4 27.8 25.4 ...</span></span>
-<span><span class="co">##  $ CLAY3     : num  12.1 11.7 12.1 11.7 12.1 ...</span></span>
-<span><span class="co">##  $ SOL_CBN3  : num  0.174 0.116 0.151 0.151 0.151 ...</span></span></code></pre>
+<span><span class="co">##  $ SAND3     : num  95.4 62.5 0 95.4 62.5 ...</span></span>
+<span><span class="co">##  $ SILT3     : num  3.46 25.39 0 3.46 25.39 ...</span></span>
+<span><span class="co">##  $ CLAY3     : num  1.15 12.07 50 1.15 12.07 ...</span></span>
+<span><span class="co">##  $ SOL_CBN3  : num  0.0581 0.1163 0.8721 0.5814 0.1163 ...</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="par_make">Adding soil parameters to user table<a class="anchor" aria-label="anchor" href="#par_make"></a>

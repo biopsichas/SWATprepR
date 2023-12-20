@@ -76,9 +76,9 @@ impervious<- st_read(basin_path, quiet = TRUE) %>%
 water_level <- st_read(water_l_path, quiet = TRUE) %>% 
   st_transform(3035)
 drainage <- st_read(drainage_path, quiet = TRUE) %>% 
-  st_transform(3035)
+  st_transform(3035) 
 soils <- st_read(soil_path, quiet = TRUE) %>% 
-  st_transform(3035)
+  st_transform(3035) 
 hsg <- st_read(hsg_path, quiet = TRUE) %>% 
   st_transform(3035)
 ```
@@ -114,22 +114,42 @@ The final soil layer should have information added from GIS layers to soil types
 print(head(soils %>% st_drop_geometry(), 3))
 ##Counting number of unique soil types in input soil data
 soils_n1 <- dim(soils %>% st_drop_geometry() %>% select(Code) %>% unique)[1]
+
+##Intersecting soil types with other layers
 soils <- soils %>% 
   st_intersection(impervious) %>%
   st_intersection(water_level) %>% 
-  st_intersection(drainage) %>% 
+  st_intersection(drainage) %>%
   mutate(SNAM = paste0(Code, "_", Impervious, "_", Depth, "_", Drained)) %>% 
   select(SNAM) 
+
+##Dealing with different possible geometries to clean up the layer produced by 
+##intersection. Following lines is needed to extract nested geometries and 
+##convert them into multipolygons.
+soils_g1 <- soils %>% 
+  filter(grepl("GEOMETRYCOLLECTION", st_geometry_type(geometry))) %>% 
+  st_collection_extract(., "POLYGON") %>% 
+  st_cast("MULTIPOLYGON")
+
+##Selecting only polygons geometry types and converting them into multipolygons.
+soils_g2 <- soils %>% 
+  filter(!grepl("POINT|LINESTRING|GEOMETRYCOLLECTION", st_geometry_type(geometry))) %>% 
+  st_cast("MULTIPOLYGON")
+
+##Binding all geometries together
+soils <- bind_rows(soils_g1, soils_g2)
+row.names(soils) <- NULL
+
 ##Counting number of unique soil types in generated soil data
 soils_n2 <- dim(soils %>% st_drop_geometry() %>% select(SNAM) %>% unique)[1]
 ```
 
-After intersection with other GIS layers information for them is added to the soil code. Thus generating new soil type, which have information about water, impervious layer depth, drainage status as well. For instance a new code is *S3_S3_SL3_3_>100cm_60-100cm_Y*. So the first four elements stay the same and the last three added should be depth to impervious layers, depth to water level and drainage status classes. It is important to point out that intersection with GIS layers in this example increased number of unique soil types from `r soils_n1 ` to `r soils_n2` and a new soil type distribution GIS data have been created. 
+After intersection with other GIS layers information for them is added to the soil code. Thus generating new soil type, which have information about water, impervious layer depth, drainage status as well. For instance a new code is *S3_S3_SL3_3_>100cm_60-100cm_Y*. So the first four elements stay the same and the last three added should be depth to impervious layers, depth to water level and drainage status classes. It is important to point out that intersection with GIS layers in this example increased number of unique soil types from `r soils_n1` to `r soils_n2` and a new soil type distribution GIS data have been created. 
 
 ```{r soil_layer2, message = FALSE, warning = FALSE}
 ##Example of new soil codes
 print(head(soils %>% st_drop_geometry(), 3))
-##Praparing figure of new soil data
+##Preparing figure of new soil data
 p5 <- ggplot(soils) + 
   geom_sf(mapping = aes(fill = SNAM), show.legend = F) +
   theme_void()
