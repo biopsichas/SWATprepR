@@ -12,30 +12,48 @@ get_atmo_dep(
 )
 }
 \arguments{
-\item{catchment_boundary_path}{path to basin boundary shape file.}
+\item{catchment_boundary_path}{Path to the basin boundary shape file.}
 
-\item{t_ext}{string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').}
+\item{t_ext}{(optional) String, specifying the EMEP data to access.
+'year' for yearly averages, 'month' for monthly averages. Default
+\code{t_ext = 'year'}.}
 
-\item{start_year}{integer year to start data extraction. Optional (default - 1990).}
+\item{start_year}{(optional) Integer representing the starting year for data
+extraction. Default \code{start_year = 1990}.}
 
-\item{end_year}{integer year to end data extraction. Optional (default - 2020).}
+\item{end_year}{Integer representing the ending year for data extraction.
+Default \code{end_year = 2020}.}
 }
 \value{
-dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns. Values in SWAT+ units.
-"NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in rainfall (mg/l),
-NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha/yr)
+A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and
+"NO3_DRY".
+Values are in SWAT+ units.
+"NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in
+rainfall (mg/l),
+NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition
+(kg/ha/yr).
 }
 \description{
-Extract EMEP atmospheric deposition data for a catchment
+This function extracts EMEP atmospheric deposition data averaged for
+a specified catchment.
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-df <- get_atmo_dep(basin_path)
-##Plot results
-ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+
-geom_line()+
-facet_wrap(~par, scales = "free_y")+
-theme_bw()
+  # Specify the path to the basin boundary shape file
+  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+  
+  # Get atmospheric deposition data for the catchment
+  df <- get_atmo_dep(basin_path)
+  
+  # Plot results
+  ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), 
+  aes(x = DATE, y = values))+
+    geom_line()+
+    facet_wrap(~par, scales = "free_y")+
+    theme_bw()
 }
 }
+\references{
+See the EMEP website for more information: \url{https://www.emep.int/mscw/mscw_moddata.html}
+}
+\keyword{loading}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{fill_with_closest}
 \alias{fill_with_closest}
-\title{Filling missing variables from the closest stations, which has data.}
+\title{Fill missing variables from the closest stations with available data}
 \usage{
 fill_with_closest(
   meteo_lst,
@@ -10,22 +10,30 @@ fill_with_closest(
 )
 }
 \arguments{
-\item{meteo_lst}{meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst}{A nested list of lists with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)}.
+Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{par_fill}{vector of variables to be filled. Optional (default is c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")).}
+\item{par_fill}{(optional) A vector of variables to be filled. Default is
+\code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.}
 }
 \value{
-list of dataframe with filled data. Returned list is for meteo_lst$data.
+A list of dataframes with filled data. Updated list is for meteo_lst$data.
 }
 \description{
-Filling missing variables from the closest stations, which has data.
+This function fills missing variables by interpolating values from the
+closest stations that have data.
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-met_lst <- load_template(temp_path, 3035)
-met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
+  # Load weather data from an Excel file
+  temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+  met_lst <- load_template(temp_path, 3035)
+  
+  # Fill for missing variables
+  met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
 }
 }
+\keyword{internal}

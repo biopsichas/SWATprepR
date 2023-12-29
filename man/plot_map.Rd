@@ -2,32 +2,39 @@
 % Please edit documentation in R/plotting.R
 \name{plot_map}
 \alias{plot_map}
-\title{Preparing interactive map of monitoring points}
+\title{Prepare Interactive Map of Monitoring Points}
 \usage{
 plot_map(df, df_station, rch, shp)
 }
 \arguments{
-\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed).}
+\item{df}{Dataframe with formatted data (requires "Station", "DATE",
+"Variables", and "Values" columns).}
 
-\item{df_station}{dataframe with formatted station data (ID, geometry columns are needed).}
+\item{df_station}{Dataframe with formatted station data (requires "ID" and
+"geometry" columns).}
 
-\item{rch}{sf dataframe for reaches (id, geometry columns are needed).}
+\item{rch}{sf dataframe for reaches (requires "id" and "geometry" columns).}
 
-\item{shp}{sf dataframe for basin (name, geometry columns are needed).}
+\item{shp}{sf dataframe for basin (requires "name" and "geometry" columns).}
 }
 \value{
-leaflet object of interactive map with monitoring data opening while pressing on points.
+Leaflet object of an interactive map with monitoring data displayed
+when points are clicked.
 }
 \description{
-Preparing interactive map of monitoring points
+This function generates an interactive map with monitoring points,
+allowing users to click on points to view data.
 }
 \examples{
 library(sf)
+
+# Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 cal_data <- load_template(temp_path, 4326)
 reach <- st_transform(st_read(reach_path), 4326)
-basin <-st_transform(st_read(basin_path), 4326)
+basin <- st_transform(st_read(basin_path), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)
 }
+\keyword{plotting}

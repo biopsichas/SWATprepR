@@ -413,6 +413,7 @@ update_wst_id <- function(tname, db_path, wst_cli){
 #' rep('%8s', 4), '%12s', '%8s', rep('%12s', 2))
 #' update_wst_txt("reservoir.con", "model_folder", wst_sf, spacing)
 #' }
+#' @keywords internal
 
 update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = "temp"){
   ##Making heading text
@@ -675,26 +676,39 @@ my.pcpmhhr <- function(x, na.rm = FALSE){ # this is an alternative way to calcul
 
 # Cleaning data ----------------------------------------------------------------
 
-#' Function to clean outliers outside by some standard deviations
+#' Clean outliers outside specified standard deviations
 #'
-#' @param df dataframe with columns c("Station", "DATE", "Variables", "Values", "Source").
-#' @param times_sd numeric value representing multiplication factor for standard deviation. 
-#' Values outside mean - sd X times_sd, mean + sd X times_sd are identified as outliers. 
-#' Optional with default value 3.  
-#' @return list of two dataframes. *newdf* dataframe contains dataframe cleaned from outliers.
-#' *dropped*  dataframe contains data, which was removed from *newdf* dataframe.
+#' This function cleans outliers from a dataframe based on some standard deviations.
+#'
+#' @param df A dataframe with columns "Station", "DATE", "Variables", "Values", 
+#' "Source". The "Variables" column should contain the names of the variables.
+#' @param times_sd (optional) A numeric value representing the multiplication factor for 
+#' standard deviation. Values outside mean - sd X times_sd and mean + sd X 
+#' times_sd are identified as outliers. Default \code{times_sd = 3}.
+#' @return A list of two dataframes. 
+#'   *newdf* contains the dataframe cleaned from outliers. 
+#'   *dropped* contains the data that was removed from *newdf*.
 #' @importFrom dplyr mutate %>% group_by summarise left_join
 #' @importFrom lubridate month 
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-#' cal_data <- load_template(temp_path)
-#' lst <- clean_outliers(cal_data$data)
-#' ##Looking at data to be removed
-#' print(head(lst$dropped))
-#' ##Updating data
-#' cal_data$data <- lst$newdf
+#' \dontrun{
+#'   # Load calibration data from an Excel file
+#'   temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
+#'   cal_data <- load_template(temp_path)
+#'   
+#'   # Clean outliers from the data
+#'   lst <- clean_outliers(cal_data$data)
+#'   
+#'   # Display data to be removed
+#'   print(head(lst$dropped))
+#'   
+#'   # Update the original data with cleaned data
+#'   cal_data$data <- lst$newdf
+#' }
+#' @keywords cleaning
+#' @seealso \code{\link{load_template}}
 
 clean_outliers <- function(df, times_sd = 3){
   ##Calculating monthly min, max values
@@ -714,17 +728,29 @@ clean_outliers <- function(df, times_sd = 3){
               dropped = df[df$P == F, c("Station", "DATE", "Variables", "Values", "Source")]))
 }
 
-#' Clean water quality data from most typical issues
+#' Clean water quality data from common issues
 #'
-#' @param df dataframe with water quality data with  with columns c("Station", "DATE", "Variables", "Values", "Source").
-#' @param zero_to_min numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 0.5. 
-#' @return cleaned dataframe
+#' This function cleans water quality data by addressing common issues.
+#'
+#' @param df A dataframe with water quality data, including columns "Station", 
+#' "DATE", "Variables", "Values", "Source".
+#' @param zero_to_min (optional) A numeric coefficient to replace zeros by the 
+#' minimum variable value multiplied by zero_to_min.
+#' Default is \code{zero_to_min = 0.5} .
+#' @return A cleaned dataframe.
 #' @export
 #' @importFrom dplyr mutate left_join distinct filter summarise select group_by
 #' @examples
-#' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-#' cal_data <- load_template(temp_path)
-#' cal_data$data <- clean_wq(cal_data$data)
+#' \dontrun{
+#'   # Load calibration data from an Excel file
+#'   temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
+#'   cal_data <- load_template(temp_path)
+#'   
+#'   # Clean water quality data
+#'   cal_data$data <- clean_wq(cal_data$data)
+#' }
+#' @keywords cleaning
+#' @seealso \code{\link{load_template}}
 
 clean_wq <- function(df, zero_to_min = 0.5){
   ##Cleaning common problems
@@ -759,34 +785,67 @@ clean_wq <- function(df, zero_to_min = 0.5){
   return(df)
 }
 
-#' Replace empty PCP entry with 0
+#' Replace very low or empty PCP entries with valid data or 0
 #'
-#' @param df_to_correct dataframe to correct for PCP variable with "DATE" and "PCP" columns.
-#' @param df_valid (optional) dataframe with valid data for PCP variable with "DATE" and "PCP" columns.
-#'  Also should overlap with df_to_correct data.
-#' @param value_to_zero (optional) numeric value of daily PCP. Only NA values can be set to 0 when df_valid PCP
-#' values are below or equal to value_to_zero (default 0.2).
+#' This function replaces deals with suspiciously low, missing PCP entries 
+#' in the provided dataframe.
+#'
+#' @param df_to_correct The dataframe to correct for the PCP variable with 
+#' "DATE" and "PCP" columns.
+#' @param df_valid (optional) The dataframe with valid data for the PCP variable,
+#'  having "DATE" and "PCP" columns. If not provided, the function will use the 
+#'  df_to_correct data. It should overlap with df_to_correct data.
+#' @param value_to_zero (optional) The numeric value of daily PCP. Only NA values 
+#' can be set to 0 when df_valid PCP values are below or equal to value_to_zero 
+#' (default is 0.2).
 #' @importFrom dplyr left_join mutate case_when filter select
-#' @return updated dataframe 
-#' @export
+#' @return Updated dataframe 
 #'
 #' @examples
 #' \dontrun{
-#' met_lst$data$ID8$PCP <- add_missing_pcp_zero(met_lst$data$ID8$PCP, met_lst$data$ID9$PCP)
+#' # Get the current date as a POSIXct object
+#' today <- as.POSIXct(Sys.Date())
+#' # Set the end date as 10 days from the current date
+#' end_day <- as.POSIXct(Sys.Date() + 10)
+#'
+#' # Create a dataframe with a sequence of dates and corresponding PCP values
+#' df_to_correct <- data.frame(
+#'   DATE = seq.POSIXt(today, end_day, by = "1 day"),  # Create a daily sequence of dates
+#'   PCP = c(0.1, NA, 0.3, NA, 0.5, NA, 0.7, NA, 0.9, NA, 1.1)
+#' )
+#'
+#' # Create a dataframe with valid PCP values for the same date range
+#' df_valid <- data.frame(
+#'   DATE = seq.POSIXt(today, end_day, by = "1 day"),  # Create a daily sequence of dates
+#'   PCP = c(0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2)
+#' )
+#'
+#' # Apply the function to replace missing PCP values with zero
+#' add_missing_pcp_zero(df_to_correct, df_valid, 0.3)
 #' }
 
-add_missing_pcp_zero <- function(df_to_correct, df_valid = NULL, value_to_zero = .2){
-  df <- data.frame(DATE = seq.POSIXt(df_to_correct[[1,"DATE"]], df_to_correct[[nrow(df_to_correct),"DATE"]], by="day"))
+#' @keywords internal
+
+add_missing_pcp_zero <- function(df_to_correct, df_valid = NULL, value_to_zero = 0.2) {
+  # Create a dataframe with a sequence of dates
+  df <- data.frame(DATE = seq.POSIXt(df_to_correct[[1, "DATE"]], 
+                                     df_to_correct[[nrow(df_to_correct), "DATE"]], by = "day"))
+  
+  # Left join the sequence dataframe with the input dataframe based on the "DATE" column
   df <- left_join(df, df_to_correct, by = "DATE") 
-  if(is.null(df_valid)){
+  
+  # Replace missing values with zero if df_valid is NULL; otherwise, apply additional logic
+  if (is.null(df_valid)) {
     df[is.na(df)] <- 0
   } else {
     df <- df %>% 
       left_join(rename(df_valid, P = 2), by = "DATE") %>%
-      mutate(PCP = case_when(is.na(PCP) & P <= value_to_zero ~ 0,
-                             !is.na(PCP) ~ PCP)) %>% 
+      mutate(PCP = case_when(is.na(PCP) | PCP <= value_to_zero ~ P,
+                             !is.na(PCP) & PCP > value_to_zero ~ PCP)) %>% 
       filter(!is.na(PCP)) %>% 
       select(DATE, PCP)
   }
+  
+  # Return the updated dataframe
   return(df)
 }

@@ -2,36 +2,51 @@
 % Please edit documentation in R/preparing.R
 \name{add_weather}
 \alias{add_weather}
-\title{Update sqlite database with weather data}
+\title{Update SQLite database with weather data}
 \usage{
 add_weather(db_path, meteo_lst, wgn_lst, fill_missing = TRUE)
 }
 \arguments{
-\item{db_path}{character to sqlite database (example "./output/project.sqlite")}
+\item{db_path}{A character string representing the path to the SQLite database
+(e.g., "./output/project.sqlite").}
 
-\item{meteo_lst}{meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst}{A nested list of lists with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{wgn_lst}{list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by \code{prepare_wgn()} function).}
+\item{wgn_lst}{A list of two dataframes: wgn_st - weather generator station
+data, wgn_data - weather generator data (prepared by \code{\link{prepare_wgn}} function).}
 
-\item{fill_missing}{Boolean, TRUE - fill data for missing stations with data from closest stations with available data.
-FALSE - leave stations without data. Weather generator will be used to fill missing variables for a model. Optional (\code{Default = TRUE}).}
+\item{fill_missing}{(optional) Boolean, TRUE - fill data for missing stations with data
+from closest stations with available data. FALSE - leave stations without
+data. Weather generator will be used to fill missing variables for a model.
+Default \code{fill_missing = TRUE}.}
 }
 \value{
-updated sqlite database with weather data
+Updated SQLite database with weather data.
 }
 \description{
-Update sqlite database with weather data
+This function updates an SQLite database with weather data, including
+meteorological and weather generator data.
 }
 \examples{
 \dontrun{
-##Getting meteo data from template
-met_lst <- load_template(temp_path, 3035)
-##Calculating wgn parameters
-wgn <- prepare_wgn(met_lst, MAXHHR = met_lst$data$ID11$MAXHHR)
-##Writing weather input into model database
-db_path <- "./output/test/project.sqlite"
-add_weather(db_path, met_lst, wgn)
+  # Getting meteorological data from template
+  met_lst <- load_template(temp_path, 3035)
+  
+  # Calculating weather generator parameters
+  wgn <- prepare_wgn(met_lst)
+  
+  # Writing weather input into the model database
+  db_path <- "./output/test/project.sqlite"
+  add_weather(db_path, met_lst, wgn)
 }
+
 }
+\seealso{
+\code{\link{load_template}}, \code{\link{prepare_wgn}},
+\code{\link{prepare_climate}}
+}
+\keyword{writing}

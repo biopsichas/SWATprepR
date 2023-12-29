@@ -2,30 +2,37 @@
 % Please edit documentation in R/preparing.R
 \name{add_atmo_dep}
 \alias{add_atmo_dep}
-\title{Update sqlite database with atmospheric deposition data}
+\title{Update SQLite database with atmospheric deposition data}
 \usage{
 add_atmo_dep(df, db_path, t_ext = "year")
 }
 \arguments{
-\item{df}{dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns obtained from \code{\link{get_atmo_dep}}) function.}
+\item{df}{A data frame containing columns "DATE," "NH4_RF," "NO3_RF,"
+"NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}} function.}
 
-\item{db_path}{character to sqlite database (example "./output/project.sqlite")}
+\item{db_path}{A character string representing the path to the SQLite
+database (e.g., "./output/project.sqlite").}
 
-\item{t_ext}{string, 'year' for yearly averages, 'month' - monthly averages
-and 'annual' for average of all period. Optional (default - "year").}
+\item{t_ext}{(optional) A string indicating the type of time aggregation: 'year' for
+yearly averages, 'month' for monthly averages, and 'annual' for the average
+of the entire period. Default default \code{t_ext = "year"}.}
 }
 \value{
-write data in 'atmodep.cli' file and updated sqlite database with codes and connection
-to atmospheric deposition data
+Writes data to 'atmodep.cli' file and updates the SQLite database
+with codes and connections to atmospheric deposition data.
 }
 \description{
-Update sqlite database with atmospheric deposition data
+This function updates an SQLite database with atmospheric deposition data.
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-df <- get_atmo_dep(basin_path)
-db_path <- "./output/test/project.sqlite"
-add_atmo_dep(df, db_path)
+  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+  df <- get_atmo_dep(basin_path)
+  db_path <- "./output/test/project.sqlite"
+  add_atmo_dep(df, db_path)
 }
 }
+\seealso{
+\code{\link{get_atmo_dep}}
+}
+\keyword{writing}

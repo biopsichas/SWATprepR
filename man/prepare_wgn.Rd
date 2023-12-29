@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{prepare_wgn}
 \alias{prepare_wgn}
-\title{Function to generate wgn data for the model}
+\title{Generate Weather Generator (WGN) Data for SWAT+ Model}
 \usage{
 prepare_wgn(
   meteo_lst,
@@ -16,49 +16,71 @@ prepare_wgn(
 )
 }
 \arguments{
-\item{meteo_lst}{meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst}{Nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{TMP_MAX}{dataframe with two columns: DATE : POSIXct, TMP_MAX : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if TMP_MAX variable is missing for a station.}
+\item{TMP_MAX}{(optional) Dataframe with two columns: DATE : POSIXct, TMP_MAX : num.
+This parameter refers to data, which should be used instead if TMP_MAX variable
+is missing for a station.  Default \code{TMP_MAX = NULL}, data of the closest
+station with data will be used.}
 
-\item{TMP_MIN}{dataframe with two columns: DATE : POSIXct, TMP_MIN : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if TMP_MIN is missing for a station.}
+\item{TMP_MIN}{(optional) Dataframe with two columns: DATE : POSIXct, TMP_MIN : num.
+This parameter refers to data, which should be used instead if TMP_MIN variable
+is missing for a station. Default \code{TMP_MIN = NULL}, indicating that data of the closest
+station with data will be used.}
 
-\item{PCP}{dataframe with two columns: DATE : POSIXct, PCP : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if PCP is missing for a station.}
+\item{PCP}{(optional) Dataframe with two columns: DATE : POSIXct, PCP : num.
+This parameter refers to data, which should be used instead if PCP variable
+is missing for a station. Default \code{PCP = NULL}, indicating that data of the closest
+station with data will be used.}
 
-\item{RELHUM}{dataframe with two columns: DATE : POSIXct, RELHUM : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if RELHUM is missing for a station.}
+\item{RELHUM}{(optional) Dataframe with two columns: DATE : POSIXct, RELHUM : num.
+This parameter refers to data, which should be used instead if RELHUM variable
+is missing for a station. Default \code{RELHUM = NULL}, indicating that data of the closest
+station with data will be used.}
 
-\item{WNDSPD}{dataframe with two columns: DATE : POSIXct, WNDSPD : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if WNDSPD is missing for a station.}
+\item{WNDSPD}{(optional) Dataframe with two columns: DATE : POSIXct, WNDSPD : num.
+This parameter refers to data, which should be used instead if WNDSPD variable
+is missing for a station. Default \code{WNDSPD = NULL}, indicating that data of the closest
+station with data will be used.}
 
-\item{MAXHHR}{dataframe with two columns: DATE : POSIXct, MAXHHR : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if MAXHHR is missing for a station.}
+\item{MAXHHR}{(optional) Dataframe with two columns: DATE : POSIXct, MAXHHR : num.
+This parameter refers to data, which should be used instead if MAXHHR variable
+is missing for a station. Default \code{MAXHHR = NULL}, indicating that data of the closest
+station with data will be used.}
 
-\item{SLR}{dataframe with two columns: DATE : POSIXct, SLR : num. Optional (default NULL).
-This parameter refers to data, which should be used instead, if SLR is missing for a station.}
+\item{SLR}{(optional) Dataframe with two columns: DATE : POSIXct, SLR : num.
+This parameter refers to data, which should be used instead if SLR variable
+is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest
+station with data will be used.}
 }
 \value{
-list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data
+List of two dataframes: wgn_st - WGN station data, wgn_data - WGN data.
 }
 \description{
-Function to generate wgn data for the model
+This function generates weather generator (WGN) data for a SWAT+ model
+based on meteorological data.
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-met_lst <- load_template(temp_path, 3035)
-TMP_MAX <- met_lst$data$ID10$TMP_MAX
-TMP_MIN <- met_lst$data$ID10$TMP_MIN
-PCP <- met_lst$data$ID9$PCP
-RELHUM = met_lst$data$ID9$RELHUM
-WNDSPD <- met_lst$data$ID12$WNDSPD
-MAXHHR <- met_lst$data$ID11$MAXHHR
-SLR <- met_lst$data$ID9$SLR
-##Does the thing
-wgn <- prepare_wgn(met_lst, TMP_MAX, TMP_MIN, PCP, RELHUM, WNDSPD, MAXHHR, SLR)
+  # Example usage:
+  temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+  met_lst <- load_template(temp_path, 3035)
+  # Generate WGN data
+  wgn <- prepare_wgn(met_lst,
+                     TMP_MAX = met_lst$data$ID10$TMP_MAX,
+                     TMP_MIN = met_lst$data$ID10$TMP_MIN,
+                     PCP = met_lst$data$ID9$PCP,
+                     RELHUM = met_lst$data$ID9$RELHUM,
+                     WNDSPD = met_lst$data$ID10$WNDSPD,
+                     MAXHHR = met_lst$data$ID11$MAXHHR,
+                     SLR = met_lst$data$ID9$SLR)
 }
 }
+\seealso{
+\code{\link{load_template}}
+}
+\keyword{parameters}

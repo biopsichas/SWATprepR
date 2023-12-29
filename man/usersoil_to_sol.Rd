@@ -2,27 +2,58 @@
 % Please edit documentation in R/preparing.R
 \name{usersoil_to_sol}
 \alias{usersoil_to_sol}
-\title{Convert usersoil.csv to soils.sol}
+\title{Convert 'usersoil.csv' to 'soils.sol'}
 \usage{
 usersoil_to_sol(csv_path, db_path = NULL)
 }
 \arguments{
-\item{csv_path}{character path to csv file (example "usersoil_lrew.csv"")}
+\item{csv_path}{Character, path to CSV file containing user-defined soil
+information (example "usersoil_lrew.csv").
+The CSV file should have the following columns:
+\itemize{
+\item OBJECTID: Identifier for each record.
+\item MUID: Unique identifier.
+\item SEQN: Sequence number.
+\item SNAM: Soil name.
+\item S5ID: Soil ID.
+\item CMPPCT: Component percentage.
+\item NLAYERS: Number of layers.
+\item HYDGRP: Hydrologic group.
+\item SOL_ZMX: Maximum soil depth.
+\item ANION_EXCL: Anion exclusion.
+\item SOL_CRK: Soil cracking.
+\item TEXTURE: Soil texture.
+For each available layer (up to 10 layers):
+\item SOL_Z1, SOL_BD1, SOL_AWC1, SOL_K1, SOL_CBN1, CLAY1, SILT1, SAND1, ROCK1, SOL_ALB1,
+USLE_K1, SOL_EC1, SOL_CAL1, SOL_PH1 (examples of the first layer)
+}}
 
-\item{db_path}{character to sqlite project database (example "output/project.sqlite").
-Optional, default NULL. Could be used to reduce soils.sol file, if there are less soil
-types in sqlite database than in usersoil csv file.}
+\item{db_path}{(optional) Character path to SQLite project database (example
+"output/project.sqlite"). Default \code{db_path = NULL}, which means SWAT+ model setup
+.sqlite database will not be used to reduce the size of the soils.sol file by
+leveraging information from an SQLite database if there are fewer soil types
+in the database compared to the user's soil CSV file.}
 }
 \value{
-soils.sol SWAT+ model input file
+Soils.sol file for SWAT+ model input.
 }
 \description{
-Convert usersoil.csv to soils.sol
+This function converts a user-defined soil CSV file to the soils.sol file
+required for SWAT+ model input.
 }
 \examples{
 \dontrun{
+# Convert user-defined soil CSV to soils.sol
 usersoil_to_sol("output/usersoil_lrew.csv")
-##Or
+
+# Convert using an SQLite project database to reduce the size of the soils.sol 
+file
 usersoil_to_sol("output/usersoil_lrew.csv", "output/project.sqlite")
 }
+
 }
+\seealso{
+\code{\link{get_usersoil_table}}
+For details on 'soil.sol' file read \href{https://swatplus.gitbook.io/io-docs/introduction/soils/soils.sol}{SWAT+ Soils Input}
+}
+\keyword{writing}

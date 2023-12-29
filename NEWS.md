@@ -1,7 +1,15 @@
+# SWATprepR 1.0.0
+
+* Reviewed and updated function documentation, removed deprecated functions, made internal functions invisible, updated examples, provided additional information in links, added references where needed, and connected functions with the 'See Also' section.
+* Minor bug fixes.
+
+# SWATprepR 0.1.6
+
+* Bug fixes to `prepare_ps()` and `get_soil_parameters()`.
+
 # SWATprepR 0.1.5
 
 * Bug fixes to `prepare_wgn()`, `prepare_climate()`,`load_netcdf_weather()` and other functions. 
-
 
 # SWATprepR 0.1.4
 

@@ -2,38 +2,42 @@
 % Please edit documentation in R/preparing.R
 \name{prepare_ps}
 \alias{prepare_ps}
-\title{Prepare point source data model text files.}
+\title{Prepare Point Source Data Model Text Files}
 \usage{
-prepare_ps(
-  pt_lst,
-  project_path,
-  write_path = project_path,
-  cha_shape_path = FALSE
-)
+prepare_ps(pt_lst, project_path, write_path = NULL, cha_shape_path = FALSE)
 }
 \arguments{
-\item{pt_lst}{nested list of lists with dataframes.
-Nested structure pt_lst -> data -> Dataframe (name,    DATE,    flo, ...)
-pt_lst -> st -> Dataframe (name, Lat, Long)}
+\item{pt_lst}{Nested list with dataframes.
+Nested structure: \code{pt_lst -> data -> Dataframe (name, DATE, flo, ...)},
+\code{pt_lst -> st -> Dataframe (name, Lat, Long)}.
+Additional information on the input variables, which could be used in the template
+files can be found in the SWAT+ documentation: \href{https://swatplus.gitbook.io/io-docs/introduction/point-sources-and-inlets/filename.rec}{'filename'.rec}}
 
-\item{project_path}{character, path to SWAT+ txtinout folder (example "my_model").}
+\item{project_path}{Character, path to the SWAT+ project folder (example "my_model").}
 
-\item{write_path}{character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}.}
+\item{write_path}{(optional) Character, path to SWAT+ txtinout folder (example "my_model").
+Default \code{write_path = NULL}, which is the same as \code{project_path}.}
 
-\item{cha_shape_path}{character, path to SWAT+ channel shapefile. 'id' column should be present in attributes with
-numeric values representing channel ids, the same as in 'chandeg.con' file. Optional (\code{default = FALSE}.}
+\item{cha_shape_path}{(optional) Character, path to SWAT+ channel shapefile.
+'id' column should be present in attributes with numeric values representing channel ids,
+the same as in 'chandeg.con' file. Default \code{cha_shape_path = FALSE},
+which assigns point sources to the will be assigned based on nearest center
+point in 'chandeg.con'}
 }
 \value{
-text files for SWAT+ model in write_path
+Text files for SWAT+ model in write_path.
 }
 \description{
-The function could be used to prepare the simple cases of point source data input
-with yearly values, where point sources are discharging to a single channels.
+This function prepares text files for a SWAT+ model to represent point source
+data. It is designed for simple cases with yearly values,
+where point sources discharge to a single channel.
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
-pnt_data <- load_template(temp_path)
-prepare_pt_source(pnt_data, "txtinout")
+  # Example usage:
+  temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+  pnt_data <- load_template(temp_path)
+  prepare_pt_source(pnt_data, "my_model")
 }
 }
+\keyword{writing}

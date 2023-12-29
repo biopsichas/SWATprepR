@@ -2,40 +2,58 @@
 % Please edit documentation in R/preparing.R
 \name{get_usersoil_table}
 \alias{get_usersoil_table}
-\title{Function to prepare user soil table for SWAT model}
+\title{Prepare user soil table for SWAT model}
 \usage{
 get_usersoil_table(csv_path, hsg = FALSE, keep_values = FALSE, nb_lyr = NA)
 }
 \arguments{
-\item{csv_path}{character path to csv file (example "usersoil_lrew.csv"). File should be comma separated
-with minimum columns of SNAM,    NLAYERS    and SOL_Z, CLAY, SILT, SAND, SOL_CBN for each available
-soil layer (minimum 1).}
+\item{csv_path}{Character path to the CSV file (e.g., "usersoil_lrew.csv").
+The file should be comma-separated with minimum columns of SNAM, NLAYERS,
+SOL_Z, CLAY, SILT, SAND, SOL_CBN
+for each available soil layer (minimum 1).}
 
-\item{hsg}{Boolean, TRUE - prepare soil hydrological groups, FALSE - no soil hydrological group
-preparation will be done. Optional (\code{Default = FALSE}). If \code{hsg = TRUE} three additional columns
-should be in an input table: Impervious (allowed values are "<50cm", "50-100cm", ">100cm"), Depth (allowed
-values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas,
-"N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol
+\item{hsg}{(optional) Logical, TRUE - prepare soil hydrological groups,
+FALSE - no soil hydrological group preparation will be done.
+Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns
+should be in an input table: Impervious (allowed values are "<50cm",
+"50-100cm", ">100cm"), Depth (allowed values are "<60cm", "60-100cm", ">100cm"),
+and Drained (allowed values are "Y" for drained areas, "N" for areas without
+working tile drains). More information can be found in the SWAT+ modeling protocol
 \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.}
 
-\item{keep_values}{Boolean or character vector, TRUE - keep old values (new values only will be left where 0
-or NA values are present in an input table), FALSE - keep only new values. Character vector also could be used
-to keep only specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of soil hydro groups and
-rock data for the first layer, while c("HYDGRP", "ROCK") would keep values in all rock data columns.
-Optional (\code{Default = FALSE}).}
+\item{keep_values}{(optional) Logical or character vector, TRUE - keep old values (new
+values only will be left where 0 or NA values are present in an input table),
+FALSE - keep only new values. A character vector can also be used to keep only
+specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of
+soil hydro groups and rock data for the first layer, while c("HYDGRP", "ROCK")
+would keep values in all rock data columns. Default \code{keep_values = FALSE}.}
 
-\item{nb_lyr}{integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA},
-which stands for the same number as in input data).}
+\item{nb_lyr}{(optional) Integer, the number of layers resulting user soil
+data should contain. Default \code{nb_lyr = NA}, which stands for the
+same number as in the input data.}
 }
 \value{
-dataframe with fully formatted and filled table of soil parameters for SWAT model.
+A dataframe with a fully formatted and filled table of soil parameters
+for the SWAT model.
 }
 \description{
-Function to prepare user soil table for SWAT model
+This function prepares a user soil table for the SWAT model based on the
+provided CSV file.
 }
 \examples{
 \dontrun{
-usersoils <- get_usersoil_table("table.csv")
-write.csv(usersoils, "usersoils.csv", row.names=FALSE, quote=FALSE)
+  usersoils <- get_usersoil_table("table.csv")
+  write.csv(usersoils, "usersoils.csv", row.names=FALSE, quote=FALSE)
 }
 }
+\references{
+SWAT+ Modeling Protocol: Soil Physical Data Chapter
+
+This function utilizes the PTF functions and methods described in pages 82-91.
+For detailed information, refer to: \url{https://doi.org/10.5281/zenodo.7463395}
+}
+\seealso{
+This function requires the euptf2 package.
+Please read more how to install, use and what is in it on \url{https://github.com/tkdweber/euptf2}.
+}
+\keyword{parameters}

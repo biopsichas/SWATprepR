@@ -2,23 +2,35 @@
 % Please edit documentation in R/helper.R
 \name{clean_wq}
 \alias{clean_wq}
-\title{Clean water quality data from most typical issues}
+\title{Clean water quality data from common issues}
 \usage{
 clean_wq(df, zero_to_min = 0.5)
 }
 \arguments{
-\item{df}{dataframe with water quality data with  with columns c("Station", "DATE", "Variables", "Values", "Source").}
+\item{df}{A dataframe with water quality data, including columns "Station",
+"DATE", "Variables", "Values", "Source".}
 
-\item{zero_to_min}{numeric coefficient to zeros by min variable value X zero_to_min. Optional, default 0.5.}
+\item{zero_to_min}{(optional) A numeric coefficient to replace zeros by the
+minimum variable value multiplied by zero_to_min.
+Default is \code{zero_to_min = 0.5} .}
 }
 \value{
-cleaned dataframe
+A cleaned dataframe.
 }
 \description{
-Clean water quality data from most typical issues
+This function cleans water quality data by addressing common issues.
 }
 \examples{
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-cal_data <- load_template(temp_path)
-cal_data$data <- clean_wq(cal_data$data)
+\dontrun{
+  # Load calibration data from an Excel file
+  temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
+  cal_data <- load_template(temp_path)
+  
+  # Clean water quality data
+  cal_data$data <- clean_wq(cal_data$data)
 }
+}
+\seealso{
+\code{\link{load_template}}
+}
+\keyword{cleaning}

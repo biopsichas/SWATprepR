@@ -2,29 +2,36 @@
 % Please edit documentation in R/plotting.R
 \name{plot_fractions}
 \alias{plot_fractions}
-\title{Plot regression and fractions for each month between parts of nutrient and total}
+\title{Plot Regression and Fractions for Each Month}
 \usage{
 plot_fractions(df, station, total_var, min_vars)
 }
 \arguments{
-\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed).}
+\item{df}{Dataframe with formatted data (requires "Station", "DATE",
+"Variables", and "Values" columns).}
 
-\item{station}{character vector indicating station/s, which should be selected for figure.}
+\item{station}{Character vector indicating the station/s to be selected for
+the figure.}
 
-\item{total_var}{character vector for variable selected to represent total of certain variable.}
+\item{total_var}{Character vector for the variable selected to represent the
+total of a certain nutrient.}
 
-\item{min_vars}{character vector for variable/s selected to represent mineral or organic of certain variable.}
+\item{min_vars}{Character vector for the variable/s selected to represent the
+mineral or organic fraction of a certain nutrient.}
 }
 \value{
-list of two ggplot objects: regression - monthly regression plots for total vs some part
-(i.e. mineral or organic), fraction - monthly fraction values.
+A list of two ggplot objects: "regression" for monthly regression
+plots and "fraction" for monthly fraction values.
 }
 \description{
-Plot regression and fractions for each month between parts of nutrient and total
+This function generates two sets of plots for monthly regression and fractions
+between nutrient parts and the total.
 }
 \examples{
+# Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 plot_fractions(cal_data$data, c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
 }
+\keyword{plotting}

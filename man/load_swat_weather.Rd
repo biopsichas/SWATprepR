@@ -2,22 +2,28 @@
 % Please edit documentation in R/loading.R
 \name{load_swat_weather}
 \alias{load_swat_weather}
-\title{Loading SWAT+ weather files to R}
+\title{Load SWAT+ weather text files into R}
 \usage{
 load_swat_weather(input_folder)
 }
 \arguments{
-\item{input_folder}{character, path to folder with SWAT+ weather input files (example "my_model").}
+\item{input_folder}{character, path to folder with SWAT+ weather input files
+(e.g., "my_model").}
 }
 \value{
-nested list of lists with dataframes. Nested structure list -> stations,
-list -> Variable -> Dataframe (DATE, VARIABLE).
+A nested list of lists with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.
 }
 \description{
-Loading SWAT+ weather files to R
+This function reads SWAT+ weather input files from a specified folder into R,
+organizing the data into a nested list structure for easy access and analysis.
 }
 \examples{
 \dontrun{
-met_lst <- load_swat_weather("my_folder")
+  met_lst <- load_swat_weather("my_folder")
 }
 }
+\keyword{loading}

@@ -1,14 +1,20 @@
 
 # Loading templates --------------------------------------------------------------------
 
-#' Function providing loading for data templates (with single and multiple data sheets)
-#' (data should have been cleaned before).
+#' Load Data Templates
 #'
-#' @param template_path path to *.xlsx file. 
-#' @param epsg_code EPSG code for station coordinates (default 4326 for WGS 84 coordinate system)  system
-#' @return list of two: stations dataframe, which contains station information,  
-#' second member of list contains contains measurement data in dataframe (if data is in one sheet)
-#' or nested list of dataframes with each parameter in separate dataframe. 
+#' This function facilitates the loading of data templates, which include 
+#' both station information and measurement data. The provided data should 
+#' be pre-cleaned.
+#'
+#' @param template_path Character, the path to the *.xlsx file containing the data template.
+#' @param epsg_code (optional) Integer, EPSG code for station coordinates. 
+#' Default \code{epsg_code = 4326}, which stands for WGS 84 coordinate system.
+#' @return A nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
 #' @importFrom dplyr mutate %>%
 #' @importFrom readxl read_xlsx excel_sheets
 #' @importFrom tidyr drop_na
@@ -16,16 +22,17 @@
 #' @export 
 #'
 #' @examples
-#' ##Two types of templates could be used
+#' ## Two types of templates could be used
 #' # 1) Example of template for weather data
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
 #' str(met_lst)
+#' 
 #' ## 2) Example of template for calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' str(cal_data)
-
+#' @keywords loading
 
 load_template <- function(template_path, epsg_code = 4326){
   print("Loading data from template.")
@@ -170,12 +177,12 @@ load_climate <- function(f_path, f_lst = list("PCP" = "prec-1", "SLR" = "solarRa
 #' @importFrom dplyr %>% mutate across all_of bind_rows
 #' @importFrom purrr map map_lgl map_df set_names
 #' @return dataframe with information from text file
-#' @export
 #' 
 #' @examples
 #' \dontrun{
 #' df <- read_tbl('rout_unit.con', 'model_folder', 3, 2) 
 #' }
+#' @keywords internal
 
 read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2) {
   tbl_path <- paste(proj_path, tbl_name, sep = '/')
@@ -214,103 +221,13 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
   return(tbl)
 }
 
-#' Loading SWAT+ weather files to R
+#' Load SWAT+ weather text files into R
+#' 
+#' This function reads SWAT+ weather input files from a specified folder into R,
+#' organizing the data into a nested list structure for easy access and analysis.
 #'
-#' @param input_folder character, path to folder with SWAT+ weather input files (example "my_model").
-#' @importFrom sf st_as_sf
-#' @importFrom stringr str_extract
-#' @importFrom dplyr bind_rows mutate select 
-#' @importFrom stats setNames
-#' @return nested list of lists with dataframes. Nested structure list -> stations, 
-#' list -> Variable -> Dataframe (DATE, VARIABLE).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' met_lst <- load_swat_weather("my_folder")
-#' }
-
-load_swat_weather <- function(input_folder){
-  .Deprecated("load_swat_weather")
-  print(paste0("Loading of SWAT+ weather data is started from ", input_folder, " directory."))
-  ##Identifying all weather files
-  fs <- list.files(input_folder, recursive = F, pattern="*.pcp|*.slr|*.hmd|*.tmp|*.wnd")
-  if(length(fs)==0){
-    stop(paste0("No SWAT+ weather files have been found in ", input_folder, " directory!!!"))
-  }
-  ##Preparing list and dics required for loop
-  rlist <- list() ##resulting nested list of lists
-  stations <- NULL ##dataframe for station data
-  p_lst <- list("pcp" = c("PCP"), 
-                "slr" = c("SLR"), 
-                "hmd" = c("RELHUM"), 
-                "tmp" = c("TMP_MAX", "TMP_MIN"), 
-                "wnd" = c("WNDSPD")) ##Parameters dics
-  s_info <- unlist(strsplit(input_folder, "/")) ##source information 
-  s_info <- paste0(s_info[c(length(s_info)-1, length(s_info))], collapse = '/')
-  nb <- length(fs)
-  ##Main loop
-  for (i in seq(1,nb)){
-    ##Getting variable type
-    f_type <- p_lst[sub(".*\\.", "", fs[i])][[1]]
-    ##Loading data from text file
-    df <- read_tbl(fs[i], input_folder)
-    ##Getting station ID and saving it into dafaframe
-    id <- str_extract(toupper(fs[i]), "ID([\\d]+)")
-    if(!is.na(id)){
-      st_info <- data.frame(ID = id)
-    } else {
-      if(!is.null(stations)){
-        st_info <- data.frame(ID = max(as.numeric(str_extract(stations$ID, "(?<=ID)\\d+")))+1)
-      } else {
-        st_info <- data.frame(ID = 1)
-      }
-      id <- st_info$ID
-    }
-    ##Filling station information for the file laoded
-    st_info[c("Name", "Elevation", "Source", "Long", "Lat")] <- list(gsub("\\..*","",fs[i]), 
-                                                                     as.numeric(df[[1,"elev"]]), 
-                                                                     s_info, 
-                                                                     as.numeric(df[[1,"lon"]]),  
-                                                                     as.numeric(df[[1,"lat"]]))
-    st_info <- st_as_sf(st_info, coords = c("Long", "Lat"), crs = 4326, remove = F) 
-    ##Checking is station information alreade in stations dataframe
-    if(!st_info$geometry %in% stations$geometry){
-      if(!is.null(stations)){
-        stations <- bind_rows(stations, st_info)
-      } else {
-        stations <- st_info
-      }
-    }
-    ##Identifying if file is for temperature or other parameters, processing and saving time series data
-    if(length(f_type)==1){
-      ts <- df[2:dim(df)[1], 1:3] %>% 
-        mutate(DATE = as.POSIXct(strptime(paste(nbyr, tstep), format="%Y %j", tz = "UTC"))) %>% 
-        select(DATE, lat) %>% 
-        setNames(c("DATE",f_type)) 
-      ##If PCP below 0.2, than 0
-      if(f_type == "PCP" && min(ts[["PCP"]], na.rm = TRUE) < 0.2){
-        ts$PCP <- ifelse(ts[["PCP"]] < 0.2, 0, ts[["PCP"]])
-      }
-      rlist[[id]][[f_type]] <- ts
-    } else if(length(f_type)==2){
-      ts <- df[2:dim(df)[1], 1:4] %>% 
-        mutate(DATE = as.POSIXct(strptime(paste(nbyr, tstep), format="%Y %j", tz = "UTC"))) %>% 
-        select(DATE, lat, lon) %>% 
-        setNames(c("DATE",f_type)) 
-      rlist[[id]][[f_type[1]]] <- ts[,c("DATE", f_type[1])]
-      rlist[[id]][[f_type[2]]] <- ts[,c("DATE", f_type[2])]
-    }
-    cat("\014")
-    print(paste0(format(round(100*i/nb, 2), nsmall = 2), "% of data are loaded."))
-  }
-  print("Data loading finished succesfully.")
-  return(list(stations = stations, data = rlist))
-}
-
-#' Loading SWAT+ weather files to R (>20 times faster version)
-#'
-#' @param input_folder character, path to folder with SWAT+ weather input files (example "my_model").
+#' @param input_folder character, path to folder with SWAT+ weather input files 
+#' (e.g., "my_model").
 #' @importFrom sf st_as_sf
 #' @importFrom purrr map pmap map_df map2
 #' @importFrom vroom vroom_lines
@@ -318,16 +235,21 @@ load_swat_weather <- function(input_folder){
 #' @importFrom dplyr bind_rows mutate select group_by ungroup everything
 #' @importFrom tibble enframe
 #' @importFrom tidyr unnest spread
-#' @return nested list of lists with dataframes. Nested structure list -> stations, 
-#' list -> Variable -> Dataframe (DATE, VARIABLE).
+#' @return 
+#' A nested list of lists with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' met_lst <- load_swat_weather2("my_folder")
+#'   met_lst <- load_swat_weather("my_folder")
 #' }
+#' @keywords loading
 
-load_swat_weather2 <- function(input_folder){
+load_swat_weather <- function(input_folder){
   ##Set function execution timer
   start_t <- Sys.time()
   print(paste0("Loading of SWAT+ weather data is started from ", input_folder, " directory."))
@@ -426,27 +348,46 @@ load_swat_weather2 <- function(input_folder){
 
 #' Extract EMEP atmospheric deposition data for a catchment
 #'
-#' @param catchment_boundary_path path to basin boundary shape file.
-#' @param t_ext string, which EMEP data to access 'year' for yearly averages, 'month' - monthly averages. Optional (default - 'year').
-#' @param start_year integer year to start data extraction. Optional (default - 1990).
-#' @param end_year integer year to end data extraction. Optional (default - 2020).
+#' This function extracts EMEP atmospheric deposition data averaged for 
+#' a specified catchment.
+#'
+#' @param catchment_boundary_path Path to the basin boundary shape file.
+#' @param t_ext (optional) String, specifying the EMEP data to access. 
+#'   'year' for yearly averages, 'month' for monthly averages. Default 
+#'   \code{t_ext = 'year'}.
+#' @param start_year (optional) Integer representing the starting year for data
+#'  extraction. Default \code{start_year = 1990}.
+#' @param end_year Integer representing the ending year for data extraction. 
+#' Default \code{end_year = 2020}.
 #' @importFrom sf st_transform st_read st_bbox
 #' @importFrom RNetCDF open.nc var.get.nc
 #' @importFrom dplyr bind_rows
-#' @return dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns. Values in SWAT+ units.
-#' "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in rainfall (mg/l), 
-#' NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition (kg/ha/yr)
+#' @return A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and 
+#' "NO3_DRY". 
+#'   Values are in SWAT+ units.
+#'   "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in 
+#'   rainfall (mg/l), 
+#'   NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition 
+#'   (kg/ha/yr).
 #' @export 
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-#' df <- get_atmo_dep(basin_path)
-#' ##Plot results
-#' ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+
-#' geom_line()+
-#' facet_wrap(~par, scales = "free_y")+
-#' theme_bw()
+#'   # Specify the path to the basin boundary shape file
+#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+#'   
+#'   # Get atmospheric deposition data for the catchment
+#'   df <- get_atmo_dep(basin_path)
+#'   
+#'   # Plot results
+#'   ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), 
+#'   aes(x = DATE, y = values))+
+#'     geom_line()+
+#'     facet_wrap(~par, scales = "free_y")+
+#'     theme_bw()
 #' }
+#' @references 
+#' See the EMEP website for more information: \url{https://www.emep.int/mscw/mscw_moddata.html}
+#' @keywords loading
 
 get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2020){
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
@@ -521,31 +462,46 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   return(df[c("DATE", "NH4_RF", "NO3_RF" , "NH4_DRY", "NO3_DRY")])
 }
 
-#' Extract climate data into nested list of lists 
+#' Extract Climate Data from CORDEX NetCDF into Nested List of Lists 
 #'
-#' @param dir_path character, path to CORDEX-BC folder (example climate/CORDEX-BC").
-#' @param location character or list. In case of character, path should be provided to 
-#' catchment boundary file (example GIS/basin.shp). In case of list, nested list of lists 
-#' with dataframes. Nested structure meteo_lst -> data -> Station ID -> Parameter -> 
-#' Dataframe (DATE, PARAMETER). List of list could be obtained using \code{load_template()}
-#' with prepared excel template.
+#' This function extracts climate data from the CORDEX-BC dataset and organizes 
+#' it into a nested list of lists.
+#'
+#' @param dir_path Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
+#' NefCDF data to be recognized by function should be saved with these file names:
+#'  "prec.nc" (precipitation), "relHum.nc" (relative humidity), "solarRad.nc" 
+#'  (solar radiation), "Tmax.nc" (maximum daily temperature), "Tmin.nc" 
+#'  (minimum daily temperature), "windSpeed.nc" (wind speed).
+#' @param location Character or list. If character, provide the path to the catchment 
+#'   boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with 
+#'   dataframes. The nested structure is same as prepared by 
+#'   using \code{load_template()} function.
 #' @importFrom elevatr get_elev_point
 #' @importFrom sf st_read st_transform st_as_sf st_crs st_overlaps st_centroid
 #' @importFrom raster brick rasterToPolygons extract
 #' @importFrom dplyr select rename mutate 
 #' @importFrom tidyr drop_na
 #' @importFrom purrr map
-#' @return Nested lists of lists. First nesting level is for RCP, second for RCM model numbers,
-#' the rest is the same as in meteo_lst. This part could be used with other package functions 
-#' (example  plot_weather(result$rcp26$"1"), "PCP", "month", "sum").
+#' @return Nested list. The first nesting level is for RCP, the second for RCM model numbers,
+#'   and the rest follows the structure of meteo_lst. Nested structure: \code{meteo_lst -> 
+#'   data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, geometry, 
+#'   Long, Lat)}. This nested list structure can be used with 
+#'   other package functions (e.g., \code{plot_weather(result$rcp26$"1", "PCP", "month", "sum")}).
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
-#' data_path <- "climate/CORDEX-BC"
-#' result <- load_netcdf_weather(data_path, basin_path)
+#'   # Specify the path to the catchment boundary file
+#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
+#'   
+#'   # Specify the path to the CORDEX-BC data
+#'   data_path <- "climate/CORDEX-BC"
+#'   
+#'   # Extract and organize climate data
+#'   result <- load_netcdf_weather(data_path, basin_path)
 #' }
+#' @keywords loading
 
 load_netcdf_weather <- function(dir_path, location){
   ##Checking inputs

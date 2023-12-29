@@ -2,30 +2,38 @@
 % Please edit documentation in R/plotting.R
 \name{plot_weather}
 \alias{plot_weather}
-\title{Prepare the plotly figure for weather data}
+\title{Prepare Plotly Figure for Weather Data}
 \usage{
 plot_weather(meteo_lst, par, period = "day", fn_summarize = "mean")
 }
 \arguments{
-\item{meteo_lst}{nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
+\item{meteo_lst}{A nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{par}{character marking weather variable to extract (i.e. "PCP", "SLR", etc).}
+\item{par}{Character, the weather variable to extract (e.g., "PCP", "SLR").}
 
-\item{period}{character describing, which time interval to display (default is "day",
-other examples are "week", "month", etc).}
+\item{period}{(optional) Character describing the time interval to display.
+Default \code{period = "day"}, other examples are "week", "month", "year".
+See \href{https://www.rdocumentation.org/packages/lubridate/versions/1.3.3/topics/floor_date}{lubridate::floor_date} for details.}
 
-\item{fn_summarize}{function to recalculate to time interval (default is "mean", other examples
-are "median", "sum", etc).}
+\item{fn_summarize}{(optional) Function to recalculate to the specified time interval.
+Default \code{fn_summarize ="mean"}, other examples are "median", "sum".
+See \href{https://dplyr.tidyverse.org/reference/summarise.html}{dplyr::summarise} for details.}
 }
 \value{
-plotly figure object with displayed weather data
+Plotly figure object with displayed weather data.
 }
 \description{
-Prepare the plotly figure for weather data
+This function generates a Plotly figure for weather data visualization based
+on user-defined parameters.
 }
 \examples{
+library(SWATprepR)
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 4326)
 plot_weather(met_lst, "PCP", "month", "sum")
 }
+\keyword{plotting}

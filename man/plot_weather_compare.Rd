@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{plot_weather_compare}
 \alias{plot_weather_compare}
-\title{Plotting figure to comparing two datasets with weather data}
+\title{Plotting Figure to Compare Two Datasets with Weather Data}
 \usage{
 plot_weather_compare(
   meteo_lst1,
@@ -15,34 +15,43 @@ plot_weather_compare(
 )
 }
 \arguments{
-\item{meteo_lst1}{first nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
+\item{meteo_lst1}{First nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{meteo_lst2}{second nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
+\item{meteo_lst2}{Second nested list with dataframes. Same structure as \code{meteo_lst1}.}
 
-\item{par}{character marking weather variable to extract (i.e. "PCP", "SLR", etc).}
+\item{par}{Character vector, weather variable to extract (e.g., "PCP", "SLR").}
 
-\item{period}{character describing, which time interval to display (default is "day",
-other examples are "week", "month", etc).}
+\item{period}{(optional) Character, the time interval to display. Default
+\code{period = "day"}, , other examples are "week", "month", "year".
+See \href{https://www.rdocumentation.org/packages/lubridate/versions/1.3.3/topics/floor_date}{lubridate::floor_date} for details.}
 
-\item{fn_summarize}{function to recalculate to time interval (default is "mean", other examples
-are "median", "sum", etc).}
+\item{fn_summarize}{(optional) Function to recalculate to the specified time interval.
+Default \code{fn_summarize ="mean"}, other examples are "median", "sum".
+See \href{https://dplyr.tidyverse.org/reference/summarise.html}{dplyr::summarise} for details.}
 
-\item{name_set1}{character to name first dataset.}
+\item{name_set1}{(optional) Character, to name the first dataset. Default
+\code{name_set1 = "dataset 1"}.}
 
-\item{name_set2}{character to name second dataset.}
+\item{name_set2}{(optional) Character, to name the second dataset. Default
+\code{name_set2 = "dataset 2"}.}
 }
 \value{
-plotly figure object with displayed weather data for two datasets.
+Plotly figure object with displayed weather data for two datasets.
 }
 \description{
-Plotting figure to comparing two datasets with weather data
+This function generates a Plotly figure to compare weather data between two datasets based on user-defined parameters.
 }
 \examples{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-met_lst1 <- load_template(temp_path, 4326)
-temp_path <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATprepR")
-met_lst2 <- load_template(temp_path, 4326)
+##Loading data
+temp_path1 <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+met_lst1 <- load_template(temp_path1)
+temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATprepR")
+met_lst2 <- load_template(temp_path2)
+##Plotting
 plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
 }
+\keyword{plotting}

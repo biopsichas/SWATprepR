@@ -2,33 +2,38 @@
 % Please edit documentation in R/loading.R
 \name{load_template}
 \alias{load_template}
-\title{Function providing loading for data templates (with single and multiple data sheets)
-(data should have been cleaned before).}
+\title{Load Data Templates}
 \usage{
 load_template(template_path, epsg_code = 4326)
 }
 \arguments{
-\item{template_path}{path to *.xlsx file.}
+\item{template_path}{Character, the path to the *.xlsx file containing the data template.}
 
-\item{epsg_code}{EPSG code for station coordinates (default 4326 for WGS 84 coordinate system)  system}
+\item{epsg_code}{(optional) Integer, EPSG code for station coordinates.
+Default \code{epsg_code = 4326}, which stands for WGS 84 coordinate system.}
 }
 \value{
-list of two: stations dataframe, which contains station information,
-second member of list contains contains measurement data in dataframe (if data is in one sheet)
-or nested list of dataframes with each parameter in separate dataframe.
+A nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.
 }
 \description{
-Function providing loading for data templates (with single and multiple data sheets)
-(data should have been cleaned before).
+This function facilitates the loading of data templates, which include
+both station information and measurement data. The provided data should
+be pre-cleaned.
 }
 \examples{
-##Two types of templates could be used
+## Two types of templates could be used
 # 1) Example of template for weather data
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
 str(met_lst)
+
 ## 2) Example of template for calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 str(cal_data)
 }
+\keyword{loading}

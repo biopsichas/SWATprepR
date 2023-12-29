@@ -2,30 +2,43 @@
 % Please edit documentation in R/helper.R
 \name{clean_outliers}
 \alias{clean_outliers}
-\title{Function to clean outliers outside by some standard deviations}
+\title{Clean outliers outside specified standard deviations}
 \usage{
 clean_outliers(df, times_sd = 3)
 }
 \arguments{
-\item{df}{dataframe with columns c("Station", "DATE", "Variables", "Values", "Source").}
+\item{df}{A dataframe with columns "Station", "DATE", "Variables", "Values",
+"Source". The "Variables" column should contain the names of the variables.}
 
-\item{times_sd}{numeric value representing multiplication factor for standard deviation.
-Values outside mean - sd X times_sd, mean + sd X times_sd are identified as outliers.
-Optional with default value 3.}
+\item{times_sd}{(optional) A numeric value representing the multiplication factor for
+standard deviation. Values outside mean - sd X times_sd and mean + sd X
+times_sd are identified as outliers. Default \code{times_sd = 3}.}
 }
 \value{
-list of two dataframes. \emph{newdf} dataframe contains dataframe cleaned from outliers.
-\emph{dropped}  dataframe contains data, which was removed from \emph{newdf} dataframe.
+A list of two dataframes.
+\emph{newdf} contains the dataframe cleaned from outliers.
+\emph{dropped} contains the data that was removed from \emph{newdf}.
 }
 \description{
-Function to clean outliers outside by some standard deviations
+This function cleans outliers from a dataframe based on some standard deviations.
 }
 \examples{
-temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
-cal_data <- load_template(temp_path)
-lst <- clean_outliers(cal_data$data)
-##Looking at data to be removed
-print(head(lst$dropped))
-##Updating data
-cal_data$data <- lst$newdf
+\dontrun{
+  # Load calibration data from an Excel file
+  temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
+  cal_data <- load_template(temp_path)
+  
+  # Clean outliers from the data
+  lst <- clean_outliers(cal_data$data)
+  
+  # Display data to be removed
+  print(head(lst$dropped))
+  
+  # Update the original data with cleaned data
+  cal_data$data <- lst$newdf
 }
+}
+\seealso{
+\code{\link{load_template}}
+}
+\keyword{cleaning}

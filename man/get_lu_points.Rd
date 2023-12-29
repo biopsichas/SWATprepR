@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{get_lu_points}
 \alias{get_lu_points}
-\title{Preparing training points for remote sensing algorithm}
+\title{Prepare training points for remote sensing algorithm}
 \usage{
 get_lu_points(
   df,
@@ -14,39 +14,52 @@ get_lu_points(
 )
 }
 \arguments{
-\item{df}{sf data.frame with land use. "type" column should be present.}
+\item{df}{An sf data.frame with land use. The "type" column should be present.}
 
-\item{year}{numeric value, year of land use.}
+\item{year}{A numeric value representing the year of land use.}
 
-\item{lookup}{dataframe with "lc1" column for numeric codes and "type" column
-for text.}
+\item{lookup}{A dataframe with a "lc1" column for numeric codes and a "type"
+column for text.}
 
-\item{lu_constant}{vector of strings with land uses to be kept constant in
-land use (i.e. water, urban areas, etc.)}
+\item{lu_constant}{(optional) A vector of strings with land uses to be kept constant in
+land use (e.g., water, urban areas, etc.). Default \code{lu_constant = c()}.}
 
-\item{nb_pts}{numeric, number of points per land use/crop class. Optional, default 100.}
+\item{nb_pts}{(optional) A numeric value representing the number of points per land use/crop
+class. Default \code{nb_pts = 100}.}
 
-\item{col_name}{string with name of column to be used representing type of crops/land use.
-Optional, default "type".}
+\item{col_name}{A string with the name of the column to be used representing
+the type of crops/land use. Default \code{col_name = "type"}.}
 }
 \value{
-sf data.frame with point input for remote sensing training algorithm.
+An sf data.frame with point input for a remote sensing training algorithm.
 }
 \description{
-Preparing training points for remote sensing algorithm
+This function prepares training points for a remote sensing algorithm based on
+land use and crop classes.
 }
 \examples{
 \dontrun{
-library(sf)
-##Loading land use/crop layer
-lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
-lu <- st_read(lu_path,  quiet = TRUE)
-##Preparing lookup table
-lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
-type = unique(c(lu$type)))
-lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
-"wetl", "past", "watr", "agrl")
-##Getting training points
-pts <- get_lu_points(lu, 2021, lookup, lu_constant)
+  library(sf)
+  
+  # Loading land use/crop layer
+  lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
+  lu <- st_read(lu_path, quiet = TRUE)
+  
+  # Preparing lookup table
+  lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
+                       type = unique(c(lu$type)))
+                       
+  # Setting land uses to be kept constant
+  lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
+                   "wetl", "past", "watr", "agrl")
+  
+  # Getting training points
+  pts <- get_lu_points(lu, 2021, lookup, lu_constant)
 }
 }
+\references{
+Mészáros, J., & Szabó, B. (2022). Script to derive and apply crop
+classification based on Sentinel 1 satellite radar images in Google Earth
+Engine platform. \url{https://doi.org/10.5281/zenodo.6700122}
+}
+\keyword{remote-sensing}

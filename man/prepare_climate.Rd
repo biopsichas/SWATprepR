@@ -2,31 +2,39 @@
 % Please edit documentation in R/preparing.R
 \name{prepare_climate}
 \alias{prepare_climate}
-\title{Function to prepare or update climate data text input files in SWAT+ model}
+\title{Prepare or Update Climate Data Text Input Files in SWAT+ Model}
 \usage{
 prepare_climate(meteo_lst, write_path, period_starts = NA, period_ends = NA)
 }
 \arguments{
-\item{meteo_lst}{meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst}{Nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{write_path}{character, path to SWAT+ txtinout folder (example "my_model").}
+\item{write_path}{Character, path to the SWAT+ txtinout folder (example "my_model").}
 
-\item{period_starts}{character, date string (example '1991-01-01'). Optional (\code{default = NA},
-stands for all available in data).}
+\item{period_starts}{(optional) Character, date string (example '1991-01-01').
+Default \code{period_starts = NA}, stands for all available in data.}
 
-\item{period_ends}{character, date string (example '2020-12-31'). Optional (\code{default = NA},
-stands for all available in data).}
+\item{period_ends}{(optional) Character, date string (example '2020-12-31').
+Default \code{period_ends = NA}, stands for all available in data.}
 }
 \value{
-Fill or update multiple weather related weather text files.
+Fills or updates multiple weather-related text files in the SWAT+ model.
 }
 \description{
-Function to prepare or update climate data text input files in SWAT+ model
+This function prepares or updates climate data text input files in a SWAT+
+model based on the provided meteo_lst.
 }
 \examples{
 \dontrun{
-prepare_climate(meteo_lst, "output", "1991-01-01", "2020-12-31")
+  # Example usage:
+  prepare_climate(meteo_lst, "output", "1991-01-01", "2020-12-31")
 }
 }
+\seealso{
+\code{\link{load_template}}
+}
+\keyword{writing}

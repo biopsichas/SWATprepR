@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{plot_wgn_comparison}
 \alias{plot_wgn_comparison}
-\title{Plot wgn parameters comparison}
+\title{Plot WGN Parameters Comparison}
 \usage{
 plot_wgn_comparison(
   meteo_lst1,
@@ -15,36 +15,41 @@ plot_wgn_comparison(
 )
 }
 \arguments{
-\item{meteo_lst1}{first nested list of lists with dataframes.
-meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst1}{First nested list with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{meteo_lst2}{second nested list of lists with dataframes.
-meteo_lst nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).}
+\item{meteo_lst2}{Second nested list with dataframes. Same structure as
+\code{meteo_lst1}.}
 
-\item{station1}{character, id of one station in the first list selected for comparison (example "ID1").}
+\item{station1}{Character, ID of one station in the first list selected for
+comparison (example "ID1").}
 
-\item{station2}{character, id of one station in the second list selected for comparison (example "ID1").}
+\item{station2}{Character, ID of one station in the second list selected for
+comparison (example "ID1").}
 
-\item{type1}{character, naming of the first dataset (example "measured").}
+\item{type1}{(optional) Character, naming of the first dataset
+(example "measured"). Default \code{type1 = "set 1"}.}
 
-\item{type2}{character, naming of the second dataset (example "netCDF").}
+\item{type2}{(optional) Character, naming of the second dataset
+(example "netCDF"). Default \code{type2 = "set 2"}.}
 
-\item{title}{character, information to be added in figure title}
+\item{title}{(optional) Character, information to be added in the figure title.
+Default \code{title = "comparison"}.}
 }
 \value{
-ggplot figure of bar plots
+ggplot figure of bar plots.
 }
 \description{
-Plot wgn parameters comparison
+This function generates a ggplot figure for comparing WGN parameters between two datasets for specified stations.
 }
 \examples{
-\dontrun{
+##Loading data
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-met_lst <- load_template(temp_path, 4326)
+met_lst <- load_template(temp_path)
+##Plotting
 plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
 }
-}
+\keyword{plotting}

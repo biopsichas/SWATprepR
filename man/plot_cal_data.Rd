@@ -2,26 +2,31 @@
 % Please edit documentation in R/plotting.R
 \name{plot_cal_data}
 \alias{plot_cal_data}
-\title{Plotting calibration data}
+\title{Plot Calibration Data}
 \usage{
-plot_cal_data(df, stations, variables = levels(as.factor(df$Variables)))
+plot_cal_data(df, stations, variables = NULL)
 }
 \arguments{
-\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed)}
+\item{df}{Dataframe with formatted data (requires "Station", "DATE", "
+Variables", and "Values" columns).}
 
-\item{stations}{character vector listing stations, which should be selected for figure.}
+\item{stations}{Character vector listing stations to be selected for the figure.}
 
-\item{variables}{optional parameter of character vector, which parameters should be in figure.}
+\item{variables}{(Optional) Character vector specifying which parameters
+should be included in the figure. Default \code{variables = NULL}, all available
+variables will be plotted.}
 }
 \value{
-plotly object of interactive figure.
+Plotly object of an interactive figure.
 }
 \description{
-Plotting calibration data
+This function generates an interactive plot of calibration data based on the
+provided data.
 }
 \examples{
+# Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
-plot_cal_data(cal_data$data, stations = c("1", "2", "3","10"), variables =
-c("PT", "Q"))
+plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "Q"))
 }
+\keyword{plotting}

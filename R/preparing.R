@@ -103,30 +103,48 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
   return(meteo_pts)
 }
 
-#' Interpolating and writing results into model input files
+#' Interpolate Weather Data 
 #'
-#' @param meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' @param catchment_boundary_path path to basin boundary shape file.
-#' @param dem_data_path path to DEM raster data in same projection as weather station.
-#' @param grid_spacing numeric value for distance in grid. Units of coordinate system should be used.
-#' @param p_vector character vector representing weather variables to interpolate (optional, default all variables selected 
-#' c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ).
-#' @param idw_exponent numeric value for exponent parameter to be used in interpolation 
-#' (optional, default value is 2).
+#' This function interpolates weather data for a SWAT model and saves results 
+#' into nested list format
+#'
+#' @param meteo_lst A nested list of lists with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param catchment_boundary_path Character, path to the basin boundary shape file.
+#' @param dem_data_path Character, path to DEM raster data in the same projection 
+#' as the weather station.
+#' @param grid_spacing Numeric, value for the distance between grid points. 
+#'   Units of the coordinate system should be used.
+#' @param p_vector (optional) Character vector representing weather variables to 
+#' interpolate. Default is all variables selected 
+#' \code{p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN")}.
+#' @param idw_exponent (optional) Numeric value for the exponent parameter to 
+#' be used in interpolation. Default \code{idw_exponent = 2}.
 #' @importFrom sf st_zm st_bbox st_read st_crs st_transform
-#' @return nested list of lists with dataframes for interpolation results.
-#' Nested structure lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER). 
-#' Function also writes all SWAT weather text input files from the interpolation results.
+#' @return A nested list of lists with interpolation results.
+#'    A nested list of lists with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
 #' @export
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#' DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-#' met_lst <- load_template(temp_path, 3035)
-#' interpolate(met_lst, basin_path, DEM_path, 2000) 
+#'   # Specify paths to weather  data, basing shapeand DEM
+#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#'   DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+#'
+#'   # Load weather data template
+#'   met_lst <- load_template(temp_path, 3035)
+#'
+#'   # Interpolate and write SWAT model input files
+#'   interpolate(met_lst, basin_path, DEM_path, 2000) 
 #' }
+#' @keywords gap-filling
 
 interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_spacing, 
                         p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN"), idw_exponent = 2){
@@ -169,23 +187,32 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 
 # Weather data -----------------------------------------------
 
-#' Filling missing variables from the closest stations, which has data. 
+#' Fill missing variables from the closest stations with available data
 #'
-#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param par_fill vector of variables to be filled. Optional (default is c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")).
+#' This function fills missing variables by interpolating values from the 
+#' closest stations that have data.
+#'
+#' @param meteo_lst A nested list of lists with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}.
+#'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param par_fill (optional) A vector of variables to be filled. Default is 
+#' \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.
 #' @importFrom sf st_distance
 #' @importFrom dplyr filter %>% 
-#' @return list of dataframe with filled data. Returned list is for meteo_lst$data.
-#' @export
+#' @return A list of dataframes with filled data. Updated list is for meteo_lst$data.
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#' met_lst <- load_template(temp_path, 3035)
-#' met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
+#'   # Load weather data from an Excel file
+#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#'   met_lst <- load_template(temp_path, 3035)
+#'   
+#'   # Fill for missing variables
+#'   met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
 #' }
+#' @keywords internal
 
 fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")){
   ##Initializing vectors, lists
@@ -221,46 +248,69 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
   return(df_list)
 }
 
-#' Function to generate wgn data for the model
+#' Generate Weather Generator (WGN) Data for SWAT+ Model
 #'
-#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param TMP_MAX dataframe with two columns: DATE : POSIXct, TMP_MAX : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if TMP_MAX variable is missing for a station.  
-#' @param TMP_MIN dataframe with two columns: DATE : POSIXct, TMP_MIN : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if TMP_MIN is missing for a station.
-#' @param PCP dataframe with two columns: DATE : POSIXct, PCP : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if PCP is missing for a station.
-#' @param RELHUM dataframe with two columns: DATE : POSIXct, RELHUM : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if RELHUM is missing for a station.
-#' @param WNDSPD dataframe with two columns: DATE : POSIXct, WNDSPD : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if WNDSPD is missing for a station.
-#' @param MAXHHR dataframe with two columns: DATE : POSIXct, MAXHHR : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if MAXHHR is missing for a station.
-#' @param SLR dataframe with two columns: DATE : POSIXct, SLR : num. Optional (default NULL).
-#' This parameter refers to data, which should be used instead, if SLR is missing for a station.
+#' This function generates weather generator (WGN) data for a SWAT+ model 
+#' based on meteorological data.
+#'
+#' @param meteo_lst Nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param TMP_MAX (optional) Dataframe with two columns: DATE : POSIXct, TMP_MAX : num. 
+#' This parameter refers to data, which should be used instead if TMP_MAX variable 
+#' is missing for a station.  Default \code{TMP_MAX = NULL}, data of the closest 
+#' station with data will be used. 
+#' @param TMP_MIN (optional) Dataframe with two columns: DATE : POSIXct, TMP_MIN : num. 
+#'   This parameter refers to data, which should be used instead if TMP_MIN variable 
+#'   is missing for a station. Default \code{TMP_MIN = NULL}, indicating that data of the closest 
+#'   station with data will be used.
+#' @param PCP (optional) Dataframe with two columns: DATE : POSIXct, PCP : num. 
+#'   This parameter refers to data, which should be used instead if PCP variable 
+#'   is missing for a station. Default \code{PCP = NULL}, indicating that data of the closest 
+#'   station with data will be used.
+#' @param RELHUM (optional) Dataframe with two columns: DATE : POSIXct, RELHUM : num. 
+#'   This parameter refers to data, which should be used instead if RELHUM variable 
+#'   is missing for a station. Default \code{RELHUM = NULL}, indicating that data of the closest 
+#'   station with data will be used.
+#' @param WNDSPD (optional) Dataframe with two columns: DATE : POSIXct, WNDSPD : num. 
+#'   This parameter refers to data, which should be used instead if WNDSPD variable 
+#'   is missing for a station. Default \code{WNDSPD = NULL}, indicating that data of the closest 
+#'   station with data will be used.
+#' @param MAXHHR (optional) Dataframe with two columns: DATE : POSIXct, MAXHHR : num. 
+#'   This parameter refers to data, which should be used instead if MAXHHR variable 
+#'   is missing for a station. Default \code{MAXHHR = NULL}, indicating that data of the closest 
+#'   station with data will be used.
+#' @param SLR (optional) Dataframe with two columns: DATE : POSIXct, SLR : num. 
+#'   This parameter refers to data, which should be used instead if SLR variable 
+#'   is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest 
+#'   station with data will be used.
 #' @importFrom stats aggregate sd
 #' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
 #' @importFrom dplyr %>% rename mutate bind_rows select
 #' @importFrom lubridate month
 #' @importFrom readr parse_number
-#' @return list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data
+#' @return List of two dataframes: wgn_st - WGN station data, wgn_data - WGN data.
 #' @export
+#'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#' met_lst <- load_template(temp_path, 3035)
-#' TMP_MAX <- met_lst$data$ID10$TMP_MAX
-#' TMP_MIN <- met_lst$data$ID10$TMP_MIN
-#' PCP <- met_lst$data$ID9$PCP
-#' RELHUM = met_lst$data$ID9$RELHUM
-#' WNDSPD <- met_lst$data$ID12$WNDSPD
-#' MAXHHR <- met_lst$data$ID11$MAXHHR
-#' SLR <- met_lst$data$ID9$SLR
-#' ##Does the thing
-#' wgn <- prepare_wgn(met_lst, TMP_MAX, TMP_MIN, PCP, RELHUM, WNDSPD, MAXHHR, SLR)
+#'   # Example usage:
+#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#'   met_lst <- load_template(temp_path, 3035)
+#'   # Generate WGN data
+#'   wgn <- prepare_wgn(met_lst,
+#'                      TMP_MAX = met_lst$data$ID10$TMP_MAX,
+#'                      TMP_MIN = met_lst$data$ID10$TMP_MIN,
+#'                      PCP = met_lst$data$ID9$PCP,
+#'                      RELHUM = met_lst$data$ID9$RELHUM,
+#'                      WNDSPD = met_lst$data$ID10$WNDSPD,
+#'                      MAXHHR = met_lst$data$ID11$MAXHHR,
+#'                      SLR = met_lst$data$ID9$SLR)
 #' }
+#' @keywords parameters
+#' @seealso \code{\link{load_template}}
 
 prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, RELHUM = NULL, WNDSPD = NULL, MAXHHR = NULL, SLR = NULL){
   ##Extracting relevant parts
@@ -367,28 +417,36 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
   return(list(wgn_st = res_wgn_stat, wgn_data = res_wgn_mon))
 }
 
-#' Function to prepare or update climate data text input files in SWAT+ model
+#' Prepare or Update Climate Data Text Input Files in SWAT+ Model
 #'
-#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param write_path character, path to SWAT+ txtinout folder (example "my_model").
-#' @param period_starts character, date string (example '1991-01-01'). Optional (\code{default = NA}, 
-#' stands for all available in data).
-#' @param period_ends character, date string (example '2020-12-31'). Optional (\code{default = NA}, 
-#' stands for all available in data).
+#' This function prepares or updates climate data text input files in a SWAT+ 
+#' model based on the provided meteo_lst.
+#'
+#' @param meteo_lst Nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param write_path Character, path to the SWAT+ txtinout folder (example "my_model").
+#' @param period_starts (optional) Character, date string (example '1991-01-01'). 
+#' Default \code{period_starts = NA}, stands for all available in data.
+#' @param period_ends (optional) Character, date string (example '2020-12-31'). 
+#' Default \code{period_ends = NA}, stands for all available in data.
 #' @importFrom purrr map
 #' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains
 #' @importFrom sf st_as_sf
 #' @importFrom lubridate year
 #' @importFrom utils read.delim
-#' @return Fill or update multiple weather related weather text files.
+#' @return Fills or updates multiple weather-related text files in the SWAT+ model.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' prepare_climate(meteo_lst, "output", "1991-01-01", "2020-12-31")
+#'   # Example usage:
+#'   prepare_climate(meteo_lst, "output", "1991-01-01", "2020-12-31")
 #' }
+#' @seealso \code{\link{load_template}}
+#' @keywords writing
 
 prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_ends = NA){
   ##Checking input
@@ -585,36 +643,54 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
 
 # Preparing soils -----------------------------------------------
 
-#' Function to prepare user soil table for SWAT model
+#' Prepare user soil table for SWAT model
 #'
-#' @param csv_path character path to csv file (example "usersoil_lrew.csv"). File should be comma separated 
-#' with minimum columns of SNAM,	NLAYERS	and SOL_Z, CLAY, SILT, SAND, SOL_CBN for each available 
-#' soil layer (minimum 1).
-#' @param hsg Boolean, TRUE - prepare soil hydrological groups, FALSE - no soil hydrological group 
-#' preparation will be done. Optional (\code{Default = FALSE}). If \code{hsg = TRUE} three additional columns
-#' should be in an input table: Impervious (allowed values are "<50cm", "50-100cm", ">100cm"), Depth (allowed 
-#' values are "<60cm", "60-100cm", ">100cm") and Drained (allowed values are "Y" for drained areas, 
-#' "N" for areas without working tile drains). More information can be found in the SWAT+ modeling protocol 
+#' This function prepares a user soil table for the SWAT model based on the 
+#' provided CSV file.
+#'
+#' @param csv_path Character path to the CSV file (e.g., "usersoil_lrew.csv"). 
+#'   The file should be comma-separated with minimum columns of SNAM, NLAYERS, 
+#'   SOL_Z, CLAY, SILT, SAND, SOL_CBN 
+#'   for each available soil layer (minimum 1).
+#' @param hsg (optional) Logical, TRUE - prepare soil hydrological groups, 
+#' FALSE - no soil hydrological group preparation will be done. 
+#' Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns 
+#' should be in an input table: Impervious (allowed values are "<50cm", 
+#' "50-100cm", ">100cm"), Depth (allowed values are "<60cm", "60-100cm", ">100cm"), 
+#' and Drained (allowed values are "Y" for drained areas, "N" for areas without 
+#' working tile drains). More information can be found in the SWAT+ modeling protocol 
 #' \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
-#' @param keep_values Boolean or character vector, TRUE - keep old values (new values only will be left where 0 
-#' or NA values are present in an input table), FALSE - keep only new values. Character vector also could be used 
-#' to keep only specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of soil hydro groups and 
-#' rock data for the first layer, while c("HYDGRP", "ROCK") would keep values in all rock data columns.
-#' Optional (\code{Default = FALSE}).
-#' @param nb_lyr integer, number of layers resulting user soil data should contain. Optional (\code{Default = NA}, 
-#' which stands for the same number as in input data).
+#' @param keep_values (optional) Logical or character vector, TRUE - keep old values (new 
+#' values only will be left where 0 or NA values are present in an input table), 
+#' FALSE - keep only new values. A character vector can also be used to keep only 
+#' specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of 
+#' soil hydro groups and rock data for the first layer, while c("HYDGRP", "ROCK") 
+#' would keep values in all rock data columns. Default \code{keep_values = FALSE}.
+#' @param nb_lyr (optional) Integer, the number of layers resulting user soil 
+#' data should contain. Default \code{nb_lyr = NA}, which stands for the 
+#' same number as in the input data.
 #' @importFrom dplyr select ends_with starts_with left_join
 #' @importFrom readr parse_number
 #' @importFrom utils type.convert
 #' @importFrom methods is
-#' @return dataframe with fully formatted and filled table of soil parameters for SWAT model.
+#' @return A dataframe with a fully formatted and filled table of soil parameters 
+#' for the SWAT model.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' usersoils <- get_usersoil_table("table.csv")
-#' write.csv(usersoils, "usersoils.csv", row.names=FALSE, quote=FALSE)
+#'   usersoils <- get_usersoil_table("table.csv")
+#'   write.csv(usersoils, "usersoils.csv", row.names=FALSE, quote=FALSE)
 #' }
+#' @references 
+#' SWAT+ Modeling Protocol: Soil Physical Data Chapter
+#' 
+#' This function utilizes the PTF functions and methods described in pages 82-91. 
+#' For detailed information, refer to: \url{https://doi.org/10.5281/zenodo.7463395}
+#' @keywords parameters
+#' @seealso 
+#' This function requires the euptf2 package. 
+#' Please read more how to install, use and what is in it on \url{https://github.com/tkdweber/euptf2}.
 
 get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_lyr = NA){
   ##Reading
@@ -972,13 +1048,35 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
   return(r)
 }
 
-#' Convert usersoil.csv to soils.sol
+#' Convert 'usersoil.csv' to 'soils.sol'
+#' 
+#' This function converts a user-defined soil CSV file to the soils.sol file 
+#' required for SWAT+ model input.
 #'
-#' @param csv_path character path to csv file (example "usersoil_lrew.csv"")
-#' @param db_path character to sqlite project database (example "output/project.sqlite"). 
-#' Optional, default NULL. Could be used to reduce soils.sol file, if there are less soil 
-#' types in sqlite database than in usersoil csv file.
-#' @importFrom DBI dbConnect dbReadTable
+#' @param csv_path Character, path to CSV file containing user-defined soil 
+#' information (example "usersoil_lrew.csv"). 
+#' The CSV file should have the following columns:
+#'   - OBJECTID: Identifier for each record.
+#'   - MUID: Unique identifier.
+#'   - SEQN: Sequence number.
+#'   - SNAM: Soil name.
+#'   - S5ID: Soil ID.
+#'   - CMPPCT: Component percentage.
+#'   - NLAYERS: Number of layers.
+#'   - HYDGRP: Hydrologic group.
+#'   - SOL_ZMX: Maximum soil depth.
+#'   - ANION_EXCL: Anion exclusion.
+#'   - SOL_CRK: Soil cracking.
+#'   - TEXTURE: Soil texture.
+#' For each available layer (up to 10 layers):
+#'   - SOL_Z1, SOL_BD1, SOL_AWC1, SOL_K1, SOL_CBN1, CLAY1, SILT1, SAND1, ROCK1, SOL_ALB1, 
+#'     USLE_K1, SOL_EC1, SOL_CAL1, SOL_PH1 (examples of the first layer)
+#' @param db_path (optional) Character path to SQLite project database (example 
+#' "output/project.sqlite"). Default \code{db_path = NULL}, which means SWAT+ model setup
+#' .sqlite database will not be used to reduce the size of the soils.sol file by 
+#' leveraging information from an SQLite database if there are fewer soil types 
+#' in the database compared to the user's soil CSV file.
+#' @importFrom DBI dbConnect dbReadTable dbDisconnect
 #' @importFrom RSQLite SQLite
 #' @importFrom dplyr mutate_all %>% 
 #' @importFrom tidyr pivot_wider pivot_longer
@@ -986,15 +1084,22 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' @importFrom purrr map2_chr
 #' @importFrom readr write_lines parse_number
 #' @importFrom utils read.csv2
-#' @return soils.sol SWAT+ model input file
+#' @return Soils.sol file for SWAT+ model input.
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' # Convert user-defined soil CSV to soils.sol
 #' usersoil_to_sol("output/usersoil_lrew.csv")
-#' ##Or
+#'
+#' # Convert using an SQLite project database to reduce the size of the soils.sol 
+#' file
 #' usersoil_to_sol("output/usersoil_lrew.csv", "output/project.sqlite")
 #' }
+#'
+#' @seealso \code{\link{get_usersoil_table}}
+#' For details on 'soil.sol' file read [SWAT+ Soils Input](https://swatplus.gitbook.io/io-docs/introduction/soils/soils.sol)
+#' @keywords writing
 
 usersoil_to_sol <- function(csv_path, db_path = NULL){
   ##Reading usersoil table
@@ -1066,33 +1171,49 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
 
 # Updating .sqlite database -----------------------------------------------
 
-#' Update sqlite database with weather data
+#' Update SQLite database with weather data
 #'
-#' @param db_path character to sqlite database (example "./output/project.sqlite")
-#' @param meteo_lst meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param wgn_lst list of two dataframes: wgn_st - wgn station data, wgn_data - wgn data (prepared by \code{prepare_wgn()} function).
-#' @param fill_missing Boolean, TRUE - fill data for missing stations with data from closest stations with available data.
-#' FALSE - leave stations without data. Weather generator will be used to fill missing variables for a model. Optional (\code{Default = TRUE}).
+#' This function updates an SQLite database with weather data, including 
+#' meteorological and weather generator data.
+#'
+#' @param db_path A character string representing the path to the SQLite database 
+#' (e.g., "./output/project.sqlite").
+#' @param meteo_lst A nested list of lists with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param wgn_lst A list of two dataframes: wgn_st - weather generator station 
+#' data, wgn_data - weather generator data (prepared by \code{\link{prepare_wgn}} function).
+#' @param fill_missing (optional) Boolean, TRUE - fill data for missing stations with data 
+#' from closest stations with available data. FALSE - leave stations without 
+#' data. Weather generator will be used to fill missing variables for a model.
+#' Default \code{fill_missing = TRUE}.
 #' @importFrom sf st_transform st_coordinates st_drop_geometry
-#' @importFrom dplyr select full_join mutate %>%  rename
+#' @importFrom dplyr select full_join mutate %>% rename
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect
 #' @importFrom lubridate yday interval years
 #' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
-#' @return updated sqlite database with weather data
-#' @export
+#' @return Updated SQLite database with weather data.
+#'
 #' @examples
 #' \dontrun{
-#' ##Getting meteo data from template
-#' met_lst <- load_template(temp_path, 3035)
-#' ##Calculating wgn parameters
-#' wgn <- prepare_wgn(met_lst, MAXHHR = met_lst$data$ID11$MAXHHR)
-#' ##Writing weather input into model database
-#' db_path <- "./output/test/project.sqlite"
-#' add_weather(db_path, met_lst, wgn)
+#'   # Getting meteorological data from template
+#'   met_lst <- load_template(temp_path, 3035)
+#'   
+#'   # Calculating weather generator parameters
+#'   wgn <- prepare_wgn(met_lst)
+#'   
+#'   # Writing weather input into the model database
+#'   db_path <- "./output/test/project.sqlite"
+#'   add_weather(db_path, met_lst, wgn)
 #' }
+#'
+#' @export
+#' @seealso \code{\link{load_template}}, \code{\link{prepare_wgn}}, 
+#' \code{\link{prepare_climate}}
+#' @keywords writing
 
 add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   ##Path to the folder to write weather files (same as sql db)
@@ -1228,25 +1349,32 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   return(print(paste("Weather data was successfuly added to", gsub(".*/","",db_path))))
 }
 
-#' Update sqlite database with atmospheric deposition data
+#' Update SQLite database with atmospheric deposition data
 #'
-#' @param df dafaframe with "DATE", "NH4_RF", "NO3_RF" , "NH4_DRY"  and "NO3_DRY" columns obtained from \code{\link{get_atmo_dep}}) function.
-#' @param db_path character to sqlite database (example "./output/project.sqlite")
-#' @param t_ext string, 'year' for yearly averages, 'month' - monthly averages
-#' and 'annual' for average of all period. Optional (default - "year"). 
+#' This function updates an SQLite database with atmospheric deposition data.
+#'
+#' @param df A data frame containing columns "DATE," "NH4_RF," "NO3_RF," 
+#' "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}} function.
+#' @param db_path A character string representing the path to the SQLite 
+#' database (e.g., "./output/project.sqlite").
+#' @param t_ext (optional) A string indicating the type of time aggregation: 'year' for 
+#' yearly averages, 'month' for monthly averages, and 'annual' for the average 
+#' of the entire period. Default default \code{t_ext = "year"}. 
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
 #' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
-#' @return write data in 'atmodep.cli' file and updated sqlite database with codes and connection 
-#' to atmospheric deposition data 
+#' @return Writes data to 'atmodep.cli' file and updates the SQLite database 
+#' with codes and connections to atmospheric deposition data.
 #' @export 
 #' @examples
 #' \dontrun{
-#' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-#' df <- get_atmo_dep(basin_path)
-#' db_path <- "./output/test/project.sqlite"
-#' add_atmo_dep(df, db_path)
+#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+#'   df <- get_atmo_dep(basin_path)
+#'   db_path <- "./output/test/project.sqlite"
+#'   add_atmo_dep(df, db_path)
 #' }
+#' @seealso \code{\link{get_atmo_dep}}
+#' @keywords writing
 
 add_atmo_dep <- function(df, db_path, t_ext = "year"){
   ##Path to the folder to write weather files (same as sql db)
@@ -1310,35 +1438,49 @@ add_atmo_dep <- function(df, db_path, t_ext = "year"){
 
 # Land use and management -----------------------------------------------
 
-#' Preparing training points for remote sensing algorithm
+#' Prepare training points for remote sensing algorithm
 #'
-#' @param df sf data.frame with land use. "type" column should be present. 
-#' @param year numeric value, year of land use.
-#' @param lookup dataframe with "lc1" column for numeric codes and "type" column 
-#' for text.
-#' @param lu_constant vector of strings with land uses to be kept constant in 
-#' land use (i.e. water, urban areas, etc.)
-#' @param nb_pts numeric, number of points per land use/crop class. Optional, default 100. 
-#' @param col_name string with name of column to be used representing type of crops/land use. 
-#' Optional, default "type".
+#' This function prepares training points for a remote sensing algorithm based on
+#' land use and crop classes.
+#'
+#' @param df An sf data.frame with land use. The "type" column should be present.
+#' @param year A numeric value representing the year of land use.
+#' @param lookup A dataframe with a "lc1" column for numeric codes and a "type" 
+#'   column for text.
+#' @param lu_constant (optional) A vector of strings with land uses to be kept constant in 
+#'   land use (e.g., water, urban areas, etc.). Default \code{lu_constant = c()}.
+#' @param nb_pts (optional) A numeric value representing the number of points per land use/crop 
+#'   class. Default \code{nb_pts = 100}.
+#' @param col_name A string with the name of the column to be used representing 
+#'   the type of crops/land use. Default \code{col_name = "type"}.
 #' @importFrom sf st_as_sf st_join st_transform st_sample
 #' @importFrom dplyr rename mutate left_join select filter sample_n ungroup
-#' @return sf data.frame with point input for remote sensing training algorithm.
+#' @return An sf data.frame with point input for a remote sensing training algorithm.
 #' @export
 #' @examples
 #' \dontrun{
-#' library(sf)
-#' ##Loading land use/crop layer
-#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
-#' lu <- st_read(lu_path,  quiet = TRUE)
-#' ##Preparing lookup table
-#' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
-#' type = unique(c(lu$type)))
-#' lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
-#' "wetl", "past", "watr", "agrl")
-#' ##Getting training points
-#' pts <- get_lu_points(lu, 2021, lookup, lu_constant)
+#'   library(sf)
+#'   
+#'   # Loading land use/crop layer
+#'   lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
+#'   lu <- st_read(lu_path, quiet = TRUE)
+#'   
+#'   # Preparing lookup table
+#'   lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
+#'                        type = unique(c(lu$type)))
+#'                        
+#'   # Setting land uses to be kept constant
+#'   lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
+#'                    "wetl", "past", "watr", "agrl")
+#'   
+#'   # Getting training points
+#'   pts <- get_lu_points(lu, 2021, lookup, lu_constant)
 #' }
+#' @references
+#' Mészáros, J., & Szabó, B. (2022). Script to derive and apply crop 
+#' classification based on Sentinel 1 satellite radar images in Google Earth 
+#' Engine platform. \url{https://doi.org/10.5281/zenodo.6700122}
+#' @keywords remote-sensing
 
 get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, col_name = "type"){
   df <- df[col_name] %>%
@@ -1359,35 +1501,47 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 
 #' Extract rotation information from raster file
 #'
-#' @param df sf data.frame with land use. "id" and "type" columns should be present. 
-#' @param start_year numeric, representing a year from which data begins.
-#' @param tif_name string for name of .tif raster file.
-#' @param r_path string for path to .tif file.
-#' @param lookup dataframe with "lc1" column for numeric codes and "type" column 
-#' for text.
-#' @param lu_constant vector of strings with land uses to be kept constant in 
-#' land use (i.e. water, urban areas, etc.)
+#' This function extracts crop rotation information from a raster file and 
+#' amends the land use data accordingly.
+#'
+#' @param df An sf data.frame with land use. Columns "id" and "type" should be 
+#' present. 
+#' @param start_year A numeric value representing the year from which data begins.
+#' @param tif_name A string for the name of the .tif raster file.
+#' @param r_path A string for the path to the .tif file.
+#' @param lookup A dataframe with a "lc1" column for numeric codes and a "type" 
+#' column for text.
+#' @param lu_constant (optional) A vector of strings with land uses to be kept constant in 
+#' land use (e.g., water, urban areas). Default \code{lu_constant = c()}.
 #' @importFrom raster raster nbands extract
 #' @importFrom dplyr left_join mutate_at all_of mutate select vars starts_with
 #' @importFrom sf st_point_on_surface st_transform st_drop_geometry st_crs
-#' @return sf data.frame with land use amended with crop rotation information
+#' @return An sf data.frame with land use amended with crop rotation information.
 #' @export
 #' @examples
 #' \dontrun{
-#' library(sf)
-#' ##Loading land use/crop layer
-#' lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
-#' lu <- st_read(lu_path,  quiet = TRUE) %>% mutate(id = row_number())
-#' ##Preparing lookup table
-#' lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
-#' type = unique(c(lu$type)))
-#' lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
-#' "wetl", "past", "watr", "agrl")
+#'   library(sf)
+#'   
+#'   # Loading land use/crop layer
+#'   lu_path <- system.file("extdata", "GIS/lu_layer.shp", package = "SWATprepR")
+#'   lu <- st_read(lu_path, quiet = TRUE) %>% mutate(id = row_number())
+#'   
+#'   # Preparing lookup table
+#'   lookup <- data.frame(lc1 = seq(1:length(unique(c(lu$type)))), 
+#'   type = unique(c(lu$type)))
+#'   lu_constant <- c("fesc", "orch", "frst", "frse", "frsd", "urld", "urhd", 
+#'   "wetl", "past", "watr", "agrl")
 #' 
-#' ##Extracting rotation information from raster
-#' ##Raster information should have been prepared with remote sensing 
-#' lu_rot <- extract_rotation(lu, 2015, "cropmaps.tif", "./output/", lookup, lu_constant)
+#'   # Extracting rotation information from raster
+#'   # Raster information should have been prepared with remote sensing 
+#'   lu_rot <- extract_rotation(lu, 2015, "cropmaps.tif", "./output/", lookup, 
+#'   lu_constant)
 #' }
+#' @references 
+#' Mészáros, J., & Szabó, B. (2022). Script to derive and apply crop 
+#' classification based on Sentinel 1 satellite radar images in Google Earth 
+#' Engine platform. \url{https://doi.org/10.5281/zenodo.6700122}
+#' @keywords remote-sensing
 
 extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_constant = c()){
   r <- raster(paste0(r_path, tif_name), band = 1)
@@ -1421,33 +1575,45 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 
 # Point source data -----------------------------------------------
 
-#' Prepare point source data model text files. 
-#' 
-#' The function could be used to prepare the simple cases of point source data input
-#' with yearly values, where point sources are discharging to a single channels. 
+#' Prepare Point Source Data Model Text Files
 #'
-#' @param pt_lst  nested list of lists with dataframes. 
-#' Nested structure pt_lst -> data -> Dataframe (name,	DATE,	flo, ...)
-#' pt_lst -> st -> Dataframe (name, Lat, Long)
-#' @param project_path character, path to SWAT+ txtinout folder (example "my_model"). 
-#' @param write_path character, path to SWAT+ txtinout folder (example "my_model"). Optional (\code{default = project_path}.
-#' @param cha_shape_path character, path to SWAT+ channel shapefile. 'id' column should be present in attributes with 
-#' numeric values representing channel ids, the same as in 'chandeg.con' file. Optional (\code{default = FALSE}.  
+#' This function prepares text files for a SWAT+ model to represent point source 
+#' data. It is designed for simple cases with yearly values,
+#' where point sources discharge to a single channel.
+#'
+#' @param pt_lst Nested list with dataframes. 
+#'   Nested structure: \code{pt_lst -> data -> Dataframe (name, DATE, flo, ...)}, 
+#'   \code{pt_lst -> st -> Dataframe (name, Lat, Long)}.
+#'   Additional information on the input variables, which could be used in the template 
+#'   files can be found in the SWAT+ documentation: ['filename'.rec](https://swatplus.gitbook.io/io-docs/introduction/point-sources-and-inlets/filename.rec)
+#' @param project_path Character, path to the SWAT+ project folder (example "my_model"). 
+#' @param write_path (optional) Character, path to SWAT+ txtinout folder (example "my_model"). 
+#'   Default \code{write_path = NULL}, which is the same as \code{project_path}.
+#' @param cha_shape_path (optional) Character, path to SWAT+ channel shapefile. 
+#'   'id' column should be present in attributes with numeric values representing channel ids, 
+#'   the same as in 'chandeg.con' file. Default \code{cha_shape_path = FALSE}, 
+#'   which assigns point sources to the will be assigned based on nearest center 
+#'   point in 'chandeg.con'
 #' @importFrom sf st_as_sf st_nearest_feature st_crs st_drop_geometry st_transform read_sf
 #' @importFrom lubridate year
 #' @importFrom dplyr select left_join
 #'
-#' @return text files for SWAT+ model in write_path
+#' @return Text files for SWAT+ model in write_path.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
-#' pnt_data <- load_template(temp_path)
-#' prepare_pt_source(pnt_data, "txtinout")
+#'   # Example usage:
+#'   temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+#'   pnt_data <- load_template(temp_path)
+#'   prepare_pt_source(pnt_data, "my_model")
 #' }
+#' @keywords writing
 
-prepare_ps <- function(pt_lst, project_path, write_path = project_path, cha_shape_path = FALSE){
+prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path = FALSE){
+  if(is.null(write_path)){
+    write_path <- project_path
+  }
   if(project_path == write_path){
     print(paste0("Files in ", project_path, " will be overwritten!!!"))
   }

@@ -1,25 +1,33 @@
 
 # Plotting time series ----------------------------------------------------
 
-#' Plotting calibration data
+#' Plot Calibration Data
 #'
-#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed)
-#' @param stations character vector listing stations, which should be selected for figure. 
-#' @param variables optional parameter of character vector, which parameters should be in figure. 
-#' @return plotly object of interactive figure.
+#' This function generates an interactive plot of calibration data based on the 
+#' provided data.
+#'
+#' @param df Dataframe with formatted data (requires "Station", "DATE", "
+#' Variables", and "Values" columns).
+#' @param stations Character vector listing stations to be selected for the figure.
+#' @param variables (Optional) Character vector specifying which parameters 
+#' should be included in the figure. Default \code{variables = NULL}, all available
+#' variables will be plotted.
 #' @importFrom dplyr filter mutate group_by %>% group_map
 #' @importFrom ggplot2 ggplot aes facet_wrap geom_line geom_point
 #' @importFrom plotly plot_ly subplot ggplotly 
 #' @importFrom comprehenr to_vec
+#' @return Plotly object of an interactive figure.
 #' @export
 #'
 #' @examples
+#' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
-#' plot_cal_data(cal_data$data, stations = c("1", "2", "3","10"), variables =
-#' c("PT", "Q"))
+#' plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "Q"))
+#' @keywords plotting
 
-plot_cal_data <- function(df, stations, variables = levels(as.factor(df$Variables))) {
+plot_cal_data <- function(df, stations, variables = NULL) {
+  if (is.null(variables)) variables = unique(df$Variables)
   df = subset(df, Station %in% stations & Variables %in% variables)
   if (nrow(df)==0) stop("Non existing station or variable")
   df_gaps = data.frame (matrix(nrow = 0, ncol = length(colnames (df))))
@@ -121,7 +129,7 @@ plot_ts_fig <- function(station, df){
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' plot_monthly(cal_data$data, station = "4")
-#' 
+#' @keywords plotting
 
 plot_monthly <- function(df, station, 
                          variables = levels(as.factor(df$Variables))){
@@ -150,27 +158,36 @@ plot_monthly <- function(df, station,
     hide_show()
 }
 
-#' Plot regression and fractions for each month between parts of nutrient and total
+#' Plot Regression and Fractions for Each Month
 #'
-#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
-#' @param station character vector indicating station/s, which should be selected for figure.
-#' @param total_var character vector for variable selected to represent total of certain variable.
-#' @param min_vars character vector for variable/s selected to represent mineral or organic of certain variable.
+#' This function generates two sets of plots for monthly regression and fractions
+#' between nutrient parts and the total.
+#'
+#' @param df Dataframe with formatted data (requires "Station", "DATE", 
+#' "Variables", and "Values" columns).
+#' @param station Character vector indicating the station/s to be selected for 
+#' the figure.
+#' @param total_var Character vector for the variable selected to represent the 
+#' total of a certain nutrient.
+#' @param min_vars Character vector for the variable/s selected to represent the 
+#' mineral or organic fraction of a certain nutrient.
 #' @importFrom dplyr filter select mutate group_by %>% summarise_all ungroup arrange
 #' @importFrom tidyr drop_na pivot_wider
 #' @importFrom lubridate month
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth facet_wrap theme_bw theme
 #' element_text geom_boxplot xlab ylab after_stat
 #' @importFrom ggpmisc stat_poly_eq
-#' @return list of two ggplot objects: regression - monthly regression plots for total vs some part 
-#' (i.e. mineral or organic), fraction - monthly fraction values.
+#' @return A list of two ggplot objects: "regression" for monthly regression 
+#' plots and "fraction" for monthly fraction values.
 #' @export
 #'
 #' @examples
+#' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' plot_fractions(cal_data$data, c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 #' plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
+#' @keywords plotting
 
 plot_fractions <- function(df, station, total_var, min_vars){
   ##Preparing df for regression
@@ -217,28 +234,36 @@ plot_fractions <- function(df, station, total_var, min_vars){
 
 # Plotting maps -----------------------------------------------------------
 
-#' Preparing interactive map of monitoring points
+#' Prepare Interactive Map of Monitoring Points
 #'
-#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
-#' @param df_station dataframe with formatted station data (ID, geometry columns are needed).
-#' @param rch sf dataframe for reaches (id, geometry columns are needed).
-#' @param shp sf dataframe for basin (name, geometry columns are needed).
-#' @return leaflet object of interactive map with monitoring data opening while pressing on points. 
+#' This function generates an interactive map with monitoring points, 
+#' allowing users to click on points to view data.
+#'
+#' @param df Dataframe with formatted data (requires "Station", "DATE", 
+#' "Variables", and "Values" columns).
+#' @param df_station Dataframe with formatted station data (requires "ID" and 
+#' "geometry" columns).
+#' @param rch sf dataframe for reaches (requires "id" and "geometry" columns).
+#' @param shp sf dataframe for basin (requires "name" and "geometry" columns).
 #' @importFrom leaflet leaflet addProviderTiles addPolygons addPolylines addMarkers  
 #' addLayersControl layersControlOptions
 #' @importFrom leafpop addPopupGraphs
+#' @return Leaflet object of an interactive map with monitoring data displayed 
+#' when points are clicked.
 #' @export
 #'
 #' @examples
 #' library(sf)
+#' 
+#' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
 #' basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #' cal_data <- load_template(temp_path, 4326)
 #' reach <- st_transform(st_read(reach_path), 4326)
-#' basin <-st_transform(st_read(basin_path), 4326)
+#' basin <- st_transform(st_read(basin_path), 4326)
 #' plot_map(cal_data$data, cal_data$stations, reach, basin)
-
+#' @keywords plotting
 
 plot_map <- function(df, df_station, rch, shp){
   if (st_crs(rch)$input == "EPSG:4326" & 
@@ -273,26 +298,36 @@ plot_map <- function(df, df_station, rch, shp){
 
 # Plotting weather data ---------------------------------------------------
 
-#' Prepare the plotly figure for weather data
+#' Prepare Plotly Figure for Weather Data
 #'
-#' @param meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' @param par character marking weather variable to extract (i.e. "PCP", "SLR", etc).
-#' @param period character describing, which time interval to display (default is "day", 
-#' other examples are "week", "month", etc).
-#' @param fn_summarize function to recalculate to time interval (default is "mean", other examples 
-#' are "median", "sum", etc).
+#' This function generates a Plotly figure for weather data visualization based 
+#' on user-defined parameters.
+#'
+#' @param meteo_lst A nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param par Character, the weather variable to extract (e.g., "PCP", "SLR").
+#' @param period (optional) Character describing the time interval to display. 
+#' Default \code{period = "day"}, other examples are "week", "month", "year".
+#' See [lubridate::floor_date](https://www.rdocumentation.org/packages/lubridate/versions/1.3.3/topics/floor_date) for details.
+#' @param fn_summarize (optional) Function to recalculate to the specified time interval. 
+#' Default \code{fn_summarize ="mean"}, other examples are "median", "sum".
+#' See [dplyr::summarise](https://dplyr.tidyverse.org/reference/summarise.html) for details.
 #' @importFrom lubridate floor_date
 #' @importFrom plotly plot_ly layout
 #' @importFrom dplyr bind_rows %>% rename summarize mutate left_join arrange
 #' @importFrom sf st_drop_geometry
-#' @return plotly figure object with displayed weather data
+#' @return Plotly figure object with displayed weather data.
 #' @export
 #'
 #' @examples 
+#' library(SWATprepR)
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 4326)
 #' plot_weather(met_lst, "PCP", "month", "sum")
+#' @keywords plotting
 
 plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
   station <- meteo_lst$stations %>% 
@@ -340,29 +375,40 @@ plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
            hide_show())
 }
 
-#' Plotting figure to comparing two datasets with weather data
+#' Plotting Figure to Compare Two Datasets with Weather Data
 #'
-#' @param meteo_lst1 first nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' @param meteo_lst2 second nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' @param par character marking weather variable to extract (i.e. "PCP", "SLR", etc).
-#' @param period character describing, which time interval to display (default is "day", 
-#' other examples are "week", "month", etc).
-#' @param fn_summarize function to recalculate to time interval (default is "mean", other examples 
-#' are "median", "sum", etc).
-#' @param name_set1 character to name first dataset.
-#' @param name_set2 character to name second dataset.
+#' This function generates a Plotly figure to compare weather data between two datasets based on user-defined parameters.
+#'
+#' @param meteo_lst1 First nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param meteo_lst2 Second nested list with dataframes. Same structure as \code{meteo_lst1}.
+#' @param par Character vector, weather variable to extract (e.g., "PCP", "SLR").
+#' @param period (optional) Character, the time interval to display. Default 
+#' \code{period = "day"}, , other examples are "week", "month", "year".
+#' See [lubridate::floor_date](https://www.rdocumentation.org/packages/lubridate/versions/1.3.3/topics/floor_date) for details.
+#' @param fn_summarize (optional) Function to recalculate to the specified time interval. 
+#' Default \code{fn_summarize ="mean"}, other examples are "median", "sum".
+#' See [dplyr::summarise](https://dplyr.tidyverse.org/reference/summarise.html) for details.
+#' @param name_set1 (optional) Character, to name the first dataset. Default 
+#' \code{name_set1 = "dataset 1"}.
+#' @param name_set2 (optional) Character, to name the second dataset. Default 
+#' \code{name_set2 = "dataset 2"}.
 #' @importFrom plotly layout subplot
-#' @return plotly figure object with displayed weather data for two datasets.
+#' @return Plotly figure object with displayed weather data for two datasets.
 #' @export
 #'
 #' @examples
-#' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#' met_lst1 <- load_template(temp_path, 4326)
-#' temp_path <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATprepR")
-#' met_lst2 <- load_template(temp_path, 4326)
+#' ##Loading data
+#' temp_path1 <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#' met_lst1 <- load_template(temp_path1)
+#' temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATprepR")
+#' met_lst2 <- load_template(temp_path2)
+#' ##Plotting
 #' plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
+#' @keywords plotting
 
 plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn_summarize = "mean", 
                                  name_set1 = "dataset 1", name_set2 = "dataset 2"){
@@ -384,33 +430,40 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
   return(fig)
 }
 
-#' Plot wgn parameters comparison
+#' Plot WGN Parameters Comparison
 #'
-#' @param meteo_lst1 first nested list of lists with dataframes. 
-#' meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param meteo_lst2 second nested list of lists with dataframes. 
-#' meteo_lst nested list of lists with dataframes. 
-#' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-#' Nested meteo_lst -> stations Dataframe (ID, Name, Elevation, Source, geometry, Long, Lat).
-#' @param station1 character, id of one station in the first list selected for comparison (example "ID1").
-#' @param station2 character, id of one station in the second list selected for comparison (example "ID1").
-#' @param type1 character, naming of the first dataset (example "measured").
-#' @param type2 character, naming of the second dataset (example "netCDF").
-#' @param title character, information to be added in figure title
-#' @importFrom dplyr %>%  filter select mutate bind_rows
+#' This function generates a ggplot figure for comparing WGN parameters between two datasets for specified stations.
+#'
+#' @param meteo_lst1 First nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}, 
+#'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}.
+#' @param meteo_lst2 Second nested list with dataframes. Same structure as 
+#' \code{meteo_lst1}. 
+#' @param station1 Character, ID of one station in the first list selected for 
+#' comparison (example "ID1").
+#' @param station2 Character, ID of one station in the second list selected for 
+#' comparison (example "ID1").
+#' @param type1 (optional) Character, naming of the first dataset 
+#' (example "measured"). Default \code{type1 = "set 1"}.
+#' @param type2 (optional) Character, naming of the second dataset 
+#' (example "netCDF"). Default \code{type2 = "set 2"}.
+#' @param title (optional) Character, information to be added in the figure title.
+#' Default \code{title = "comparison"}.
+#' @importFrom dplyr %>% filter select mutate bind_rows
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot geom_bar facet_wrap ggtitle aes theme_minimal labs
-#' @return ggplot figure of bar plots 
+#' @return ggplot figure of bar plots.
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' ##Loading data
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#' met_lst <- load_template(temp_path, 4326)
+#' met_lst <- load_template(temp_path)
+#' ##Plotting
 #' plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
-#' }
+#' @keywords plotting
 
 plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type1 = "set 1", type2 = "set 2", title = "comparison"){
   ##Checking inputs

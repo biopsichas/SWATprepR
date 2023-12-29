@@ -2,31 +2,44 @@
 % Please edit documentation in R/loading.R
 \name{load_netcdf_weather}
 \alias{load_netcdf_weather}
-\title{Extract climate data into nested list of lists}
+\title{Extract Climate Data from CORDEX NetCDF into Nested List of Lists}
 \usage{
 load_netcdf_weather(dir_path, location)
 }
 \arguments{
-\item{dir_path}{character, path to CORDEX-BC folder (example climate/CORDEX-BC").}
+\item{dir_path}{Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
+NefCDF data to be recognized by function should be saved with these file names:
+"prec.nc" (precipitation), "relHum.nc" (relative humidity), "solarRad.nc"
+(solar radiation), "Tmax.nc" (maximum daily temperature), "Tmin.nc"
+(minimum daily temperature), "windSpeed.nc" (wind speed).}
 
-\item{location}{character or list. In case of character, path should be provided to
-catchment boundary file (example GIS/basin.shp). In case of list, nested list of lists
-with dataframes. Nested structure meteo_lst -> data -> Station ID -> Parameter ->
-Dataframe (DATE, PARAMETER). List of list could be obtained using \code{load_template()}
-with prepared excel template.}
+\item{location}{Character or list. If character, provide the path to the catchment
+boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with
+dataframes. The nested structure is same as prepared by
+using \code{load_template()} function.}
 }
 \value{
-Nested lists of lists. First nesting level is for RCP, second for RCM model numbers,
-the rest is the same as in meteo_lst. This part could be used with other package functions
-(example  plot_weather(result$rcp26$"1"), "PCP", "month", "sum").
+Nested list. The first nesting level is for RCP, the second for RCM model numbers,
+and the rest follows the structure of meteo_lst. Nested structure: \code{meteo_lst -> 
+  data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, geometry, 
+  Long, Lat)}. This nested list structure can be used with
+other package functions (e.g., \code{plot_weather(result$rcp26$"1", "PCP", "month", "sum")}).
 }
 \description{
-Extract climate data into nested list of lists
+This function extracts climate data from the CORDEX-BC dataset and organizes
+it into a nested list of lists.
 }
 \examples{
 \dontrun{
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
-data_path <- "climate/CORDEX-BC"
-result <- load_netcdf_weather(data_path, basin_path)
+  # Specify the path to the catchment boundary file
+  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
+  
+  # Specify the path to the CORDEX-BC data
+  data_path <- "climate/CORDEX-BC"
+  
+  # Extract and organize climate data
+  result <- load_netcdf_weather(data_path, basin_path)
 }
 }
+\keyword{loading}

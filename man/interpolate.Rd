@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{interpolate}
 \alias{interpolate}
-\title{Interpolating and writing results into model input files}
+\title{Interpolate Weather Data}
 \usage{
 interpolate(
   meteo_lst,
@@ -14,35 +14,51 @@ interpolate(
 )
 }
 \arguments{
-\item{meteo_lst}{nested list of lists with dataframes.
-Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
+\item{meteo_lst}{A nested list of lists with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.}
 
-\item{catchment_boundary_path}{path to basin boundary shape file.}
+\item{catchment_boundary_path}{Character, path to the basin boundary shape file.}
 
-\item{dem_data_path}{path to DEM raster data in same projection as weather station.}
+\item{dem_data_path}{Character, path to DEM raster data in the same projection
+as the weather station.}
 
-\item{grid_spacing}{numeric value for distance in grid. Units of coordinate system should be used.}
+\item{grid_spacing}{Numeric, value for the distance between grid points.
+Units of the coordinate system should be used.}
 
-\item{p_vector}{character vector representing weather variables to interpolate (optional, default all variables selected
-c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN" ).}
+\item{p_vector}{(optional) Character vector representing weather variables to
+interpolate. Default is all variables selected
+\code{p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN")}.}
 
-\item{idw_exponent}{numeric value for exponent parameter to be used in interpolation
-(optional, default value is 2).}
+\item{idw_exponent}{(optional) Numeric value for the exponent parameter to
+be used in interpolation. Default \code{idw_exponent = 2}.}
 }
 \value{
-nested list of lists with dataframes for interpolation results.
-Nested structure lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
-Function also writes all SWAT weather text input files from the interpolation results.
+A nested list of lists with interpolation results.
+A nested list of lists with dataframes.
+Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+  Dataframe (DATE, PARAMETER)},
+\code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+  geometry, Long, Lat)}.
 }
 \description{
-Interpolating and writing results into model input files
+This function interpolates weather data for a SWAT model and saves results
+into nested list format
 }
 \examples{
 \dontrun{
-temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
-basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-met_lst <- load_template(temp_path, 3035)
-interpolate(met_lst, basin_path, DEM_path, 2000) 
+  # Specify paths to weather  data, basing shapeand DEM
+  temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+  DEM_path <- system.file("extdata", "GIS/DEM.tif", package = "SWATprepR")
+  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+
+  # Load weather data template
+  met_lst <- load_template(temp_path, 3035)
+
+  # Interpolate and write SWAT model input files
+  interpolate(met_lst, basin_path, DEM_path, 2000) 
 }
 }
+\keyword{gap-filling}

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,22 +70,22 @@
           
           <code><a href="add_atmo_dep.html">add_atmo_dep()</a></code> 
         </dt>
-        <dd>Update sqlite database with atmospheric deposition data</dd>
+        <dd>Update SQLite database with atmospheric deposition data</dd>
       </dl><dl><dt>
           
           <code><a href="add_weather.html">add_weather()</a></code> 
         </dt>
-        <dd>Update sqlite database with weather data</dd>
+        <dd>Update SQLite database with weather data</dd>
       </dl><dl><dt>
           
           <code><a href="clean_outliers.html">clean_outliers()</a></code> 
         </dt>
-        <dd>Function to clean outliers outside by some standard deviations</dd>
+        <dd>Clean outliers outside specified standard deviations</dd>
       </dl><dl><dt>
           
           <code><a href="clean_wq.html">clean_wq()</a></code> 
         </dt>
-        <dd>Clean water quality data from most typical issues</dd>
+        <dd>Clean water quality data from common issues</dd>
       </dl><dl><dt>
           
           <code><a href="extract_rotation.html">extract_rotation()</a></code> 
@@ -100,33 +100,32 @@
           
           <code><a href="get_lu_points.html">get_lu_points()</a></code> 
         </dt>
-        <dd>Preparing training points for remote sensing algorithm</dd>
+        <dd>Prepare training points for remote sensing algorithm</dd>
       </dl><dl><dt>
           
           <code><a href="interpolate.html">interpolate()</a></code> 
         </dt>
-        <dd>Interpolating and writing results into model input files</dd>
+        <dd>Interpolate Weather Data</dd>
       </dl><dl><dt>
           
           <code><a href="load_template.html">load_template()</a></code> 
         </dt>
-        <dd>Function providing loading for data templates (with single and multiple data sheets)
-(data should have been cleaned before).</dd>
+        <dd>Load Data Templates</dd>
       </dl><dl><dt>
           
           <code><a href="plot_cal_data.html">plot_cal_data()</a></code> 
         </dt>
-        <dd>Plotting calibration data</dd>
+        <dd>Plot Calibration Data</dd>
       </dl><dl><dt>
           
           <code><a href="plot_fractions.html">plot_fractions()</a></code> 
         </dt>
-        <dd>Plot regression and fractions for each month between parts of nutrient and total</dd>
+        <dd>Plot Regression and Fractions for Each Month</dd>
       </dl><dl><dt>
           
           <code><a href="plot_map.html">plot_map()</a></code> 
         </dt>
-        <dd>Preparing interactive map of monitoring points</dd>
+        <dd>Prepare Interactive Map of Monitoring Points</dd>
       </dl><dl><dt>
           
           <code><a href="plot_monthly.html">plot_monthly()</a></code> 
@@ -136,77 +135,52 @@
           
           <code><a href="plot_weather.html">plot_weather()</a></code> 
         </dt>
-        <dd>Prepare the plotly figure for weather data</dd>
+        <dd>Prepare Plotly Figure for Weather Data</dd>
       </dl><dl><dt>
           
           <code><a href="plot_weather_compare.html">plot_weather_compare()</a></code> 
         </dt>
-        <dd>Plotting figure to comparing two datasets with weather data</dd>
+        <dd>Plotting Figure to Compare Two Datasets with Weather Data</dd>
       </dl><dl><dt>
           
           <code><a href="prepare_wgn.html">prepare_wgn()</a></code> 
         </dt>
-        <dd>Function to generate wgn data for the model</dd>
-      </dl><dl><dt>
-          
-          <code><a href="add_missing_pcp_zero.html">add_missing_pcp_zero()</a></code> 
-        </dt>
-        <dd>Replace empty PCP entry with 0</dd>
-      </dl><dl><dt>
-          
-          <code><a href="fill_with_closest.html">fill_with_closest()</a></code> 
-        </dt>
-        <dd>Filling missing variables from the closest stations, which has data.</dd>
+        <dd>Generate Weather Generator (WGN) Data for SWAT+ Model</dd>
       </dl><dl><dt>
           
           <code><a href="usersoil_to_sol.html">usersoil_to_sol()</a></code> 
         </dt>
-        <dd>Convert usersoil.csv to soils.sol</dd>
+        <dd>Convert 'usersoil.csv' to 'soils.sol'</dd>
       </dl><dl><dt>
           
           <code><a href="get_usersoil_table.html">get_usersoil_table()</a></code> 
         </dt>
-        <dd>Function to prepare user soil table for SWAT model</dd>
+        <dd>Prepare user soil table for SWAT model</dd>
       </dl><dl><dt>
           
           <code><a href="plot_wgn_comparison.html">plot_wgn_comparison()</a></code> 
         </dt>
-        <dd>Plot wgn parameters comparison</dd>
-      </dl><dl><dt>
-          
-          <code><a href="update_wst_txt.html">update_wst_txt()</a></code> 
-        </dt>
-        <dd>Updating wst_id information in model text files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_tbl.html">read_tbl()</a></code> 
-        </dt>
-        <dd>Loading SWAT+ text files into dataframe</dd>
+        <dd>Plot WGN Parameters Comparison</dd>
       </dl><dl><dt>
           
           <code><a href="prepare_climate.html">prepare_climate()</a></code> 
         </dt>
-        <dd>Function to prepare or update climate data text input files in SWAT+ model</dd>
+        <dd>Prepare or Update Climate Data Text Input Files in SWAT+ Model</dd>
       </dl><dl><dt>
           
           <code><a href="load_swat_weather.html">load_swat_weather()</a></code> 
         </dt>
-        <dd>Loading SWAT+ weather files to R</dd>
+        <dd>Load SWAT+ weather text files into R</dd>
       </dl><dl><dt>
           
           <code><a href="load_netcdf_weather.html">load_netcdf_weather()</a></code> 
         </dt>
-        <dd>Extract climate data into nested list of lists</dd>
+        <dd>Extract Climate Data from CORDEX NetCDF into Nested List of Lists</dd>
       </dl><dl><dt>
           
           <code><a href="prepare_ps.html">prepare_ps()</a></code> 
         </dt>
-        <dd>Prepare point source data model text files.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="load_swat_weather2.html">load_swat_weather2()</a></code> 
-        </dt>
-        <dd>Loading SWAT+ weather files to R (&gt;20 times faster version)</dd>
+        <dd>Prepare Point Source Data Model Text Files</dd>
       </dl></div>
   </main></div>
 

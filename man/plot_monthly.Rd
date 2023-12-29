@@ -23,5 +23,5 @@ Aggregating values of single station to interactive monthly box plots
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 plot_monthly(cal_data$data, station = "4")
-
 }
+\keyword{plotting}

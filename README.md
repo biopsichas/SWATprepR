@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-0.1.6-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-1.0.0-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -63,6 +63,12 @@ lines below. Please run it on your system to find it for you.
 
 ``` r
 library(SWATprepR)
+#> Loading required package: euptf2
+#> Loading required package: plyr
+#> Loading required package: stringr
+#> Loading required package: data.table
+#> Warning: package 'data.table' was built under R version 4.2.3
+#> Loading required package: ranger
 temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
 #> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"
@@ -78,7 +84,7 @@ prepare your data to be inline with templates we have provided in
   flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
 - **usersoils.csv** - example of loading soil parameters dataset.
-- **pnt_data.xlsx** - example of point source dataset.
+- **pnt_data.xlsx** - template of point source dataset.
 - **GIS/** - folder with GIS layers needed to run some functions.
 
 Data prepared according to templates can be directly loaded into R and
