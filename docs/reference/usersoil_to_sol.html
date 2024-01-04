@@ -74,21 +74,39 @@ required for SWAT+ model input.</p>
     <dl><dt>csv_path</dt>
 <dd><p>Character, path to CSV file containing user-defined soil
 information (example "usersoil_lrew.csv").
-The CSV file should have the following columns:</p><ul><li><p>OBJECTID: Identifier for each record.</p></li>
-<li><p>MUID: Unique identifier.</p></li>
-<li><p>SEQN: Sequence number.</p></li>
+The CSV file should have the following columns (* indicates not required, yet
+column should be present in the CSV file):</p><ul><li><p>OBJECTID*: Identifier for each record.</p></li>
+<li><p>MUID*: Unique identifier.</p></li>
+<li><p>SEQN*: Sequence number.</p></li>
 <li><p>SNAM: Soil name.</p></li>
-<li><p>S5ID: Soil ID.</p></li>
-<li><p>CMPPCT: Component percentage.</p></li>
+<li><p>S5ID*: Soil ID.</p></li>
+<li><p>CMPPCT*: Component percentage.</p></li>
 <li><p>NLAYERS: Number of layers.</p></li>
 <li><p>HYDGRP: Hydrologic group.</p></li>
 <li><p>SOL_ZMX: Maximum soil depth.</p></li>
 <li><p>ANION_EXCL: Anion exclusion.</p></li>
 <li><p>SOL_CRK: Soil cracking.</p></li>
-<li><p>TEXTURE: Soil texture.
-For each available layer (up to 10 layers):</p></li>
-<li><p>SOL_Z1, SOL_BD1, SOL_AWC1, SOL_K1, SOL_CBN1, CLAY1, SILT1, SAND1, ROCK1, SOL_ALB1,
-USLE_K1, SOL_EC1, SOL_CAL1, SOL_PH1 (examples of the first layer)</p></li>
+<li><p>TEXTURE: Soil texture. <br><br><strong>For each available layer (up to 10 layers)</strong>:</p></li>
+<li><p>SOL_Z1 - SOL_Z10: Depth of each layer. Units: mm;</p></li>
+<li><p>SOL_BD1 - SOL_BD10: Bulk density of each layer. Units: Mg/m3 or g/cm3;</p></li>
+<li><p>SOL_AWC1 - SOL_AWC10: Available water capacity of each layer. Units: mm H2O/mm soil;</p></li>
+<li><p>SOL_K1 - SOL_K10: Saturated hydraulic conductivity of each layer. Units: mm/hr;</p></li>
+<li><p>SOL_CBN1 - SOL_CBN10: Carbon content of each layer. Units: % soil weight;</p></li>
+<li><p>CLAY1 - CLAY10: Clay  (particles &lt;0.002 mm) content of each layer.
+Units: % soil weight;</p></li>
+<li><p>SILT1 - SILT10: Silt (particles between 0.002 and 0.05 mm)
+content of each layer. Units: % soil weight;</p></li>
+<li><p>SAND1 - SAND10: Sand (particles between 0.05 and 2 mm)
+content of each layer. Units: % soil weight;</p></li>
+<li><p>ROCK1 - ROCK10: Rock (particles &gt;2 mm) content of each layer. Units: % total weight;</p></li>
+<li><p>SOL_ALB1 - SOL_ALB10: Soil albedo of each layer. Units: ratio (values 0-1);</p></li>
+<li><p>USLE_K1 - USLE_K10: USLE K factor of each layer. Units: 0.013 (metric ton m2 hr)/(m3-metric ton cm);</p></li>
+<li><p>SOL_EC1 - SOL_EC10: Soil electrical conductivity of each layer. Units: dS/m;</p></li>
+<li><p>SOL_CAL1 - SOL_CAL10: Soil CaCO3 content of each layer. Units: % (values 0 - 50%);</p></li>
+<li><p>SOL_PH1 - SOL_PH10: Soil pH of each layer. Units: pH (values 3-10). <br><br>
+Soil properties data can be prepared using <code><a href="get_usersoil_table.html">get_usersoil_table</a></code>
+function and saved into the CSV file using
+<code>write.csv(usertable, ".my_file.csv", row.names=FALSE, quote=FALSE)</code>.</p></li>
 </ul></dd>
 
 

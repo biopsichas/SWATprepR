@@ -7,7 +7,8 @@
 plot_monthly(df, station, variables = levels(as.factor(df$Variables)))
 }
 \arguments{
-\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed)}
+\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
+Data can be loaded with \code{\link{load_template}} function using 'xlsx' template file.}
 
 \item{station}{character indicating station, which should be selected for figure.}
 

@@ -11,7 +11,10 @@ plot_weather(meteo_lst, par, period = "day", fn_summarize = "mean")
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{par}{Character, the weather variable to extract (e.g., "PCP", "SLR").}
 

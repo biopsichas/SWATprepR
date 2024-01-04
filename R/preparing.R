@@ -112,7 +112,10 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param catchment_boundary_path Character, path to the basin boundary shape file.
 #' @param dem_data_path Character, path to DEM raster data in the same projection 
 #' as the weather station.
@@ -196,7 +199,10 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}.
 #'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param par_fill (optional) A vector of variables to be filled. Default is 
 #' \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.
 #' @importFrom sf st_distance
@@ -257,35 +263,38 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param TMP_MAX (optional) Dataframe with two columns: DATE : POSIXct, TMP_MAX : num. 
 #' This parameter refers to data, which should be used instead if TMP_MAX variable 
-#' is missing for a station.  Default \code{TMP_MAX = NULL}, data of the closest 
-#' station with data will be used. 
+#' is missing for a station. Default \code{TMP_MAX = NULL}, data of the closest 
+#' station with data will be used. Units: Celsius.
 #' @param TMP_MIN (optional) Dataframe with two columns: DATE : POSIXct, TMP_MIN : num. 
 #'   This parameter refers to data, which should be used instead if TMP_MIN variable 
 #'   is missing for a station. Default \code{TMP_MIN = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: Celsius.
 #' @param PCP (optional) Dataframe with two columns: DATE : POSIXct, PCP : num. 
 #'   This parameter refers to data, which should be used instead if PCP variable 
 #'   is missing for a station. Default \code{PCP = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: mm/day.
 #' @param RELHUM (optional) Dataframe with two columns: DATE : POSIXct, RELHUM : num. 
 #'   This parameter refers to data, which should be used instead if RELHUM variable 
 #'   is missing for a station. Default \code{RELHUM = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: ratio 0-1.
 #' @param WNDSPD (optional) Dataframe with two columns: DATE : POSIXct, WNDSPD : num. 
 #'   This parameter refers to data, which should be used instead if WNDSPD variable 
 #'   is missing for a station. Default \code{WNDSPD = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: m/s.
 #' @param MAXHHR (optional) Dataframe with two columns: DATE : POSIXct, MAXHHR : num. 
 #'   This parameter refers to data, which should be used instead if MAXHHR variable 
 #'   is missing for a station. Default \code{MAXHHR = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: mm.
 #' @param SLR (optional) Dataframe with two columns: DATE : POSIXct, SLR : num. 
 #'   This parameter refers to data, which should be used instead if SLR variable 
 #'   is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest 
-#'   station with data will be used.
+#'   station with data will be used. Units: MJ/m2.
 #' @importFrom stats aggregate sd
 #' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
 #' @importFrom dplyr %>% rename mutate bind_rows select
@@ -426,7 +435,10 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param write_path Character, path to the SWAT+ txtinout folder (example "my_model").
 #' @param period_starts (optional) Character, date string (example '1991-01-01'). 
 #' Default \code{period_starts = NA}, stands for all available in data.
@@ -649,16 +661,25 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
 #' provided CSV file.
 #'
 #' @param csv_path Character path to the CSV file (e.g., "usersoil_lrew.csv"). 
-#'   The file should be comma-separated with minimum columns of SNAM, NLAYERS, 
-#'   SOL_Z, CLAY, SILT, SAND, SOL_CBN 
-#'   for each available soil layer (minimum 1).
+#'   The file should be comma-separated with minimum columns of:
+#'   - SNAM - name of soil type, 
+#'   - NLAYERS - number of soil layers in the soil, and for each soil layer i (minimum 1).
+#'   - SOL_Zi - depth from soil surface to bottom of layer in mm; 
+#'   - CLAYi - clay content (particles <0.002 mm) in % soil weight;
+#'   - SILTi - silt content (particles between 0.002 and 0.05 mm) in % soil weight; 
+#'   - SANDi - sand content (particles between 0.05 and 2 mm) in % soil weight; 
+#'   - SOL_CBNi - organic carbon content (% soil weight) for each available soil layer.
 #' @param hsg (optional) Logical, TRUE - prepare soil hydrological groups, 
 #' FALSE - no soil hydrological group preparation will be done. 
 #' Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns 
-#' should be in an input table: Impervious (allowed values are "<50cm", 
-#' "50-100cm", ">100cm"), Depth (allowed values are "<60cm", "60-100cm", ">100cm"), 
-#' and Drained (allowed values are "Y" for drained areas, "N" for areas without 
-#' working tile drains). More information can be found in the SWAT+ modeling protocol 
+#' should be in an input table: \cr 
+#'  - 'Impervious' - depth to impervious layer (allowed values are "<50cm", 
+#'  "50-100cm", ">100cm");
+#'  - 'Depth' - depth to water table  (allowed values are "<60cm", "60-100cm", 
+#'  ">100cm");
+#'  - 'Drained' - whether soil is drained (allowed values are "Y" for drained 
+#'  areas, "N" for areas without working tile drains). \cr
+#'  More information can be found in the SWAT+ modeling protocol 
 #' \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
 #' @param keep_values (optional) Logical or character vector, TRUE - keep old values (new 
 #' values only will be left where 0 or NA values are present in an input table), 
@@ -1055,22 +1076,41 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #'
 #' @param csv_path Character, path to CSV file containing user-defined soil 
 #' information (example "usersoil_lrew.csv"). 
-#' The CSV file should have the following columns:
-#'   - OBJECTID: Identifier for each record.
-#'   - MUID: Unique identifier.
-#'   - SEQN: Sequence number.
+#' The CSV file should have the following columns (* indicates not required, yet 
+#' column should be present in the CSV file):
+#'   - OBJECTID*: Identifier for each record.
+#'   - MUID*: Unique identifier.
+#'   - SEQN*: Sequence number.
 #'   - SNAM: Soil name.
-#'   - S5ID: Soil ID.
-#'   - CMPPCT: Component percentage.
+#'   - S5ID*: Soil ID.
+#'   - CMPPCT*: Component percentage.
 #'   - NLAYERS: Number of layers.
 #'   - HYDGRP: Hydrologic group.
 #'   - SOL_ZMX: Maximum soil depth.
 #'   - ANION_EXCL: Anion exclusion.
 #'   - SOL_CRK: Soil cracking.
-#'   - TEXTURE: Soil texture.
-#' For each available layer (up to 10 layers):
-#'   - SOL_Z1, SOL_BD1, SOL_AWC1, SOL_K1, SOL_CBN1, CLAY1, SILT1, SAND1, ROCK1, SOL_ALB1, 
-#'     USLE_K1, SOL_EC1, SOL_CAL1, SOL_PH1 (examples of the first layer)
+#'   - TEXTURE: Soil texture. \cr\cr
+#' **For each available layer (up to 10 layers)**:
+#'   - SOL_Z1 - SOL_Z10: Depth of each layer. Units: mm;
+#'   - SOL_BD1 - SOL_BD10: Bulk density of each layer. Units: Mg/m3 or g/cm3;
+#'   - SOL_AWC1 - SOL_AWC10: Available water capacity of each layer. Units: mm H2O/mm soil;
+#'   - SOL_K1 - SOL_K10: Saturated hydraulic conductivity of each layer. Units: mm/hr;
+#'   - SOL_CBN1 - SOL_CBN10: Carbon content of each layer. Units: % soil weight;
+#'   - CLAY1 - CLAY10: Clay  (particles <0.002 mm) content of each layer. 
+#'   Units: % soil weight;
+#'   - SILT1 - SILT10: Silt (particles between 0.002 and 0.05 mm) 
+#'   content of each layer. Units: % soil weight;
+#'   - SAND1 - SAND10: Sand (particles between 0.05 and 2 mm) 
+#'   content of each layer. Units: % soil weight;
+#'   - ROCK1 - ROCK10: Rock (particles >2 mm) content of each layer. Units: % total weight;
+#'   - SOL_ALB1 - SOL_ALB10: Soil albedo of each layer. Units: ratio (values 0-1);
+#'   - USLE_K1 - USLE_K10: USLE K factor of each layer. Units: 0.013 (metric ton m2 hr)/(m3-metric ton cm);
+#'   - SOL_EC1 - SOL_EC10: Soil electrical conductivity of each layer. Units: dS/m;
+#'   - SOL_CAL1 - SOL_CAL10: Soil CaCO3 content of each layer. Units: % (values 0 - 50%);
+#'   - SOL_PH1 - SOL_PH10: Soil pH of each layer. Units: pH (values 3-10). \cr\cr
+#'     Soil properties data can be prepared using \code{\link{get_usersoil_table}} 
+#'     function and saved into the CSV file using 
+#'     \code{write.csv(usertable, ".my_file.csv", row.names=FALSE, quote=FALSE)}.
 #' @param db_path (optional) Character path to SQLite project database (example 
 #' "output/project.sqlite"). Default \code{db_path = NULL}, which means SWAT+ model setup
 #' .sqlite database will not be used to reduce the size of the soils.sol file by 
@@ -1169,22 +1209,25 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
   print("Please copy file to your setup folder.")
 }
 
-# Updating .sqlite database -----------------------------------------------
+# Updating SWAT+ SQLite database -----------------------------------------------
 
-#' Update SQLite database with weather data
+#' Update SWAT+ SQLite database with weather data
 #'
-#' This function updates an SQLite database with weather data, including 
+#' This function updates an SWAT+ SQLite database with weather data, including 
 #' meteorological and weather generator data.
 #'
-#' @param db_path A character string representing the path to the SQLite database 
+#' @param db_path A character string representing the path to the SWAT+ SQLite database 
 #' (e.g., "./output/project.sqlite").
 #' @param meteo_lst A nested list of lists with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param wgn_lst A list of two dataframes: wgn_st - weather generator station 
-#' data, wgn_data - weather generator data (prepared by \code{\link{prepare_wgn}} function).
+#' data, wgn_data - weather generator data (prepared by function).
 #' @param fill_missing (optional) Boolean, TRUE - fill data for missing stations with data 
 #' from closest stations with available data. FALSE - leave stations without 
 #' data. Weather generator will be used to fill missing variables for a model.
@@ -1195,7 +1238,7 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
 #' @importFrom lubridate yday interval years
 #' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
-#' @return Updated SQLite database with weather data.
+#' @return Updated SWAT+ SQLite database with weather data.
 #'
 #' @examples
 #' \dontrun{
@@ -1349,9 +1392,9 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   return(print(paste("Weather data was successfuly added to", gsub(".*/","",db_path))))
 }
 
-#' Update SQLite database with atmospheric deposition data
+#' Update SWAT+ SQLite database with atmospheric deposition data
 #'
-#' This function updates an SQLite database with atmospheric deposition data.
+#' This function updates an SWAT+ SQLite database with atmospheric deposition data.
 #'
 #' @param df A data frame containing columns "DATE," "NH4_RF," "NO3_RF," 
 #' "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}} function.
@@ -1363,7 +1406,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
 #' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
-#' @return Writes data to 'atmodep.cli' file and updates the SQLite database 
+#' @return Writes data to 'atmodep.cli' file and updates the SWAT+ SQLite database 
 #' with codes and connections to atmospheric deposition data.
 #' @export 
 #' @examples
@@ -1586,6 +1629,8 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #'   \code{pt_lst -> st -> Dataframe (name, Lat, Long)}.
 #'   Additional information on the input variables, which could be used in the template 
 #'   files can be found in the SWAT+ documentation: ['filename'.rec](https://swatplus.gitbook.io/io-docs/introduction/point-sources-and-inlets/filename.rec)
+#'   Point source data can be loaded with \code{\link{load_template}} function 
+#'   using 'xlsx' template file. 
 #' @param project_path Character, path to the SWAT+ project folder (example "my_model"). 
 #' @param write_path (optional) Character, path to SWAT+ txtinout folder (example "my_model"). 
 #'   Default \code{write_path = NULL}, which is the same as \code{project_path}.

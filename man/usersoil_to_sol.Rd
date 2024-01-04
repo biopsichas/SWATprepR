@@ -9,23 +9,42 @@ usersoil_to_sol(csv_path, db_path = NULL)
 \arguments{
 \item{csv_path}{Character, path to CSV file containing user-defined soil
 information (example "usersoil_lrew.csv").
-The CSV file should have the following columns:
+The CSV file should have the following columns (* indicates not required, yet
+column should be present in the CSV file):
 \itemize{
-\item OBJECTID: Identifier for each record.
-\item MUID: Unique identifier.
-\item SEQN: Sequence number.
+\item OBJECTID*: Identifier for each record.
+\item MUID*: Unique identifier.
+\item SEQN*: Sequence number.
 \item SNAM: Soil name.
-\item S5ID: Soil ID.
-\item CMPPCT: Component percentage.
+\item S5ID*: Soil ID.
+\item CMPPCT*: Component percentage.
 \item NLAYERS: Number of layers.
 \item HYDGRP: Hydrologic group.
 \item SOL_ZMX: Maximum soil depth.
 \item ANION_EXCL: Anion exclusion.
 \item SOL_CRK: Soil cracking.
-\item TEXTURE: Soil texture.
-For each available layer (up to 10 layers):
-\item SOL_Z1, SOL_BD1, SOL_AWC1, SOL_K1, SOL_CBN1, CLAY1, SILT1, SAND1, ROCK1, SOL_ALB1,
-USLE_K1, SOL_EC1, SOL_CAL1, SOL_PH1 (examples of the first layer)
+\item TEXTURE: Soil texture. \cr\cr
+\strong{For each available layer (up to 10 layers)}:
+\item SOL_Z1 - SOL_Z10: Depth of each layer. Units: mm;
+\item SOL_BD1 - SOL_BD10: Bulk density of each layer. Units: Mg/m3 or g/cm3;
+\item SOL_AWC1 - SOL_AWC10: Available water capacity of each layer. Units: mm H2O/mm soil;
+\item SOL_K1 - SOL_K10: Saturated hydraulic conductivity of each layer. Units: mm/hr;
+\item SOL_CBN1 - SOL_CBN10: Carbon content of each layer. Units: \% soil weight;
+\item CLAY1 - CLAY10: Clay  (particles <0.002 mm) content of each layer.
+Units: \% soil weight;
+\item SILT1 - SILT10: Silt (particles between 0.002 and 0.05 mm)
+content of each layer. Units: \% soil weight;
+\item SAND1 - SAND10: Sand (particles between 0.05 and 2 mm)
+content of each layer. Units: \% soil weight;
+\item ROCK1 - ROCK10: Rock (particles >2 mm) content of each layer. Units: \% total weight;
+\item SOL_ALB1 - SOL_ALB10: Soil albedo of each layer. Units: ratio (values 0-1);
+\item USLE_K1 - USLE_K10: USLE K factor of each layer. Units: 0.013 (metric ton m2 hr)/(m3-metric ton cm);
+\item SOL_EC1 - SOL_EC10: Soil electrical conductivity of each layer. Units: dS/m;
+\item SOL_CAL1 - SOL_CAL10: Soil CaCO3 content of each layer. Units: \% (values 0 - 50\%);
+\item SOL_PH1 - SOL_PH10: Soil pH of each layer. Units: pH (values 3-10). \cr\cr
+Soil properties data can be prepared using \code{\link{get_usersoil_table}}
+function and saved into the CSV file using
+\code{write.csv(usertable, ".my_file.csv", row.names=FALSE, quote=FALSE)}.
 }}
 
 \item{db_path}{(optional) Character path to SQLite project database (example

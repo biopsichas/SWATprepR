@@ -362,10 +362,10 @@ list_to_df <- function(lst){
 }
 
 
-#' Updating sqlite database table with wst_id information
+#' Updating SWAT+ SQLite database table with wst_id information
 #'
 #' @param tname character of table name (example "hru_con")
-#' @param db_path character to sqlite database (example "./output/project.sqlite")
+#' @param db_path character to SWAT+ SQLite database (example "./output/project.sqlite")
 #' @param wst_cli data.frame weather_sta_cli table
 #' @importFrom DBI dbConnect dbReadTable dbWriteTable dbDisconnect
 #' @importFrom RSQLite SQLite

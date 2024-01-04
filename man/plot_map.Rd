@@ -8,7 +8,8 @@ plot_map(df, df_station, rch, shp)
 }
 \arguments{
 \item{df}{Dataframe with formatted data (requires "Station", "DATE",
-"Variables", and "Values" columns).}
+"Variables", and "Values" columns). Data can be loaded with
+\code{\link{load_template}} function using 'xlsx' template file.}
 
 \item{df_station}{Dataframe with formatted station data (requires "ID" and
 "geometry" columns).}

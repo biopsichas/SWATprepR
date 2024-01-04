@@ -8,7 +8,8 @@ plot_cal_data(df, stations, variables = NULL)
 }
 \arguments{
 \item{df}{Dataframe with formatted data (requires "Station", "DATE", "
-Variables", and "Values" columns).}
+Variables", and "Values" columns). Data can be loaded with
+\code{\link{load_template}} function using 'xlsx' template file.}
 
 \item{stations}{Character vector listing stations to be selected for the figure.}
 

@@ -11,7 +11,10 @@ prepare_climate(meteo_lst, write_path, period_starts = NA, period_ends = NA)
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{write_path}{Character, path to the SWAT+ txtinout folder (example "my_model").}
 

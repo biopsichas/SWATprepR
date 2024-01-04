@@ -2,14 +2,14 @@
 % Please edit documentation in R/helper.R
 \name{update_wst_id}
 \alias{update_wst_id}
-\title{Updating sqlite database table with wst_id information}
+\title{Updating SWAT+ SQLite database table with wst_id information}
 \usage{
 update_wst_id(tname, db_path, wst_cli)
 }
 \arguments{
 \item{tname}{character of table name (example "hru_con")}
 
-\item{db_path}{character to sqlite database (example "./output/project.sqlite")}
+\item{db_path}{character to SWAT+ SQLite database (example "./output/project.sqlite")}
 
 \item{wst_cli}{data.frame weather_sta_cli table}
 }
@@ -17,7 +17,7 @@ update_wst_id(tname, db_path, wst_cli)
 updates sql database with table amended with wst_id (id of closest weather station)
 }
 \description{
-Updating sqlite database table with wst_id information
+Updating SWAT+ SQLite database table with wst_id information
 }
 \examples{
 \dontrun{

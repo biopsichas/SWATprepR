@@ -8,7 +8,8 @@ plot_fractions(df, station, total_var, min_vars)
 }
 \arguments{
 \item{df}{Dataframe with formatted data (requires "Station", "DATE",
-"Variables", and "Values" columns).}
+"Variables", and "Values" columns). Data can be loaded with
+\code{\link{load_template}} function using 'xlsx' template file.}
 
 \item{station}{Character vector indicating the station/s to be selected for
 the figure.}

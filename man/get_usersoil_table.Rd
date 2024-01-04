@@ -8,18 +8,31 @@ get_usersoil_table(csv_path, hsg = FALSE, keep_values = FALSE, nb_lyr = NA)
 }
 \arguments{
 \item{csv_path}{Character path to the CSV file (e.g., "usersoil_lrew.csv").
-The file should be comma-separated with minimum columns of SNAM, NLAYERS,
-SOL_Z, CLAY, SILT, SAND, SOL_CBN
-for each available soil layer (minimum 1).}
+The file should be comma-separated with minimum columns of:
+\itemize{
+\item SNAM - name of soil type,
+\item NLAYERS - number of soil layers in the soil, and for each soil layer i (minimum 1).
+\item SOL_Zi - depth from soil surface to bottom of layer in mm;
+\item CLAYi - clay content (particles <0.002 mm) in \% soil weight;
+\item SILTi - silt content (particles between 0.002 and 0.05 mm) in \% soil weight;
+\item SANDi - sand content (particles between 0.05 and 2 mm) in \% soil weight;
+\item SOL_CBNi - organic carbon content (\% soil weight) for each available soil layer.
+}}
 
 \item{hsg}{(optional) Logical, TRUE - prepare soil hydrological groups,
 FALSE - no soil hydrological group preparation will be done.
 Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns
-should be in an input table: Impervious (allowed values are "<50cm",
-"50-100cm", ">100cm"), Depth (allowed values are "<60cm", "60-100cm", ">100cm"),
-and Drained (allowed values are "Y" for drained areas, "N" for areas without
-working tile drains). More information can be found in the SWAT+ modeling protocol
-\href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.}
+should be in an input table: \cr
+\itemize{
+\item 'Impervious' - depth to impervious layer (allowed values are "<50cm",
+"50-100cm", ">100cm");
+\item 'Depth' - depth to water table  (allowed values are "<60cm", "60-100cm",
+">100cm");
+\item 'Drained' - whether soil is drained (allowed values are "Y" for drained
+areas, "N" for areas without working tile drains). \cr
+More information can be found in the SWAT+ modeling protocol
+\href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
+}}
 
 \item{keep_values}{(optional) Logical or character vector, TRUE - keep old values (new
 values only will be left where 0 or NA values are present in an input table),

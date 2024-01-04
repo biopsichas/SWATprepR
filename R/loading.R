@@ -358,7 +358,7 @@ load_swat_weather <- function(input_folder){
 #' @param start_year (optional) Integer representing the starting year for data
 #'  extraction. Default \code{start_year = 1990}.
 #' @param end_year Integer representing the ending year for data extraction. 
-#' Default \code{end_year = 2020}.
+#' Default \code{end_year = 2022}.
 #' @importFrom sf st_transform st_read st_bbox
 #' @importFrom RNetCDF open.nc var.get.nc
 #' @importFrom dplyr bind_rows
@@ -389,9 +389,9 @@ load_swat_weather <- function(input_folder){
 #' See the EMEP website for more information: \url{https://www.emep.int/mscw/mscw_moddata.html}
 #' @keywords loading
 
-get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2020){
+get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2022){
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
-  url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2022_Reporting/EMEP01_rv4.45_"
+  url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2023_Reporting/EMEP01_rv5.0_"
   ##Getting borders of the catchment
   basin <-st_transform(st_read(catchment_boundary_path, quiet = TRUE), 4326)
   bb <- st_bbox(basin)
@@ -402,13 +402,13 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   ##Loop to extract data
   for(u in seq(start_year, end_year)){
     print(paste("Working on year", u))
-    if(u != 2020){
-      uu <- "_rep2022.nc"
+    if(!u %in% c(2021, 2022)){
+      uu <- "_rep2023.nc"
     } else {
       uu <- ".nc"
     }
     ##Assembling URL for each year
-    url <- paste0(url_prt, t_ext, ".", u, "met_", u, "emis", uu)
+    url <- paste0(url_prt, t_ext, ".", u, "met_", ifelse(u == 2022, 2021, u), "emis", uu)
     ##Opening file and getting indexes for data.
     r <- open.nc(url)
     lon <- var.get.nc(r, "lon")
@@ -425,9 +425,11 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     ##Reading parameters and converting to right units and averaging them over extracted grid.
     if(t_ext == "year"){
       prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat]
-      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]*4.4268/100)
+      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]*4.4268/100) 
+      # 4.4268 is the conversion factor from N to NO3, /100 is conversion mg/m2 to kg/ha
       wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]*4.4268/prec)
       dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]*1.2878/100)
+      # 1.2878 is the conversion factor from N to NH4, /100 is conversion mg/m2 to kg/ha
       wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]*1.2878/prec)
       ##Saving results
       df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
@@ -468,10 +470,15 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' it into a nested list of lists.
 #'
 #' @param dir_path Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
-#' NefCDF data to be recognized by function should be saved with these file names:
-#'  "prec.nc" (precipitation), "relHum.nc" (relative humidity), "solarRad.nc" 
-#'  (solar radiation), "Tmax.nc" (maximum daily temperature), "Tmin.nc" 
-#'  (minimum daily temperature), "windSpeed.nc" (wind speed).
+#' NetCDF data to be recognized by the function should be saved with these specific file names:
+#'  - "prec.nc" for precipitation,
+#'  - "relHum.nc" for relative humidity,
+#'  - "solarRad.nc" for solar radiation,
+#'  - "Tmax.nc" for maximum daily temperature,
+#'  - "Tmin.nc" for minimum daily temperature,
+#'  - "windSpeed.nc" for wind speed.
+#' Ensure that the NetCDF files are correctly named and stored in the specified 
+#' directory for the function to recognize them.'
 #' @param location Character or list. If character, provide the path to the catchment 
 #'   boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with 
 #'   dataframes. The nested structure is same as prepared by 

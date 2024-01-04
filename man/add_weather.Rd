@@ -2,22 +2,25 @@
 % Please edit documentation in R/preparing.R
 \name{add_weather}
 \alias{add_weather}
-\title{Update SQLite database with weather data}
+\title{Update SWAT+ SQLite database with weather data}
 \usage{
 add_weather(db_path, meteo_lst, wgn_lst, fill_missing = TRUE)
 }
 \arguments{
-\item{db_path}{A character string representing the path to the SQLite database
+\item{db_path}{A character string representing the path to the SWAT+ SQLite database
 (e.g., "./output/project.sqlite").}
 
 \item{meteo_lst}{A nested list of lists with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{wgn_lst}{A list of two dataframes: wgn_st - weather generator station
-data, wgn_data - weather generator data (prepared by \code{\link{prepare_wgn}} function).}
+data, wgn_data - weather generator data (prepared by function).}
 
 \item{fill_missing}{(optional) Boolean, TRUE - fill data for missing stations with data
 from closest stations with available data. FALSE - leave stations without
@@ -25,10 +28,10 @@ data. Weather generator will be used to fill missing variables for a model.
 Default \code{fill_missing = TRUE}.}
 }
 \value{
-Updated SQLite database with weather data.
+Updated SWAT+ SQLite database with weather data.
 }
 \description{
-This function updates an SQLite database with weather data, including
+This function updates an SWAT+ SQLite database with weather data, including
 meteorological and weather generator data.
 }
 \examples{

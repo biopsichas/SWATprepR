@@ -8,10 +8,17 @@ load_netcdf_weather(dir_path, location)
 }
 \arguments{
 \item{dir_path}{Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
-NefCDF data to be recognized by function should be saved with these file names:
-"prec.nc" (precipitation), "relHum.nc" (relative humidity), "solarRad.nc"
-(solar radiation), "Tmax.nc" (maximum daily temperature), "Tmin.nc"
-(minimum daily temperature), "windSpeed.nc" (wind speed).}
+NetCDF data to be recognized by the function should be saved with these specific file names:
+\itemize{
+\item "prec.nc" for precipitation,
+\item "relHum.nc" for relative humidity,
+\item "solarRad.nc" for solar radiation,
+\item "Tmax.nc" for maximum daily temperature,
+\item "Tmin.nc" for minimum daily temperature,
+\item "windSpeed.nc" for wind speed.
+Ensure that the NetCDF files are correctly named and stored in the specified
+directory for the function to recognize them.'
+}}
 
 \item{location}{Character or list. If character, provide the path to the catchment
 boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with

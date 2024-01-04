@@ -2,7 +2,7 @@
 % Please edit documentation in R/preparing.R
 \name{add_atmo_dep}
 \alias{add_atmo_dep}
-\title{Update SQLite database with atmospheric deposition data}
+\title{Update SWAT+ SQLite database with atmospheric deposition data}
 \usage{
 add_atmo_dep(df, db_path, t_ext = "year")
 }
@@ -18,11 +18,11 @@ yearly averages, 'month' for monthly averages, and 'annual' for the average
 of the entire period. Default default \code{t_ext = "year"}.}
 }
 \value{
-Writes data to 'atmodep.cli' file and updates the SQLite database
+Writes data to 'atmodep.cli' file and updates the SWAT+ SQLite database
 with codes and connections to atmospheric deposition data.
 }
 \description{
-This function updates an SQLite database with atmospheric deposition data.
+This function updates an SWAT+ SQLite database with atmospheric deposition data.
 }
 \examples{
 \dontrun{

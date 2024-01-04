@@ -8,7 +8,7 @@ get_atmo_dep(
   catchment_boundary_path,
   t_ext = "year",
   start_year = 1990,
-  end_year = 2020
+  end_year = 2022
 )
 }
 \arguments{
@@ -22,7 +22,7 @@ get_atmo_dep(
 extraction. Default \code{start_year = 1990}.}
 
 \item{end_year}{Integer representing the ending year for data extraction.
-Default \code{end_year = 2020}.}
+Default \code{end_year = 2022}.}
 }
 \value{
 A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and

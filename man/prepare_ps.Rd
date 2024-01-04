@@ -11,7 +11,9 @@ prepare_ps(pt_lst, project_path, write_path = NULL, cha_shape_path = FALSE)
 Nested structure: \code{pt_lst -> data -> Dataframe (name, DATE, flo, ...)},
 \code{pt_lst -> st -> Dataframe (name, Lat, Long)}.
 Additional information on the input variables, which could be used in the template
-files can be found in the SWAT+ documentation: \href{https://swatplus.gitbook.io/io-docs/introduction/point-sources-and-inlets/filename.rec}{'filename'.rec}}
+files can be found in the SWAT+ documentation: \href{https://swatplus.gitbook.io/io-docs/introduction/point-sources-and-inlets/filename.rec}{'filename'.rec}
+Point source data can be loaded with \code{\link{load_template}} function
+using 'xlsx' template file.}
 
 \item{project_path}{Character, path to the SWAT+ project folder (example "my_model").}
 

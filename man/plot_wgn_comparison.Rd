@@ -19,7 +19,10 @@ plot_wgn_comparison(
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{meteo_lst2}{Second nested list with dataframes. Same structure as
 \code{meteo_lst1}.}

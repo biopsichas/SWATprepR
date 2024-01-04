@@ -20,42 +20,45 @@ prepare_wgn(
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{TMP_MAX}{(optional) Dataframe with two columns: DATE : POSIXct, TMP_MAX : num.
 This parameter refers to data, which should be used instead if TMP_MAX variable
-is missing for a station.  Default \code{TMP_MAX = NULL}, data of the closest
-station with data will be used.}
+is missing for a station. Default \code{TMP_MAX = NULL}, data of the closest
+station with data will be used. Units: Celsius.}
 
 \item{TMP_MIN}{(optional) Dataframe with two columns: DATE : POSIXct, TMP_MIN : num.
 This parameter refers to data, which should be used instead if TMP_MIN variable
 is missing for a station. Default \code{TMP_MIN = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: Celsius.}
 
 \item{PCP}{(optional) Dataframe with two columns: DATE : POSIXct, PCP : num.
 This parameter refers to data, which should be used instead if PCP variable
 is missing for a station. Default \code{PCP = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: mm/day.}
 
 \item{RELHUM}{(optional) Dataframe with two columns: DATE : POSIXct, RELHUM : num.
 This parameter refers to data, which should be used instead if RELHUM variable
 is missing for a station. Default \code{RELHUM = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: ratio 0-1.}
 
 \item{WNDSPD}{(optional) Dataframe with two columns: DATE : POSIXct, WNDSPD : num.
 This parameter refers to data, which should be used instead if WNDSPD variable
 is missing for a station. Default \code{WNDSPD = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: m/s.}
 
 \item{MAXHHR}{(optional) Dataframe with two columns: DATE : POSIXct, MAXHHR : num.
 This parameter refers to data, which should be used instead if MAXHHR variable
 is missing for a station. Default \code{MAXHHR = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: mm.}
 
 \item{SLR}{(optional) Dataframe with two columns: DATE : POSIXct, SLR : num.
 This parameter refers to data, which should be used instead if SLR variable
 is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest
-station with data will be used.}
+station with data will be used. Units: MJ/m2.}
 }
 \value{
 List of two dataframes: wgn_st - WGN station data, wgn_data - WGN data.

@@ -14,7 +14,10 @@ fill_with_closest(
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)}.
 Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-  geometry, Long, Lat)}.}
+  geometry, Long, Lat)}. \cr\cr
+meteo_lst can be created using \code{\link{load_template}} function using
+'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+function loading information from SWAT+ model setup weather files.}
 
 \item{par_fill}{(optional) A vector of variables to be filled. Default is
 \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.}

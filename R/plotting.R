@@ -7,7 +7,8 @@
 #' provided data.
 #'
 #' @param df Dataframe with formatted data (requires "Station", "DATE", "
-#' Variables", and "Values" columns).
+#' Variables", and "Values" columns). Data can be loaded with 
+#' \code{\link{load_template}} function using 'xlsx' template file. 
 #' @param stations Character vector listing stations to be selected for the figure.
 #' @param variables (Optional) Character vector specifying which parameters 
 #' should be included in the figure. Default \code{variables = NULL}, all available
@@ -115,7 +116,8 @@ plot_ts_fig <- function(station, df){
 
 #' Aggregating values of single station to interactive monthly box plots 
 #'
-#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed)
+#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
+#' Data can be loaded with \code{\link{load_template}} function using 'xlsx' template file. 
 #' @param station character indicating station, which should be selected for figure. 
 #' @param variables optional parameter of character vector, which parameters should be in figure. 
 #' @return plotly object of interactive figure
@@ -164,7 +166,8 @@ plot_monthly <- function(df, station,
 #' between nutrient parts and the total.
 #'
 #' @param df Dataframe with formatted data (requires "Station", "DATE", 
-#' "Variables", and "Values" columns).
+#' "Variables", and "Values" columns). Data can be loaded with 
+#' \code{\link{load_template}} function using 'xlsx' template file. 
 #' @param station Character vector indicating the station/s to be selected for 
 #' the figure.
 #' @param total_var Character vector for the variable selected to represent the 
@@ -240,7 +243,8 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' allowing users to click on points to view data.
 #'
 #' @param df Dataframe with formatted data (requires "Station", "DATE", 
-#' "Variables", and "Values" columns).
+#' "Variables", and "Values" columns). Data can be loaded with 
+#' \code{\link{load_template}} function using 'xlsx' template file. 
 #' @param df_station Dataframe with formatted station data (requires "ID" and 
 #' "geometry" columns).
 #' @param rch sf dataframe for reaches (requires "id" and "geometry" columns).
@@ -307,7 +311,10 @@ plot_map <- function(df, df_station, rch, shp){
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param par Character, the weather variable to extract (e.g., "PCP", "SLR").
 #' @param period (optional) Character describing the time interval to display. 
 #' Default \code{period = "day"}, other examples are "week", "month", "year".
@@ -383,7 +390,10 @@ plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param meteo_lst2 Second nested list with dataframes. Same structure as \code{meteo_lst1}.
 #' @param par Character vector, weather variable to extract (e.g., "PCP", "SLR").
 #' @param period (optional) Character, the time interval to display. Default 
@@ -438,7 +448,10 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}.
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
 #' @param meteo_lst2 Second nested list with dataframes. Same structure as 
 #' \code{meteo_lst1}. 
 #' @param station1 Character, ID of one station in the first list selected for 
