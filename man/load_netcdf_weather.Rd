@@ -2,7 +2,7 @@
 % Please edit documentation in R/loading.R
 \name{load_netcdf_weather}
 \alias{load_netcdf_weather}
-\title{Extract Climate Data from CORDEX NetCDF into Nested List of Lists}
+\title{Extract Climate Data from CORDEX NetCDF into Nested List}
 \usage{
 load_netcdf_weather(dir_path, location)
 }
@@ -21,9 +21,9 @@ directory for the function to recognize them.'
 }}
 
 \item{location}{Character or list. If character, provide the path to the catchment
-boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with
+boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list with
 dataframes. The nested structure is same as prepared by
-using \code{load_template()} function.}
+using \code{\link{load_template}} or \code{\link{load_swat_weather}} functions.}
 }
 \value{
 Nested list. The first nesting level is for RCP, the second for RCM model numbers,
@@ -35,7 +35,7 @@ other package functions (e.g., \code{plot_weather(result$rcp26$"1", "PCP", "mont
 }
 \description{
 This function extracts climate data from the CORDEX-BC dataset and organizes
-it into a nested list of lists.
+it into a nested list.
 }
 \examples{
 \dontrun{

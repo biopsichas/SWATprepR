@@ -7,7 +7,7 @@
 get_interpolated_data(meteo_lst, grd, par, shp, dem_data_path, idw_exponent)
 }
 \arguments{
-\item{meteo_lst}{nested list of lists with dataframes.
+\item{meteo_lst}{nested list with dataframes.
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
 
 \item{grd}{sp SpatialGrid grid for the interpolation.}

@@ -10,7 +10,7 @@ add_weather(db_path, meteo_lst, wgn_lst, fill_missing = TRUE)
 \item{db_path}{A character string representing the path to the SWAT+ SQLite database
 (e.g., "./output/project.sqlite").}
 
-\item{meteo_lst}{A nested list of lists with dataframes.
+\item{meteo_lst}{A nested list with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -20,7 +20,7 @@ meteo_lst can be created using \code{\link{load_template}} function using
 function loading information from SWAT+ model setup weather files.}
 
 \item{wgn_lst}{A list of two dataframes: wgn_st - weather generator station
-data, wgn_data - weather generator data (prepared by function).}
+data, wgn_data - weather generator data (prepared by function \code{\link{prepare_wgn}}).}
 
 \item{fill_missing}{(optional) Boolean, TRUE - fill data for missing stations with data
 from closest stations with available data. FALSE - leave stations without

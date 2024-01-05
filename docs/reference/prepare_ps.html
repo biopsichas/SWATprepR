@@ -95,10 +95,11 @@ Default <code>write_path = NULL</code>, which is the same as <code>project_path<
 
 <dt>cha_shape_path</dt>
 <dd><p>(optional) Character, path to SWAT+ channel shapefile.
-'id' column should be present in attributes with numeric values representing channel ids,
-the same as in 'chandeg.con' file. Default <code>cha_shape_path = FALSE</code>,
-which assigns point sources to the will be assigned based on nearest center
-point in 'chandeg.con'</p></dd>
+'id' column should be present in attributes with numeric values representing channel ids
+corresponding to ids in 'chandeg.con' file. Default <code>cha_shape_path = FALSE</code>,
+which assigns point sources to nearest center point in 'chandeg.con'.
+To activate this parameter provide path to reach file, example <code>cha_shape_path = "my_path/my_channel_shape.shp"</code>,
+point sources will be assigned to nearest channel line.</p></dd>
 
 </dl></div>
     <div class="section level2">

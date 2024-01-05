@@ -24,22 +24,27 @@ FALSE - no soil hydrological group preparation will be done.
 Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns
 should be in an input table: \cr
 \itemize{
-\item 'Impervious' - depth to impervious layer (allowed values are "<50cm",
+\item 'Impervious' - depth to water impermeable layer (allowed values are "<50cm",
 "50-100cm", ">100cm");
-\item 'Depth' - depth to water table  (allowed values are "<60cm", "60-100cm",
+\item 'Depth' - depth to high water table  (allowed values are "<60cm", "60-100cm",
 ">100cm");
-\item 'Drained' - whether soil is drained (allowed values are "Y" for drained
+\item 'Drained' - information on tile drains (allowed values are "Y" for drained
 areas, "N" for areas without working tile drains). \cr
 More information can be found in the SWAT+ modeling protocol
 \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
 }}
 
-\item{keep_values}{(optional) Logical or character vector, TRUE - keep old values (new
-values only will be left where 0 or NA values are present in an input table),
-FALSE - keep only new values. A character vector can also be used to keep only
-specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of
-soil hydro groups and rock data for the first layer, while c("HYDGRP", "ROCK")
-would keep values in all rock data columns. Default \code{keep_values = FALSE}.}
+\item{keep_values}{(optional) Logical or character vector, TRUE - keep original
+values (only 0 or NA values of the original input table are overwritten with
+the values computed by the function, else original values are kept),
+FALSE - all original values are overwritten with the values computed by the
+function. \cr\cr
+If a character vector is provided, it should contain names of columns to keep.
+For instance, c("HYDGRP", "ROCK1") would keep values of soil
+hydrologic groups and rock content data of the first layer, while
+c("HYDGRP", "ROCK") would keep values of soil hydrologic groups and
+rock content data of all soil layers. \cr
+Default \code{keep_values = FALSE}.}
 
 \item{nb_lyr}{(optional) Integer, the number of layers resulting user soil
 data should contain. Default \code{nb_lyr = NA}, which stands for the
@@ -67,6 +72,6 @@ For detailed information, refer to: \url{https://doi.org/10.5281/zenodo.7463395}
 }
 \seealso{
 This function requires the euptf2 package.
-Please read more how to install, use and what is in it on \url{https://github.com/tkdweber/euptf2}.
+Please read information on its installation and description on \url{https://github.com/tkdweber/euptf2}.
 }
 \keyword{parameters}

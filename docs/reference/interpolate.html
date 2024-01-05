@@ -79,7 +79,7 @@ into nested list format</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>meteo_lst</dt>
-<dd><p>A nested list of lists with dataframes.
+<dd><p>A nested list with dataframes.
 Nested structure: <code>meteo_lst -&gt; data -&gt; Station ID -&gt; Parameter -&gt; 
   Dataframe (DATE, PARAMETER)</code>,
 <code>meteo_lst -&gt; stations -&gt; Dataframe (ID, Name, Elevation, Source, 
@@ -118,8 +118,8 @@ be used in interpolation. Default <code>idw_exponent = 2</code>.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A nested list of lists with interpolation results.
-A nested list of lists with dataframes.
+<p>A nested list with interpolation results.
+A nested list with dataframes.
 Nested structure: <code>meteo_lst -&gt; data -&gt; Station ID -&gt; Parameter -&gt; 
   Dataframe (DATE, PARAMETER)</code>,
 <code>meteo_lst -&gt; stations -&gt; Dataframe (ID, Name, Elevation, Source, 
@@ -137,8 +137,8 @@ Nested structure: <code>meteo_lst -&gt; data -&gt; Station ID -&gt; Parameter -&
 <span class="r-in"><span>  <span class="co"># Load weather data template</span></span></span>
 <span class="r-in"><span>  <span class="va">met_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_template.html">load_template</a></span><span class="op">(</span><span class="va">temp_path</span>, <span class="fl">3035</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Interpolate and write SWAT model input files</span></span></span>
-<span class="r-in"><span>  <span class="fu">interpolate</span><span class="op">(</span><span class="va">met_lst</span>, <span class="va">basin_path</span>, <span class="va">DEM_path</span>, <span class="fl">2000</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>  <span class="co"># Interpolate </span></span></span>
+<span class="r-in"><span>  <span class="va">met_lst_int</span> <span class="op">&lt;-</span> <span class="fu">interpolate</span><span class="op">(</span><span class="va">met_lst</span>, <span class="va">basin_path</span>, <span class="va">DEM_path</span>, <span class="fl">2000</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

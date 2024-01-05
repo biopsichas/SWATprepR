@@ -7,7 +7,7 @@
 get_data_to_interpolate(meteo_lst, par)
 }
 \arguments{
-\item{meteo_lst}{nested list of lists with dataframes.
+\item{meteo_lst}{nested list with dataframes.
 Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).}
 
 \item{par}{is weather variable to extract (i.e. "PCP", "SLR", etc)}

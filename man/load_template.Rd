@@ -21,19 +21,23 @@ Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter ->
 }
 \description{
 This function facilitates the loading of data templates, which include
-both station information and measurement data. The provided data should
-be pre-cleaned.
+both station information and measurement data (e.g. calibration, weather,
+soil, point source data.).
 }
 \examples{
-## Two types of templates could be used
+\dontrun{
+## Three types of templates could be used
 # 1) Example of template for weather data
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 3035)
-str(met_lst)
 
 ## 2) Example of template for calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
-str(cal_data)
+
+## 3) Example of template for point source:
+temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+pnt_data <- load_template(temp_path)
+}
 }
 \keyword{loading}

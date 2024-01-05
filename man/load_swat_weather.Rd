@@ -11,7 +11,7 @@ load_swat_weather(input_folder)
 (e.g., "my_model").}
 }
 \value{
-A nested list of lists with dataframes.
+A nested list with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 

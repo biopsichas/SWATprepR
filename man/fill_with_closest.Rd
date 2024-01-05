@@ -10,7 +10,7 @@ fill_with_closest(
 )
 }
 \arguments{
-\item{meteo_lst}{A nested list of lists with dataframes.
+\item{meteo_lst}{A nested list with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)}.
 Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 

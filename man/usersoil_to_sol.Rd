@@ -13,11 +13,11 @@ The CSV file should have the following columns (* indicates not required, yet
 column should be present in the CSV file):
 \itemize{
 \item OBJECTID*: Identifier for each record.
-\item MUID*: Unique identifier.
-\item SEQN*: Sequence number.
-\item SNAM: Soil name.
-\item S5ID*: Soil ID.
-\item CMPPCT*: Component percentage.
+\item MUID*: STATSGO mapping unit identifier.
+\item SEQN*: STATSGO sequential number of a soil component.
+\item SNAM: Name of soil type or identifier of the soil.
+\item S5ID*: STATSGO soil component identifier.
+\item CMPPCT*: Percentage of the soil component in the MUID.
 \item NLAYERS: Number of layers.
 \item HYDGRP: Hydrologic group.
 \item SOL_ZMX: Maximum soil depth.

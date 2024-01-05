@@ -4,8 +4,8 @@
 #' Load Data Templates
 #'
 #' This function facilitates the loading of data templates, which include 
-#' both station information and measurement data. The provided data should 
-#' be pre-cleaned.
+#' both station information and measurement data (e.g. calibration, weather, 
+#' soil, point source data.). 
 #'
 #' @param template_path Character, the path to the *.xlsx file containing the data template.
 #' @param epsg_code (optional) Integer, EPSG code for station coordinates. 
@@ -22,16 +22,20 @@
 #' @export 
 #'
 #' @examples
-#' ## Two types of templates could be used
+#' \dontrun{
+#' ## Three types of templates could be used
 #' # 1) Example of template for weather data
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 3035)
-#' str(met_lst)
 #' 
 #' ## 2) Example of template for calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
-#' str(cal_data)
+#' 
+#' ## 3) Example of template for point source:
+#' temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+#' pnt_data <- load_template(temp_path)
+#' }
 #' @keywords loading
 
 load_template <- function(template_path, epsg_code = 4326){
@@ -236,7 +240,7 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
 #' @importFrom tibble enframe
 #' @importFrom tidyr unnest spread
 #' @return 
-#' A nested list of lists with dataframes. 
+#' A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -464,10 +468,10 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   return(df[c("DATE", "NH4_RF", "NO3_RF" , "NH4_DRY", "NO3_DRY")])
 }
 
-#' Extract Climate Data from CORDEX NetCDF into Nested List of Lists 
+#' Extract Climate Data from CORDEX NetCDF into Nested List
 #'
 #' This function extracts climate data from the CORDEX-BC dataset and organizes 
-#' it into a nested list of lists.
+#' it into a nested list.
 #'
 #' @param dir_path Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
 #' NetCDF data to be recognized by the function should be saved with these specific file names:
@@ -480,9 +484,9 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' Ensure that the NetCDF files are correctly named and stored in the specified 
 #' directory for the function to recognize them.'
 #' @param location Character or list. If character, provide the path to the catchment 
-#'   boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list of lists with 
+#'   boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list with 
 #'   dataframes. The nested structure is same as prepared by 
-#'   using \code{load_template()} function.
+#'   using \code{\link{load_template}} or \code{\link{load_swat_weather}} functions.
 #' @importFrom elevatr get_elev_point
 #' @importFrom sf st_read st_transform st_as_sf st_crs st_overlaps st_centroid
 #' @importFrom raster brick rasterToPolygons extract

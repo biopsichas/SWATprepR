@@ -24,7 +24,7 @@
 #' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
-#' plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "Q"))
+#' plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "NT"))
 #' @keywords plotting
 
 plot_cal_data <- function(df, stations, variables = NULL) {
@@ -116,10 +116,11 @@ plot_ts_fig <- function(station, df){
 
 #' Aggregating values of single station to interactive monthly box plots 
 #'
-#' @param df dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
+#' @param df Dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
 #' Data can be loaded with \code{\link{load_template}} function using 'xlsx' template file. 
-#' @param station character indicating station, which should be selected for figure. 
-#' @param variables optional parameter of character vector, which parameters should be in figure. 
+#' @param station Character, indicating station ID, which should be selected for figure. 
+#' @param variables (optional) Character vector, variables/s, which should be in figure. 
+#' Default is \code{variables = NULL}, which means all variables will be in figure.
 #' @return plotly object of interactive figure
 #' @importFrom dplyr filter mutate group_by %>% group_map
 #' @importFrom plotly plot_ly subplot 
@@ -134,8 +135,8 @@ plot_ts_fig <- function(station, df){
 #' @keywords plotting
 
 plot_monthly <- function(df, station, 
-                         variables = levels(as.factor(df$Variables))){
-
+                         variables = NULL){
+  if (is.null(variables)) variables = levels(as.factor(df$Variables))
   if (nrow(subset(df, Station %in% station & Variables %in% variables))==0) stop("Non existing station or variable")
   df = subset(df, Station == station & Variables %in% variables)
    ss = df %>% 
@@ -188,7 +189,6 @@ plot_monthly <- function(df, station,
 #' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
-#' plot_fractions(cal_data$data, c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 #' plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
 #' @keywords plotting
 

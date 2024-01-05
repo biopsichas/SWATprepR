@@ -77,7 +77,7 @@ meteorological and weather generator data.</p>
 
 
 <dt>meteo_lst</dt>
-<dd><p>A nested list of lists with dataframes.
+<dd><p>A nested list with dataframes.
 Nested structure: <code>meteo_lst -&gt; data -&gt; Station ID -&gt; Parameter -&gt; 
   Dataframe (DATE, PARAMETER)</code>,
 <code>meteo_lst -&gt; stations -&gt; Dataframe (ID, Name, Elevation, Source, 
@@ -89,7 +89,7 @@ function loading information from SWAT+ model setup weather files.</p></dd>
 
 <dt>wgn_lst</dt>
 <dd><p>A list of two dataframes: wgn_st - weather generator station
-data, wgn_data - weather generator data (prepared by function).</p></dd>
+data, wgn_data - weather generator data (prepared by function <code><a href="prepare_wgn.html">prepare_wgn</a></code>).</p></dd>
 
 
 <dt>fill_missing</dt>

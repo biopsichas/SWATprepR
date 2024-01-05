@@ -21,10 +21,11 @@ using 'xlsx' template file.}
 Default \code{write_path = NULL}, which is the same as \code{project_path}.}
 
 \item{cha_shape_path}{(optional) Character, path to SWAT+ channel shapefile.
-'id' column should be present in attributes with numeric values representing channel ids,
-the same as in 'chandeg.con' file. Default \code{cha_shape_path = FALSE},
-which assigns point sources to the will be assigned based on nearest center
-point in 'chandeg.con'}
+'id' column should be present in attributes with numeric values representing channel ids
+corresponding to ids in 'chandeg.con' file. Default \code{cha_shape_path = FALSE},
+which assigns point sources to nearest center point in 'chandeg.con'.
+To activate this parameter provide path to reach file, example \code{cha_shape_path = "my_path/my_channel_shape.shp"},
+point sources will be assigned to nearest channel line.}
 }
 \value{
 Text files for SWAT+ model in write_path.

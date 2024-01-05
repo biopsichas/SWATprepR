@@ -3,7 +3,7 @@
 
 #' Function to get data to be used in the interpolation
 #'
-#' @param meteo_lst nested list of lists with dataframes. 
+#' @param meteo_lst nested list with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @param par is weather variable to extract (i.e. "PCP", "SLR", etc)
 #' @importFrom dplyr left_join select everything %>%
@@ -49,7 +49,7 @@ get_data_to_interpolate <- function(meteo_lst, par){
 
 #' Main interpolation function
 #'
-#' @param meteo_lst nested list of lists with dataframes. 
+#' @param meteo_lst nested list with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @param grd sp SpatialGrid grid for the interpolation. 
 #' @param par character representing weather variable to extract (i.e. "PCP", "SLR", etc).
@@ -108,7 +108,7 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' This function interpolates weather data for a SWAT model and saves results 
 #' into nested list format
 #'
-#' @param meteo_lst A nested list of lists with dataframes. 
+#' @param meteo_lst A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -127,8 +127,8 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' @param idw_exponent (optional) Numeric value for the exponent parameter to 
 #' be used in interpolation. Default \code{idw_exponent = 2}.
 #' @importFrom sf st_zm st_bbox st_read st_crs st_transform
-#' @return A nested list of lists with interpolation results.
-#'    A nested list of lists with dataframes. 
+#' @return A nested list with interpolation results.
+#'    A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -144,8 +144,8 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #'   # Load weather data template
 #'   met_lst <- load_template(temp_path, 3035)
 #'
-#'   # Interpolate and write SWAT model input files
-#'   interpolate(met_lst, basin_path, DEM_path, 2000) 
+#'   # Interpolate 
+#'   met_lst_int <- interpolate(met_lst, basin_path, DEM_path, 2000) 
 #' }
 #' @keywords gap-filling
 
@@ -195,7 +195,7 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 #' This function fills missing variables by interpolating values from the 
 #' closest stations that have data.
 #'
-#' @param meteo_lst A nested list of lists with dataframes. 
+#' @param meteo_lst A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}.
 #'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -673,20 +673,25 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
 #' FALSE - no soil hydrological group preparation will be done. 
 #' Default \code{ hsg = FALSE}. If \code{hsg = TRUE}, three additional columns 
 #' should be in an input table: \cr 
-#'  - 'Impervious' - depth to impervious layer (allowed values are "<50cm", 
+#'  - 'Impervious' - depth to water impermeable layer (allowed values are "<50cm", 
 #'  "50-100cm", ">100cm");
-#'  - 'Depth' - depth to water table  (allowed values are "<60cm", "60-100cm", 
+#'  - 'Depth' - depth to high water table  (allowed values are "<60cm", "60-100cm", 
 #'  ">100cm");
-#'  - 'Drained' - whether soil is drained (allowed values are "Y" for drained 
+#'  - 'Drained' - information on tile drains (allowed values are "Y" for drained 
 #'  areas, "N" for areas without working tile drains). \cr
 #'  More information can be found in the SWAT+ modeling protocol 
 #' \href{https://doi.org/10.5281/zenodo.7463395}{Table 3.3}.
-#' @param keep_values (optional) Logical or character vector, TRUE - keep old values (new 
-#' values only will be left where 0 or NA values are present in an input table), 
-#' FALSE - keep only new values. A character vector can also be used to keep only 
-#' specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of 
-#' soil hydro groups and rock data for the first layer, while c("HYDGRP", "ROCK") 
-#' would keep values in all rock data columns. Default \code{keep_values = FALSE}.
+#' @param keep_values (optional) Logical or character vector, TRUE - keep original
+#'  values (only 0 or NA values of the original input table are overwritten with 
+#'  the values computed by the function, else original values are kept), 
+#'  FALSE - all original values are overwritten with the values computed by the 
+#'  function. \cr\cr
+#'  If a character vector is provided, it should contain names of columns to keep.
+#'  For instance, c("HYDGRP", "ROCK1") would keep values of soil 
+#'  hydrologic groups and rock content data of the first layer, while 
+#'  c("HYDGRP", "ROCK") would keep values of soil hydrologic groups and 
+#'  rock content data of all soil layers. \cr
+#'  Default \code{keep_values = FALSE}.
 #' @param nb_lyr (optional) Integer, the number of layers resulting user soil 
 #' data should contain. Default \code{nb_lyr = NA}, which stands for the 
 #' same number as in the input data.
@@ -711,7 +716,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
 #' @keywords parameters
 #' @seealso 
 #' This function requires the euptf2 package. 
-#' Please read more how to install, use and what is in it on \url{https://github.com/tkdweber/euptf2}.
+#' Please read information on its installation and description on \url{https://github.com/tkdweber/euptf2}.
 
 get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_lyr = NA){
   ##Reading
@@ -1079,11 +1084,11 @@ get_hsg <- function(d_imp, d_wtr, drn, t){
 #' The CSV file should have the following columns (* indicates not required, yet 
 #' column should be present in the CSV file):
 #'   - OBJECTID*: Identifier for each record.
-#'   - MUID*: Unique identifier.
-#'   - SEQN*: Sequence number.
-#'   - SNAM: Soil name.
-#'   - S5ID*: Soil ID.
-#'   - CMPPCT*: Component percentage.
+#'   - MUID*: STATSGO mapping unit identifier.
+#'   - SEQN*: STATSGO sequential number of a soil component.
+#'   - SNAM: Name of soil type or identifier of the soil.
+#'   - S5ID*: STATSGO soil component identifier.
+#'   - CMPPCT*: Percentage of the soil component in the MUID.
 #'   - NLAYERS: Number of layers.
 #'   - HYDGRP: Hydrologic group.
 #'   - SOL_ZMX: Maximum soil depth.
@@ -1218,7 +1223,7 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
 #'
 #' @param db_path A character string representing the path to the SWAT+ SQLite database 
 #' (e.g., "./output/project.sqlite").
-#' @param meteo_lst A nested list of lists with dataframes. 
+#' @param meteo_lst A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
 #'   Dataframe (DATE, PARAMETER)}, 
 #'   \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -1227,7 +1232,7 @@ usersoil_to_sol <- function(csv_path, db_path = NULL){
 #'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
 #'   function loading information from SWAT+ model setup weather files.
 #' @param wgn_lst A list of two dataframes: wgn_st - weather generator station 
-#' data, wgn_data - weather generator data (prepared by function).
+#' data, wgn_data - weather generator data (prepared by function \code{\link{prepare_wgn}}).
 #' @param fill_missing (optional) Boolean, TRUE - fill data for missing stations with data 
 #' from closest stations with available data. FALSE - leave stations without 
 #' data. Weather generator will be used to fill missing variables for a model.
@@ -1635,10 +1640,11 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #' @param write_path (optional) Character, path to SWAT+ txtinout folder (example "my_model"). 
 #'   Default \code{write_path = NULL}, which is the same as \code{project_path}.
 #' @param cha_shape_path (optional) Character, path to SWAT+ channel shapefile. 
-#'   'id' column should be present in attributes with numeric values representing channel ids, 
-#'   the same as in 'chandeg.con' file. Default \code{cha_shape_path = FALSE}, 
-#'   which assigns point sources to the will be assigned based on nearest center 
-#'   point in 'chandeg.con'
+#'   'id' column should be present in attributes with numeric values representing channel ids 
+#'   corresponding to ids in 'chandeg.con' file. Default \code{cha_shape_path = FALSE}, 
+#'   which assigns point sources to nearest center point in 'chandeg.con'. 
+#'   To activate this parameter provide path to reach file, example \code{cha_shape_path = "my_path/my_channel_shape.shp"}, 
+#'   point sources will be assigned to nearest channel line.
 #' @importFrom sf st_as_sf st_nearest_feature st_crs st_drop_geometry st_transform read_sf
 #' @importFrom lubridate year
 #' @importFrom dplyr select left_join

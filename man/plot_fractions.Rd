@@ -32,7 +32,6 @@ between nutrient parts and the total.
 # Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
-plot_fractions(cal_data$data, c("4"), c("NT"), c("N-NO3", "N-NH4", "N-NO2"))
 plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
 }
 \keyword{plotting}

@@ -87,11 +87,11 @@ The file should be comma-separated with minimum columns of:</p><ul><li><p>SNAM -
 <dd><p>(optional) Logical, TRUE - prepare soil hydrological groups,
 FALSE - no soil hydrological group preparation will be done.
 Default <code> hsg = FALSE</code>. If <code>hsg = TRUE</code>, three additional columns
-should be in an input table: <br></p><ul><li><p>'Impervious' - depth to impervious layer (allowed values are "&lt;50cm",
+should be in an input table: <br></p><ul><li><p>'Impervious' - depth to water impermeable layer (allowed values are "&lt;50cm",
 "50-100cm", "&gt;100cm");</p></li>
-<li><p>'Depth' - depth to water table  (allowed values are "&lt;60cm", "60-100cm",
+<li><p>'Depth' - depth to high water table  (allowed values are "&lt;60cm", "60-100cm",
 "&gt;100cm");</p></li>
-<li><p>'Drained' - whether soil is drained (allowed values are "Y" for drained
+<li><p>'Drained' - information on tile drains (allowed values are "Y" for drained
 areas, "N" for areas without working tile drains). <br>
 More information can be found in the SWAT+ modeling protocol
 <a href="https://doi.org/10.5281/zenodo.7463395" class="external-link">Table 3.3</a>.</p></li>
@@ -99,12 +99,17 @@ More information can be found in the SWAT+ modeling protocol
 
 
 <dt>keep_values</dt>
-<dd><p>(optional) Logical or character vector, TRUE - keep old values (new
-values only will be left where 0 or NA values are present in an input table),
-FALSE - keep only new values. A character vector can also be used to keep only
-specified columns. For instance, c("HYDGRP", "ROCK1") would keep values of
-soil hydro groups and rock data for the first layer, while c("HYDGRP", "ROCK")
-would keep values in all rock data columns. Default <code>keep_values = FALSE</code>.</p></dd>
+<dd><p>(optional) Logical or character vector, TRUE - keep original
+values (only 0 or NA values of the original input table are overwritten with
+the values computed by the function, else original values are kept),
+FALSE - all original values are overwritten with the values computed by the
+function. <br><br>
+If a character vector is provided, it should contain names of columns to keep.
+For instance, c("HYDGRP", "ROCK1") would keep values of soil
+hydrologic groups and rock content data of the first layer, while
+c("HYDGRP", "ROCK") would keep values of soil hydrologic groups and
+rock content data of all soil layers. <br>
+Default <code>keep_values = FALSE</code>.</p></dd>
 
 
 <dt>nb_lyr</dt>
@@ -129,7 +134,7 @@ For detailed information, refer to: <a href="https://doi.org/10.5281/zenodo.7463
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>This function requires the euptf2 package.
-Please read more how to install, use and what is in it on <a href="https://github.com/tkdweber/euptf2" class="external-link">https://github.com/tkdweber/euptf2</a>.</p></div>
+Please read information on its installation and description on <a href="https://github.com/tkdweber/euptf2" class="external-link">https://github.com/tkdweber/euptf2</a>.</p></div>
     </div>
 
     <div class="section level2">

@@ -14,7 +14,7 @@ interpolate(
 )
 }
 \arguments{
-\item{meteo_lst}{A nested list of lists with dataframes.
+\item{meteo_lst}{A nested list with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -39,8 +39,8 @@ interpolate. Default is all variables selected
 be used in interpolation. Default \code{idw_exponent = 2}.}
 }
 \value{
-A nested list of lists with interpolation results.
-A nested list of lists with dataframes.
+A nested list with interpolation results.
+A nested list with dataframes.
 Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
   Dataframe (DATE, PARAMETER)},
 \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
@@ -60,8 +60,8 @@ into nested list format
   # Load weather data template
   met_lst <- load_template(temp_path, 3035)
 
-  # Interpolate and write SWAT model input files
-  interpolate(met_lst, basin_path, DEM_path, 2000) 
+  # Interpolate 
+  met_lst_int <- interpolate(met_lst, basin_path, DEM_path, 2000) 
 }
 }
 \keyword{gap-filling}

@@ -4,15 +4,16 @@
 \alias{plot_monthly}
 \title{Aggregating values of single station to interactive monthly box plots}
 \usage{
-plot_monthly(df, station, variables = levels(as.factor(df$Variables)))
+plot_monthly(df, station, variables = NULL)
 }
 \arguments{
-\item{df}{dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
+\item{df}{Dataframe with formatted data (Station, DATE, Variables and Values columns are needed).
 Data can be loaded with \code{\link{load_template}} function using 'xlsx' template file.}
 
-\item{station}{character indicating station, which should be selected for figure.}
+\item{station}{Character, indicating station ID, which should be selected for figure.}
 
-\item{variables}{optional parameter of character vector, which parameters should be in figure.}
+\item{variables}{(optional) Character vector, variables/s, which should be in figure.
+Default is \code{variables = NULL}, which means all variables will be in figure.}
 }
 \value{
 plotly object of interactive figure
