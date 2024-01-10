@@ -247,6 +247,10 @@ plot(hsg["hsg"], main="HYDGRP from field data")
 soilp <- st_join(soilp, hsg, join = st_overlaps, left = TRUE, largest = TRUE) %>% 
   mutate(HYDGRP = hsg) %>% 
   select(-hsg)
+
+##Updating soil type names with hydrologic groups as to save this information, 
+##in following steps.
+soilp$SNAM <- paste0(soilp$SNAM, "_", soilp$HYDGRP)
 ##Plotting updated data result
 plot(soilp["HYDGRP"])
 ```
@@ -273,11 +277,11 @@ The very last step is to write SWAT+ input data: raster layer (in our case named
 dem <- read_stars(DEM_path)
 plot(dem)
 ##Merging unique soil types into one row and multipolygon
-soils_dis <- soils %>% 
+soils_dis <- soilp %>% 
   group_by(SNAM) %>% 
   dplyr::summarise() %>% 
   mutate(SOIL_ID = rownames(.),
-         SNAME = SNAM)
+          SNAME = SNAM)
 ##Rasterizing soil type data
 soils_raster <- soils_dis %>% 
   st_rasterize(dem)
@@ -285,8 +289,17 @@ plot(soils_raster)
 ##Preparing linkage table
 soil_link_table <- soils_dis %>% 
   st_drop_geometry() %>% 
-  select(SOIL_ID, SNAME)
+  select(SOIL_ID, SNAM)
 print(head(soil_link_table, 3))
+##Preparing updated user soil table
+usertable_to_save <- soilp %>% 
+  st_drop_geometry() %>% 
+  distinct(SNAM, .keep_all = TRUE) %>%
+  left_join(soil_link_table, by = "SNAM") %>%
+  mutate(OBJECTID = as.numeric(SOIL_ID)) %>%
+  select(-SOIL_ID) %>% 
+  arrange(OBJECTID) %>% 
+  select(OBJECTID, MUID,SEQN,everything())
 ```
 
 `write_stars` function from `stars` package could be used to write raster file and `write.csv` R base function to write *.csv* files. 
@@ -295,5 +308,5 @@ print(head(soil_link_table, 3))
 ##Writing files
 write_stars(soils_raster , "../output/SoilmapSWAT.tif")
 write.csv(soil_link_table, "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
-write.csv(usertable, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)
+write.csv(usertable_to_save, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)
 ```

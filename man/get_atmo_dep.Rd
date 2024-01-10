@@ -28,10 +28,10 @@ Default \code{end_year = 2022}.}
 A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and
 "NO3_DRY".
 Values are in SWAT+ units.
-"NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in
-rainfall (mg/l),
-NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition
-(kg/ha/yr).
+"NH4_RF" - ammonia nitrogen in rainfall (mg/l),
+"NO3_RF" - nitrate nitrogen in rainfall (mg/l),
+NH4_DRY - ammonia nitrogen dry deposition (kg/ha/yr),
+"NO3_DRY" - nitrate nitrogen dry deposition (kg/ha/yr).
 }
 \description{
 This function extracts EMEP atmospheric deposition data averaged for
@@ -55,5 +55,8 @@ a specified catchment.
 }
 \references{
 See the EMEP website for more information: \url{https://www.emep.int/mscw/mscw_moddata.html}
+}
+\seealso{
+Please read about SWAT+ atmospheric input data on \url{https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli}.
 }
 \keyword{loading}

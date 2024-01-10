@@ -24,12 +24,12 @@ Nitrogen atmospheric could be obtained from local sources. However, if local dat
 - *WDEP_RDN* - wet deposition of reduced nitrogen ($mgN/m^2$).
 - *WDEP_PREC* - precipitation ($mm$).
 
-These parameters can be used to prepare following SWAT+ parameters required for *'atmo.cli'* input file:
+These parameters can be used to prepare following SWAT+ parameters required for [*'atmo.cli'* input file](https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli):
 
-- *NH4_RF* - ammonia in rainfall ($mg/l$);
-- *NO3_RF* - nitrate in rainfall ($mg/l$);
-- *NH4_DRY* - ammonia dry deposition ($kg/ha/yr$);
-- *NO3_DRY* - nitrate dry deposition ($kg/ha/yr$). 
+- *NH4_RF* - ammonia nitrogen in rainfall ($mg/l$);
+- *NO3_RF* - nitrate nitrogen in rainfall ($mg/l$);
+- *NH4_DRY* - ammonia nitrogen dry deposition ($kg/ha/yr$);
+- *NO3_DRY* - nitrate nitrogen dry deposition ($kg/ha/yr$). 
 
 EMEP provides access to yearly, monthly, daily and hourly data. Data for a selected catchment with required time step could be extracted directly from [EMEP website](https://www.emep.int/mscw/mscw_moddata.html) with [get_atmo_dep](../reference/get_atmo_dep.html) function. Function requires just path to catchment boundary shape file and internet connection. Depending of the data time step selected (yearly or monthly), function will need more or less time to run (less with "year" selected, more with "month"). More information about the inclusion of atmospheric deposition data in SWAT+ modeling is presented in the section 3.10 of [SWAT+ modelling protocol](https://doi.org/10.5281/zenodo.7463395).
 
@@ -37,7 +37,7 @@ EMEP provides access to yearly, monthly, daily and hourly data. Data for a selec
 library(SWATprepR)
 library(tidyverse)
 basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
-df <- get_atmo_dep(basin_path)
+df <- get_atmo_dep(basin_path, t_ext = 'month')
 ##Plot results
 ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = DATE, y = values))+ 
   geom_line()+ 

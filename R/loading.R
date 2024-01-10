@@ -369,10 +369,10 @@ load_swat_weather <- function(input_folder){
 #' @return A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and 
 #' "NO3_DRY". 
 #'   Values are in SWAT+ units.
-#'   "NH4_RF" - ammonia in rainfall (mg/l), "NO3_RF" - nitrate in 
-#'   rainfall (mg/l), 
-#'   NH4_RF - ammonia deposition (kg/ha/yr), "NO3_DRY" - nitrate dry deposition 
-#'   (kg/ha/yr).
+#'   "NH4_RF" - ammonia nitrogen in rainfall (mg/l), 
+#'   "NO3_RF" - nitrate nitrogen in rainfall (mg/l), 
+#'   NH4_DRY - ammonia nitrogen dry deposition (kg/ha/yr), 
+#'   "NO3_DRY" - nitrate nitrogen dry deposition (kg/ha/yr).
 #' @export 
 #' @examples
 #' \dontrun{
@@ -392,6 +392,8 @@ load_swat_weather <- function(input_folder){
 #' @references 
 #' See the EMEP website for more information: \url{https://www.emep.int/mscw/mscw_moddata.html}
 #' @keywords loading
+#' @seealso 
+#' Please read about SWAT+ atmospheric input data on \url{https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli}.
 
 get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2022){
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
@@ -429,12 +431,18 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     ##Reading parameters and converting to right units and averaging them over extracted grid.
     if(t_ext == "year"){
       prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat]
-      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]*4.4268/100) 
+      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]/100) 
+      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]/prec)
+      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]/100)
+      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]/prec)
+
+      # SWAT+ input and output units are in pure nitrogen, documentation is confusing
+      # In case conversion is needed, use the following:
       # 4.4268 is the conversion factor from N to NO3, /100 is conversion mg/m2 to kg/ha
-      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]*4.4268/prec)
-      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]*1.2878/100)
       # 1.2878 is the conversion factor from N to NH4, /100 is conversion mg/m2 to kg/ha
-      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]*1.2878/prec)
+      # Example:
+      # dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]*CONVERSION FACTOR/100) 
+      
       ##Saving results
       df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
     } else if(t_ext %in% c("month")){

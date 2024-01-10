@@ -49,10 +49,12 @@ ggplot figure of bar plots.
 This function generates a ggplot figure for comparing WGN parameters between two datasets for specified stations.
 }
 \examples{
+\dontrun{
 ##Loading data
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path)
 ##Plotting
 plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
+}
 }
 \keyword{plotting}

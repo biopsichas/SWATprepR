@@ -126,78 +126,13 @@ Default <code>title = "comparison"</code>.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">##Loading data</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co">##Loading data</span></span></span>
 <span class="r-in"><span><span class="va">temp_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"weather_data.xlsx"</span>, package <span class="op">=</span> <span class="st">"SWATprepR"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">met_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_template.html">load_template</a></span><span class="op">(</span><span class="va">temp_path</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Loading data from template."</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Your station coordinates are not in WGS84 system. Please check, correct your input data and reload template!!!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID9 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID3 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID10 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID11 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID12 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID13 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID1 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID8 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID2 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID4 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID5 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID6 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Reading station ID7 data."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Loading of data is finished."</span>
 <span class="r-in"><span><span class="co">##Plotting</span></span></span>
 <span class="r-in"><span><span class="fu">plot_wgn_comparison</span><span class="op">(</span><span class="va">met_lst</span>, <span class="va">met_lst</span>, <span class="st">"ID9"</span>, <span class="st">"ID2"</span>, <span class="st">"Samszyce"</span>, <span class="st">"Glebokie"</span>, <span class="st">"comparison"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>bounding box has potentially an invalid value range for longlat data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on station ID9:SAMSZYCE"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on station ID2:GLEBOKIE"</span>
-<span class="r-plt img"><img src="plot_wgn_comparison-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

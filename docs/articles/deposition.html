@@ -143,16 +143,17 @@ grid (<span class="math inline">\(mgN/m^2\)</span>);</li>
 <em>WDEP_PREC</em> - precipitation (<span class="math inline">\(mm\)</span>).</li>
 </ul>
 <p>These parameters can be used to prepare following SWAT+ parameters
-required for <em>‘atmo.cli’</em> input file:</p>
+required for <a href="https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli" class="external-link"><em>‘atmo.cli’</em>
+input file</a>:</p>
 <ul>
 <li>
-<em>NH4_RF</em> - ammonia in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
+<em>NH4_RF</em> - ammonia nitrogen in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
 <li>
-<em>NO3_RF</em> - nitrate in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
+<em>NO3_RF</em> - nitrate nitrogen in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
 <li>
-<em>NH4_DRY</em> - ammonia dry deposition (<span class="math inline">\(kg/ha/yr\)</span>);</li>
+<em>NH4_DRY</em> - ammonia nitrogen dry deposition (<span class="math inline">\(kg/ha/yr\)</span>);</li>
 <li>
-<em>NO3_DRY</em> - nitrate dry deposition (<span class="math inline">\(kg/ha/yr\)</span>).</li>
+<em>NO3_DRY</em> - nitrate nitrogen dry deposition (<span class="math inline">\(kg/ha/yr\)</span>).</li>
 </ul>
 <p>EMEP provides access to yearly, monthly, daily and hourly data. Data
 for a selected catchment with required time step could be extracted
@@ -169,7 +170,7 @@ modelling protocol</a>.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/biopsichas/SWATprepR" class="external-link">SWATprepR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="va">basin_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GIS/basin.shp"</span>, package <span class="op">=</span> <span class="st">"SWATprepR"</span><span class="op">)</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_atmo_dep.html">get_atmo_dep</a></span><span class="op">(</span><span class="va">basin_path</span><span class="op">)</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_atmo_dep.html">get_atmo_dep</a></span><span class="op">(</span><span class="va">basin_path</span>, t_ext <span class="op">=</span> <span class="st">'month'</span><span class="op">)</span></span>
 <span><span class="co">##Plot results</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="va">df</span>, <span class="op">!</span><span class="va">DATE</span>, names_to <span class="op">=</span> <span class="st">"par"</span>, values_to <span class="op">=</span> <span class="st">"values"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">DATE</span>, y <span class="op">=</span> <span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> </span>

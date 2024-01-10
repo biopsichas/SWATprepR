@@ -25,9 +25,11 @@ This function generates an interactive plot of calibration data based on the
 provided data.
 }
 \examples{
+\dontrun{
 # Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 cal_data <- load_template(temp_path)
 plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "NT"))
+}
 }
 \keyword{plotting}

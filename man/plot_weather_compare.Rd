@@ -49,6 +49,7 @@ Plotly figure object with displayed weather data for two datasets.
 This function generates a Plotly figure to compare weather data between two datasets based on user-defined parameters.
 }
 \examples{
+\dontrun{
 ##Loading data
 temp_path1 <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst1 <- load_template(temp_path1)
@@ -56,5 +57,6 @@ temp_path2 <- system.file("extdata", "weather_data_raw.xlsx", package = "SWATpre
 met_lst2 <- load_template(temp_path2)
 ##Plotting
 plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
+}
 }
 \keyword{plotting}

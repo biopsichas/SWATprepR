@@ -34,9 +34,10 @@ This function generates a Plotly figure for weather data visualization based
 on user-defined parameters.
 }
 \examples{
-library(SWATprepR)
+\dontrun{
 temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 met_lst <- load_template(temp_path, 4326)
 plot_weather(met_lst, "PCP", "month", "sum")
+}
 }
 \keyword{plotting}

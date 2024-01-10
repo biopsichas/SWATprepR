@@ -21,10 +21,12 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' plot_cal_data(cal_data$data, stations = c("1", "2", "3", "10"), variables = c("PT", "NT"))
+#' }
 #' @keywords plotting
 
 plot_cal_data <- function(df, stations, variables = NULL) {
@@ -129,9 +131,11 @@ plot_ts_fig <- function(station, df){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' plot_monthly(cal_data$data, station = "4")
+#' }
 #' @keywords plotting
 
 plot_monthly <- function(df, station, 
@@ -186,10 +190,12 @@ plot_monthly <- function(df, station,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' cal_data <- load_template(temp_path)
 #' plot_fractions(cal_data$data, c("4"), c("PT"), c("P-PO4"))
+#' }
 #' @keywords plotting
 
 plot_fractions <- function(df, station, total_var, min_vars){
@@ -257,8 +263,8 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(sf)
-#' 
 #' # Example using calibration data
 #' temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 #' reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
@@ -267,6 +273,7 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' reach <- st_transform(st_read(reach_path), 4326)
 #' basin <- st_transform(st_read(basin_path), 4326)
 #' plot_map(cal_data$data, cal_data$stations, reach, basin)
+#' }
 #' @keywords plotting
 
 plot_map <- function(df, df_station, rch, shp){
@@ -330,10 +337,11 @@ plot_map <- function(df, df_station, rch, shp){
 #' @export
 #'
 #' @examples 
-#' library(SWATprepR)
+#' \dontrun{
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path, 4326)
 #' plot_weather(met_lst, "PCP", "month", "sum")
+#' }
 #' @keywords plotting
 
 plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
@@ -411,6 +419,7 @@ plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ##Loading data
 #' temp_path1 <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst1 <- load_template(temp_path1)
@@ -418,6 +427,7 @@ plot_weather <- function(meteo_lst, par, period = "day", fn_summarize = "mean"){
 #' met_lst2 <- load_template(temp_path2)
 #' ##Plotting
 #' plot_weather_compare(met_lst1, met_lst2, "PCP", "month", "mean", "clean", "raw")
+#' }
 #' @keywords plotting
 
 plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn_summarize = "mean", 
@@ -471,11 +481,13 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ##Loading data
 #' temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
 #' met_lst <- load_template(temp_path)
 #' ##Plotting
 #' plot_wgn_comparison(met_lst, met_lst, "ID9", "ID2", "Samszyce", "Glebokie", "comparison")
+#' }
 #' @keywords plotting
 
 plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type1 = "set 1", type2 = "set 2", title = "comparison"){

@@ -27,8 +27,8 @@ This function generates an interactive map with monitoring points,
 allowing users to click on points to view data.
 }
 \examples{
+\dontrun{
 library(sf)
-
 # Example using calibration data
 temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprepR")
 reach_path <- system.file("extdata", "GIS/reaches.shp", package = "SWATprepR")
@@ -37,5 +37,6 @@ cal_data <- load_template(temp_path, 4326)
 reach <- st_transform(st_read(reach_path), 4326)
 basin <- st_transform(st_read(basin_path), 4326)
 plot_map(cal_data$data, cal_data$stations, reach, basin)
+}
 }
 \keyword{plotting}
