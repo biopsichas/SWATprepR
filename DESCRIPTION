@@ -1,8 +1,8 @@
 Type: Package
 Package: SWATprepR
 Title: SWAT+ input data preparation tool
-Version: 1.0.0
-Date: 2023-12-29
+Version: 1.0.1
+Date: 2024-01-18
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))

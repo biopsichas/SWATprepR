@@ -35,7 +35,7 @@ The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/
 - [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[For access please inquire at *christoph.schuerz@ufz.de*.] - R tool for building SWAT+ setups;
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for preparing management schedules for SWAT model;
 - [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of functions in R and routines for SWAT model calibration and model diagnostics;
-- [SWATrunR (former SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) - R tool for sensitivity analyse, model calibration and validation.
+- [SWATrunR (former SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) - R tool for running SWAT models for different parameters and scenarios.
 
 <img src="man/figures/swativerse.png" title="SWAT packages for R" alt="swativerse logo" width="80%" style="display: block; margin: auto;" />
 

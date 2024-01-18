@@ -625,3 +625,52 @@ load_netcdf_weather <- function(dir_path, location){
   print("Extraction of data is finished.")
   return(cl_list)
 }
+
+#' Convert SWAT+ soils.sol data to usersoil format
+#'
+#' This function reads the soils.sol file from a SWAT+ project folder and converts
+#' the data into usersoil format to examine/update with other functions.
+#'
+#' @param project_path Character, path to the SWAT+ project folder (example "my_model").
+#' @importFrom purrr pmap
+#' @importFrom dplyr bind_rows bind_cols select mutate mutate_at
+#' @importFrom tidyr pivot_longer pivot_wider
+#' @return A data frame representing user soil data.
+#' @export
+#' @examples
+#' \dontrun{
+#' usersoil <- sol_to_usersoil("my_model")
+#' }
+#' @seealso \code{\link{get_usersoil_table}}, \code{\link{usersoil_to_sol}}
+#' @keywords loading
+
+sol_to_usersoil <- function(project_path){
+  # Read soil data
+  soil_data <- read_tbl("soils.sol", project_path)
+  # Separate soil data for each soil type
+  st <- soil_data[is.na(as.numeric(soil_data$name)),c(1:7)]
+  # Separate soil data for each soil layer 
+  soil_layers <- soil_data[!is.na(as.numeric(soil_data$name)), c(1:14)]
+  # Rename columns
+  colnames(soil_layers) <- c("SOL_Z", "SOL_BD", "SOL_AWC", "SOL_K", "SOL_CBN", 
+                             "CLAY", "SILT", "SAND", "ROCK", "SOL_ALB", "USLE_K", 
+                             "SOL_EC", "SOL_CAL", "SOL_PH")
+  # Create user soil table and return
+  pmap(list(st$name, st$nly, st$hyd_grp, st$dp_tot, st$anion_excl, st$perc_crk, st$texture), 
+       function(x1, x2, x3, x4, x5, x6, x7){bind_cols(data.frame(SNAM = rep(x1,x2) %>% unlist(.),
+                                                                 LAYER_NB = seq(1,x2), 
+                                                                 NLAYERS = x2,
+                                                                 HYDGRP = x3,
+                                                                 SOL_ZMX = x4,
+                                                                 ANION_EXCL = x5,
+                                                                 SOL_CRK = x6,
+                                                                 TEXTURE = x7))}) %>%
+    bind_rows(.) %>% 
+    bind_cols(soil_layers) %>% 
+    mutate_at(., vars(SOL_Z:SOL_PH), ~as.numeric(.)) %>%
+    pivot_longer(-c(SNAM, LAYER_NB, NLAYERS, HYDGRP, SOL_ZMX, ANION_EXCL, SOL_CRK, TEXTURE), 
+                 names_to = "PAR_NAME", values_to = "PAR_VAL") %>% 
+    mutate(PAR_NAME = paste0(PAR_NAME, LAYER_NB)) %>% 
+    select(-LAYER_NB) %>%
+    pivot_wider(names_from = PAR_NAME, values_from = PAR_VAL)
+}

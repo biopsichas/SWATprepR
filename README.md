@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-1.0.0-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-1.0.1-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -32,7 +32,7 @@ recommend trying and using these tools:
   diagnostics;
 - [SWATrunR (former
   SWATplusR)](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) -
-  R tool for sensitivity analyse, model calibration and validation.
+  R tool for running SWAT models for different parameters and scenarios.
 
 <img src="man/figures/swativerse.png" title="SWAT packages for R" alt="swativerse logo" width="80%" style="display: block; margin: auto;" />
 

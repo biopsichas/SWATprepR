@@ -1,3 +1,9 @@
+# SWATprepR 1.0.1
+
+* `sol_to_usersoil()` function was added to read and convert `soils.sol` file to `usersoil` R object.
+* `get_atmo_dep()` function was updated according to documentation of [*'atmo.cli'* input file](https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli).
+* Documentation of functions corrected. 
+
 # SWATprepR 1.0.0
 
 * Reviewed and updated function documentation, removed deprecated functions, made internal functions invisible, updated examples, provided additional information in links, added references where needed, and connected functions with the 'See Also' section.
