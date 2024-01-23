@@ -289,17 +289,19 @@ plot(soils_raster)
 ##Preparing linkage table
 soil_link_table <- soils_dis %>% 
   st_drop_geometry() %>% 
-  select(SOIL_ID, SNAM)
+  rename(`Soil full name` = SNAM) %>% 
+  mutate(SNAM = paste0("s",SOIL_ID)) %>% ## rename soil codes as SWAT+ takes max 20 chr.
+  select(SOIL_ID, SNAM, `Soil full name`) 
+
 print(head(soil_link_table, 3))
 ##Preparing updated user soil table
-usertable_to_save <- soilp %>% 
-  st_drop_geometry() %>% 
-  distinct(SNAM, .keep_all = TRUE) %>%
-  left_join(soil_link_table, by = "SNAM") %>%
+usertable_to_save <- soil_link_table %>% 
+  left_join(soilp %>% st_drop_geometry(), by = c("Soil full name" = "SNAM")) %>% 
+  distinct(SNAM, .keep_all = TRUE) %>% 
   mutate(OBJECTID = as.numeric(SOIL_ID)) %>%
-  select(-SOIL_ID) %>% 
   arrange(OBJECTID) %>% 
-  select(OBJECTID, MUID,SEQN,everything())
+  select(OBJECTID, MUID,SEQN,everything(), -c("SOIL_ID", "Soil full name"))
+
 ```
 
 `write_stars` function from `stars` package could be used to write raster file and `write.csv` R base function to write *.csv* files. 
