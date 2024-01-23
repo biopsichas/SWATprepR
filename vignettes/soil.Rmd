@@ -309,6 +309,9 @@ usertable_to_save <- soil_link_table %>%
 ```{r soil_write, message = FALSE, warning = FALSE, eval = FALSE}
 ##Writing files
 write_stars(soils_raster , "../output/SoilmapSWAT.tif")
-write.csv(soil_link_table, "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
+write.csv(soil_link_table[c(1:2)], "../output/Soil_SWAT_cod.csv", row.names=FALSE, quote=FALSE)
 write.csv(usertable_to_save, "../output/usersoil_lrew.csv", row.names=FALSE, quote=FALSE)
+
+##Saving short soil names link to full names
+write.csv(soil_link_table[c(2:3)], "../output/Soil_short_to_full.csv", row.names=FALSE, quote=FALSE)
 ```
