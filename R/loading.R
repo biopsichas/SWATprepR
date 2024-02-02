@@ -280,8 +280,8 @@ load_swat_weather <- function(input_folder){
   ##Reading ids from file names
   id <- map(fs, ~str_extract(toupper(.), "ID([\\d]+)"))
   ##Check if ids are in names
-  if (is.na(unique(unlist(id)))){
-    warning("File names should contain 'id' or 'ID' text + number to identify station. 
+  if (any(is.na(unique(unlist(id))))){
+    warning("All file names should contain 'id' or 'ID' text + number to identify station. 
             Numbers will be extracted from file names and used as station IDs.")
     id <- paste0("ID", as.numeric(gsub("\\D", "", fs)))
     if(any(is.na(id))){
