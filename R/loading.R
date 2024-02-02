@@ -281,7 +281,13 @@ load_swat_weather <- function(input_folder){
   id <- map(fs, ~str_extract(toupper(.), "ID([\\d]+)"))
   ##Check if ids are in names
   if (is.na(unique(unlist(id)))){
-    stop("File names should contain 'id' or 'ID' text + number to identify station. Please correct this!!!")
+    warning("File names should contain 'id' or 'ID' text + number to identify station. 
+            Numbers will be extracted from file names and used as station IDs.")
+    id <- paste0("ID", as.numeric(gsub("\\D", "", fs)))
+    if(any(is.na(id))){
+      stop("Station IDs could not be extracted from file names. Probably some 
+           stations have no numbers in their names. Please, check file names.")
+    }
   }
   ##Reading all files into list of lists
   rlist <- map(fs, ~vroom_lines(paste0(input_folder,"/",.x), skip = 2))
