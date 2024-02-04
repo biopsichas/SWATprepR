@@ -232,11 +232,11 @@ read_tbl <- function(tbl_name, proj_path, row_data_start = 3, row_col_names = 2)
 #'
 #' @param input_folder character, path to folder with SWAT+ weather input files 
 #' (e.g., "my_model").
-#' @importFrom sf st_as_sf
+#' @importFrom sf st_as_sf st_drop_geometry
 #' @importFrom purrr map pmap map_df map2
 #' @importFrom vroom vroom_lines
 #' @importFrom stringr str_extract
-#' @importFrom dplyr bind_rows mutate select group_by ungroup everything
+#' @importFrom dplyr bind_rows mutate select group_by ungroup everything row_number distinct filter left_join
 #' @importFrom tibble enframe
 #' @importFrom tidyr unnest spread
 #' @return 
@@ -321,9 +321,38 @@ load_swat_weather <- function(input_folder){
         select(DATE, everything()) ##Building new dataframe and selecting columns
     })
   
+  ##Finding if any stations with same code have different coordinates
+  station_non_unique <- st_info %>% 
+    st_drop_geometry %>% 
+    select(ID, Long, Lat) %>% 
+    distinct %>%
+    group_by(ID) %>% 
+    filter(n()>1)
+  
+  ## In case of non-unique stations, assigning new IDs and warning for the user
+  ## To know how they are recoded
+  if(nrow(station_non_unique) > 0){
+    warning("Your station IDs (obtained from file names) contains non-unique coordinate values. 
+          This will be corrected by assinging new ID numbers. If you don't want this to happen,
+          please make sure that your station IDs are unique (have only one set of Lat, Long).")
+    st_info <- st_info %>% 
+      left_join(st_info %>% st_drop_geometry %>% 
+                  select(Long, Lat) %>% 
+                  distinct %>% 
+                  mutate(ID_up = paste0("ID", row_number())) , by = c("Long", "Lat")) %>% 
+      mutate(ID = ID_up) %>% 
+      select(-ID_up)
+    id <- st_info$ID
+    warning("Following IDs were assigned to the files")
+    options(warning.length = 8170)
+    warning(map2(id, fs, ~paste0(.x, " ",.y, ", "))%>% unlist)
+    options(warning.length = 1000)
+  }
+  
   ##Transforming list into nested list of list LIST>ID>VARIABLE>DATAFRAME
   ##Final list of lists used in collecting transformed lists in correct form
   cc <- c()
+  print_warning <- TRUE
   ##For each station id
   for(id1 in unique(unlist(id))){
     l <- rlist[which(id == id1)]; v <- f_type[which(id == id1)]; c <- c()
@@ -334,6 +363,11 @@ load_swat_weather <- function(input_folder){
         names(ll) <- vv
         ##If PCP < 0.2 assign 0
         if(vv == "PCP" && min(ll[[1]][[vv]], na.rm = TRUE) < 0.2){
+          if(print_warning){
+            warning(paste0("Some of the precipitation values are below 0.2 mm. 
+                         They will be assigned 0."))
+            print_warning <- FALSE
+          }
           ll[[vv]][[vv]] <- ifelse(ll[[vv]][[vv]] < 0.2, 0, ll[[vv]][[vv]])
         }
         c <- c(c, ll)
@@ -349,6 +383,24 @@ load_swat_weather <- function(input_folder){
     ##Collecting results of transformation
     cc[[id1]] <- c
   }
+  ## Checking if any of the stations have dublicated variable names
+  ## If yes, removing them. Data is left from the first occurence.
+  any_dublitates <- map(names(cc), ~duplicated(unlist(names(cc[[.x]]))))
+  if(any(unlist(any_dublitates))){
+    station_with_dublicates <- st_info$ID[unlist(map(any_dublitates, ~any(.x)))]
+    warning(paste0("Stations ", station_with_dublicates, " have dublicated variable names. 
+                 They will be removed together with data."))
+    cc <- map(cc, ~.x[!duplicated(unlist(names(.x)))])
+  }
+  ##In case of multiple stations with same ID, combining them into one. First 
+  ## occurrence is left.
+  st_info <- st_info %>% 
+    st_drop_geometry %>% 
+    select(ID) %>%
+    distinct %>% 
+    left_join(st_info, by = "ID", multiple = "first") %>% 
+    st_as_sf()
+  
   diff_t <- Sys.time() - start_t
   print(paste0("Data loading succesfully finished in ", round(as.numeric(diff_t), 2), " ", units(diff_t), "."))
   return(list(stations = st_info, data = cc))

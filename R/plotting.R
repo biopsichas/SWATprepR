@@ -509,8 +509,8 @@ plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type
     }
   }
   ##In case no variable, fill with same variable from the closest station
-  meteo_lst1$data <- fill_with_closest(meteo_lst1)
-  meteo_lst2$data <- fill_with_closest(meteo_lst2)
+  meteo_lst1 <- fill_with_closest(meteo_lst1)
+  meteo_lst2 <- fill_with_closest(meteo_lst2)
   ##Filtering for different stations
   meteo_lst1$data <-  meteo_lst1$data[names(meteo_lst1$data) %in% c(station1)]
   meteo_lst1$stations <- meteo_lst1$stations[meteo_lst1$stations$ID %in% c(station1),]

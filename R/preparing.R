@@ -190,70 +190,6 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 
 # Weather data -----------------------------------------------
 
-#' Fill missing variables from the closest stations with available data
-#'
-#' This function fills missing variables by interpolating values from the 
-#' closest stations that have data.
-#'
-#' @param meteo_lst A nested list with dataframes. 
-#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
-#'   Dataframe (DATE, PARAMETER)}.
-#'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
-#'   geometry, Long, Lat)}. \cr\cr
-#'   meteo_lst can be created using \code{\link{load_template}} function using 
-#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
-#'   function loading information from SWAT+ model setup weather files.
-#' @param par_fill (optional) A vector of variables to be filled. Default is 
-#' \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.
-#' @importFrom sf st_distance
-#' @importFrom dplyr filter %>% 
-#' @return A list of dataframes with filled data. Updated list is for meteo_lst$data.
-#'
-#' @examples
-#' \dontrun{
-#'   # Load weather data from an Excel file
-#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
-#'   met_lst <- load_template(temp_path, 3035)
-#'   
-#'   # Fill for missing variables
-#'   met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
-#' }
-#' @keywords internal
-
-fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")){
-  ##Initializing vectors, lists
-  df_list <- meteo_lst$data
-  stations <- names(df_list)
-  av_list <- list()
-  ##Checking missing variables for every station
-  for(p in par_fill){
-    c <- c()
-    for(st in stations){
-      if(!is.null(df_list[[st]][[p]])){
-        c <- c(c, st)
-      }
-    }
-    av_list[[p]] <- c
-  }
-  ##Loop to fill data for missing stations for provided variables in par_fill
-  for (p in par_fill){
-    ##Stations with data for selected variable
-    sel <- meteo_lst$stations %>% filter(ID %in% as.vector(av_list[[p]]))
-    ##Matrix for distances between stations
-    m <- st_distance(meteo_lst$stations, sel)
-    ##Adding names
-    rownames(m) <- meteo_lst$stations$ID
-    colnames(m) <- sel$ID
-    ##For each station missing selected variable
-    for(st in stations[!stations %in% av_list[[p]]]){
-      ##Finding closest station with data 
-      st_fill <- colnames(m)[which(m[st,] == min(m[st,]))]
-      df_list[[st]][[p]] <- meteo_lst$data[[st_fill]][[p]]
-    }
-  }
-  return(df_list)
-}
-
 #' Generate Weather Generator (WGN) Data for SWAT+ Model
 #'
 #' This function generates weather generator (WGN) data for a SWAT+ model 
@@ -356,13 +292,13 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
   ##Missing variables error (in case there are missing variables and they were not provided)
   missing_maxhhr <- FALSE
   if (length(c_f) != 0){
-    if (length(c_f) == 1 && c_f == "MAXHHR"){
-      missing_maxhhr <- TRUE
-    } else{
+    if ("MAXHHR" %in% c_f) missing_maxhhr <- TRUE
+    if(length(c_f)>0){
       warning(paste("These variables", paste(as.character(c_f), sep="' '", collapse=", "), "are missing for some of the stations.
       Closest stations with data will be used to fill existing gaps.", if("MAXHHR" %in% c_f){"MAXHHR will be calculated by PCP*0.38."}, "\n", 
       "Please use optional function parameters, if you want specific data to be used in filling missing variables for stations."))
-      data <- fill_with_closest(meteo_lst, c_f)
+      if(missing_maxhhr) c_f <- setdiff(c_f, "MAXHHR")
+      if(length(c_f)>0) data <- fill_with_closest(meteo_lst, c_f) %>% .$data
     }
   }
   ##Setting dataframes to save results
@@ -540,14 +476,16 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   ##Creating station names from coordinates (example s52699n18600e)
   station_names <- mutate_all(df1[c("LAT", "LONG")], ~sprintf(., fmt = '%#.6s')) %>% 
     mutate(name =  gsub("\\.", "", as.character(paste0("s", LAT, "n", LONG, "e"))))
+  ##Finding closest meteo station to each variable in selected station
+  d <- find_closest(meteo_lst)
   ##Writing file names for different variables
   weather_sta_cli <- data.frame(name=station_names$name, 
                                 wgn = df1$ID, 
-                                pcp = paste0("sta_", tolower(df1$ID), ".pcp"),
-                                tmp = paste0("sta_", tolower(df1$ID), ".tmp"),
-                                slr = paste0("sta_", tolower(df1$ID), ".slr"),
-                                hmd = paste0("sta_", tolower(df1$ID), ".hmd"),
-                                wnd = paste0("sta_", tolower(df1$ID), ".wnd"),
+                                pcp = paste0("sta_", tolower(d$PCP), ".pcp"),
+                                tmp = paste0("sta_", tolower(d$TMP_MAX), ".tmp"),
+                                slr = paste0("sta_", tolower(d$SLR), ".slr"),
+                                hmd = paste0("sta_", tolower(d$RELHUM), ".hmd"),
+                                wnd = paste0("sta_", tolower(d$WNDSPD), ".wnd"),
                                 wnd_dir = "null",
                                 atmo_dep = "atmodep.cli")
   ##Spacing
@@ -581,9 +519,9 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     write.table("filename", paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     write.table(weather_sta_cli[cli], paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     ##For each station
-    for(id in df1_cli$ID){
+    for(id in unique(d[[p_lst[[cli]][[1]][[1]]]])){
       s2 <- subset(df1_cli[df1_cli$ID == id,], select = -ID)
-      fname <- paste0("sta_", id, ".", cli)
+      fname <- paste0("sta_", tolower(id), ".", cli)
       ##Heading line
       text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " data - file written by SWATprepR R package ", Sys.time())
       write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -616,13 +554,33 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   wst_sf <- st_as_sf(station_names, coords = c("LONG", "LAT"), crs = 4326)
   ##Defining spacing of output files and updating each file
   spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4))
-  update_wst_txt('aquifer.con', write_path, wst_sf, spacing)
-  update_wst_txt('hru.con', write_path, wst_sf, spacing)
+  if(file.exists(paste0(write_path, '/', 'aquifer.con'))){
+    update_wst_txt('aquifer.con', write_path, wst_sf, spacing)
+  } else {
+    warning(paste("aquifer.con file was not found in", write_path, "and was not updated."))
+  }
+  if(file.exists(paste0(write_path, '/', 'hru.con'))){
+    update_wst_txt('hru.con', write_path, wst_sf, spacing)
+  } else {
+    warning(paste("hru.con file was not found in", write_path, "and was not updated."))
+  }
   spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 2))
-  update_wst_txt('reservoir.con', write_path, wst_sf, spacing)
-  update_wst_txt('chandeg.con', write_path, wst_sf, spacing)
+  if(file.exists(paste0(write_path, '/', 'reservoir.con'))){
+    update_wst_txt('reservoir.con', write_path, wst_sf, spacing)
+  } else {
+    warning(paste("reservoir.con file was not found in", write_path, "and was not updated."))
+  }
+  if(file.exists(paste0(write_path, '/', 'chandeg.con'))){
+    update_wst_txt('chandeg.con', write_path, wst_sf, spacing)
+  } else {
+    warning(paste("chandeg.con file was not found in", write_path, "and was not updated."))
+  }
   spacing <- c('%8s', '%-12s', rep('%12s', 5), '%8s', '%16s', rep('%8s', 4), '%12s', '%8s', rep('%12s', 46))
-  update_wst_txt('rout_unit.con', write_path, wst_sf, spacing)
+  if(file.exists(paste0(write_path, '/', 'rout_unit.con'))){
+    update_wst_txt('rout_unit.con', write_path, wst_sf, spacing)
+  } else {
+    warning(paste("rout_unit.con file was not found in", write_path, "and was not updated."))
+  }
   
   ##Creating temp folder to save all updated files before overwriting them into main directory
   f_dir <- paste(write_path, "temp", sep = '/')
@@ -1278,7 +1236,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   ##Filling data missing at stations with closest station data
   if (fill_missing){
     print("Closest stations are used to fill missing variables.")
-    meteo_lst$data <- fill_with_closest(meteo_lst)
+    meteo_lst <- fill_with_closest(meteo_lst)
   }
   ##Converting station coordinates (if not correct already) 
   st <-  meteo_lst[["stations"]]

@@ -849,3 +849,113 @@ add_missing_pcp_zero <- function(df_to_correct, df_valid = NULL, value_to_zero =
   # Return the updated dataframe
   return(df)
 }
+
+# Gaps in weather data ---------------------------------------------------------
+
+#' Find Closest Stations for Meteorological Parameters
+#'
+#' This function finds the closest stations for specified meteorological parameters.
+#'
+#' @param meteo_lst A nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}.
+#'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
+#' @param par_fill (optional) A vector of variables to be filled. Default is 
+#' \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.
+#' @importFrom sf st_distance
+#' @importFrom dplyr filter %>% 
+#' @importFrom purrr map walk walk2 compact
+#' @return A data frame with station information and filled meteorological parameters.
+#'
+#' @examples
+#' \dontrun{
+#'   # Load weather data from an Excel file
+#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#'   met_lst <- load_template(temp_path, 3035)
+#'   
+#'   # Fill for missing variables
+#'   df <- find_closest(met_lst)
+#' }
+#' @keywords internal
+
+find_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN", "PCP", "RELHUM", "WNDSPD", "SLR")) {
+  ## Initializing vectors, lists
+  df_list <- meteo_lst$data
+  stations <- names(df_list)
+  av_list <- list()
+  
+  # Filling available values for each parameter
+  walk(par_fill, ~{
+    p <- .x
+    av_list[[.x]] <<- map(stations, ~{
+      if (!is.null(df_list[[.x]][[p]])) .x else NULL
+    }) %>% compact %>% unlist
+  })
+  
+  # Creating a data frame to store results
+  df <- data.frame(stations = stations); df[par_fill] <- NA
+  
+  # Filling data frame with available values
+  walk2(par_fill, av_list, ~{df[df$stations %in% .y, .x] <<- .y})
+  
+  # Finding closest stations for missing values
+  walk(par_fill, ~{
+    sel <- meteo_lst$stations %>% filter(ID %in% as.vector(av_list[[.x]]))
+    m <- st_distance(meteo_lst$stations, sel)
+    rownames(m) <- meteo_lst$stations$ID
+    colnames(m) <- sel$ID
+    p <- .x
+    stations[!stations %in% av_list[[.x]]] %>%
+      walk(~ {
+        st_fill <- colnames(m)[which(m[.x, ] == min(m[.x, ]))]
+        df[df$station == .x, p] <<- st_fill
+      })
+  })
+  
+  return(df)
+}
+
+
+#' Fill missing variables from the closest stations with available data
+#'
+#' This function fills missing variables by interpolating values from the 
+#' closest stations that have data.
+#'
+#' @param meteo_lst A nested list with dataframes. 
+#'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
+#'   Dataframe (DATE, PARAMETER)}.
+#'   Nested \code{meteo_lst -> stations -> Dataframe (ID, Name, Elevation, Source, 
+#'   geometry, Long, Lat)}. \cr\cr
+#'   meteo_lst can be created using \code{\link{load_template}} function using 
+#'   'xlsx' template file or it could to be created with \code{\link{load_swat_weather}}
+#'   function loading information from SWAT+ model setup weather files.
+#' @param par_fill (optional) A vector of variables to be filled. Default is 
+#' \code{par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")}.
+#' @importFrom purrr walk
+#' @importFrom dplyr filter %>% 
+#' @return A list of dataframes with filled data. Updated list is for meteo_lst$data.
+#'
+#' @examples
+#' \dontrun{
+#'   # Load weather data from an Excel file
+#'   temp_path <- system.file("extdata", "weather_data.xlsx", package = "SWATprepR")
+#'   met_lst <- load_template(temp_path, 3035)
+#'   
+#'   # Fill for missing variables
+#'   met_lst$data <- fill_with_closest(met_lst, c("TMP_MAX", "TMP_MIN"))
+#' }
+#' @keywords internal
+
+fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP", "RELHUM", "WNDSPD", "SLR")){
+  df <- find_closest(meteo_lst, par_fill)
+  walk(df$stations, function(x){
+    walk(par_fill, function(y){
+      meteo_lst$data[[x]][[y]] <<- meteo_lst$data[[df[df$stations == x, y]]][[y]]
+    })
+  })
+  return(meteo_lst)
+}
