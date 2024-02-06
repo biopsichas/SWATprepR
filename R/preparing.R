@@ -520,7 +520,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     write.table(weather_sta_cli[cli], paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     ##For each station
     for(id in unique(d[[p_lst[[cli]][[1]][[1]]]])){
-      s2 <- subset(df1_cli[df1_cli$ID == id,], select = -ID)
+      s2 <- subset(df1_cli[df1_cli$ID == tolower(id),], select = -ID)
       fname <- paste0("sta_", tolower(id), ".", cli)
       ##Heading line
       text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " data - file written by SWATprepR R package ", Sys.time())
