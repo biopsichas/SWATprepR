@@ -1685,12 +1685,32 @@ prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path =
   print(paste0("recall.rec", " file was successfully written."))
   print(paste0("recall.con", " file was successfully written."))
   
+  ## Updating object.cnt file
+  f_obj_path <- paste0(write_path, "/", "object.cnt")
+  ## Just to have object.cnt file unlocked during writing
+  if(!file.exists(paste0(f_obj_path, ".bak"))) {
+    file.copy(from = paste0(f_obj_path),
+              to = paste0(f_obj_path, ".bak"), overwrite = TRUE)
+  }
+  object.cnt <- read_tbl("object.cnt.bak", project_path)  
+  object.cnt$rec <- id
+  object.cnt$obj <- sum(object.cnt[c(5:ncol(object.cnt))])
+  write.table(paste0("object.cnt", text_l), f_obj_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+              col.names = FALSE, quote = FALSE)
+  write.table(paste(sprintf(c('%-20s', rep('%11s', 6), rep('%9s', 14)), names(object.cnt)), collapse = ' '), f_obj_path, append = TRUE, 
+              sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(paste(sprintf(c('%-20s', rep('%11s', 6), rep('%9s', 14)), object.cnt[1,]), 
+                    collapse = ' '), f_obj_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  print(paste0("object.cnt", " file was successfully updated."))
+  
+  ## Updating file.cio file
   file_cio <- readLines(paste0(project_path, "/", "file.cio"))
   if(!grepl("recall.rec", file_cio[11], fixed = TRUE)){
     file_cio[11] <- "recall            recall.rec        "
     writeLines(file_cio, paste0(project_path, "/", "file.cio"))
     print(paste0("file.cio", " file was successfully updated."))
   }
+  
   print(paste0("Point source files for model have been successfully prepared and written in ", write_path, " folder."))
 }
 
