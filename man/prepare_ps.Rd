@@ -4,7 +4,13 @@
 \alias{prepare_ps}
 \title{Prepare Point Source Data Model Text Files}
 \usage{
-prepare_ps(pt_lst, project_path, write_path = NULL, cha_shape_path = FALSE)
+prepare_ps(
+  pt_lst,
+  project_path,
+  constant = FALSE,
+  write_path = NULL,
+  cha_shape_path = FALSE
+)
 }
 \arguments{
 \item{pt_lst}{Nested list with dataframes.
@@ -16,6 +22,9 @@ Point source data can be loaded with \code{\link{load_template}} function
 using 'xlsx' template file.}
 
 \item{project_path}{Character, path to the SWAT+ project folder (example "my_model").}
+
+\item{constant}{(optional) Logical, if TRUE, point source data will be constant in model.
+Default \code{constant = FALSE}.}
 
 \item{write_path}{(optional) Character, path to SWAT+ txtinout folder (example "my_model").
 Default \code{write_path = NULL}, which is the same as \code{project_path}.}

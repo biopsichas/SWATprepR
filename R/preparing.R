@@ -1595,6 +1595,8 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #'   Point source data can be loaded with \code{\link{load_template}} function 
 #'   using 'xlsx' template file. 
 #' @param project_path Character, path to the SWAT+ project folder (example "my_model"). 
+#' @param constant (optional) Logical, if TRUE, point source data will be constant in model. 
+#' Default \code{constant = FALSE}. 
 #' @param write_path (optional) Character, path to SWAT+ txtinout folder (example "my_model"). 
 #'   Default \code{write_path = NULL}, which is the same as \code{project_path}.
 #' @param cha_shape_path (optional) Character, path to SWAT+ channel shapefile. 
@@ -1619,7 +1621,7 @@ extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_consta
 #' }
 #' @keywords writing
 
-prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path = FALSE){
+prepare_ps <- function(pt_lst, project_path, constant = FALSE, write_path = NULL, cha_shape_path = FALSE){
   if(is.null(write_path)){
     write_path <- project_path
   }
@@ -1630,32 +1632,76 @@ prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path =
   for(i in unique(pt_lst$data$ob_name)){
     ri <- pt_lst$data[pt_lst$data$ob_name == i,]
     t <- find_time_step(ri[2, "DATE"], ri[1, "DATE"])
-    fname <- paste0(i, ".rec")
     ri$ob_typ <- paste0(ri$ob_typ, "_", t$typ)
-    f_path <- paste0(write_path, "/", fname)
-    f_rec_path <- paste0(write_path, "/", "recall.rec")
-    f_con_path <- paste0(write_path, "/", "recall.con")
-    s <- c(rep('%8s', 2), rep('%9s', 3), rep('%10s', 19))
     text_l <- paste0(": file was written by SWATprepR R package ", Sys.time())
-    ri <- ri[, !(colnames(ri) == "DATE")]
-    write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
-                quote = FALSE)
-    write.table(dim(ri)[1], f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    write.table(paste(sprintf(s, names(ri)), collapse = ' '), f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, 
-                col.names = FALSE, quote = FALSE)
-    df_to_txt(write_path, fname, ri, s)
-    print(paste0(fname, " file was successfully written."))
-    if(id == 0){
-      write.table(paste0("recall.rec", text_l), f_rec_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
-                  col.names = FALSE, quote = FALSE)
-      write.table(paste(sprintf(c(rep('%10s', 4)), c("id", "name", "rec_typ", "file")), collapse = ' '), f_rec_path, 
-                  append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-      write.table(paste0("recall.con", text_l), f_con_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
-                  col.names = FALSE, quote = FALSE)
-      write.table(paste(sprintf(c(rep('%10s', 17)), c('id', 'name', 'gis_id', 'area', 'lat', 'lon', 'elev', 'rec', 'wst', 'cst', 
-                                                      'ovfl', 'rule', 'out_tot', 'obj_typ', 'obj_id', 'hyd_typ', 'frac')), 
-                        collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+    if(constant){
+      f_rec_path <- paste0(write_path, "/", "exco.exc")
+      f_con_path <- paste0(write_path, "/", "exco.con")
+      fname <- "exco_om.exc"
+      f_path <- paste0(write_path, "/", fname)
+      ri <- ri %>% select(-c(jday , mo, day_mo, DATE)) %>% 
+        group_by(yr, ob_typ, ob_name) %>% 
+        summarise_all(sum) %>% 
+        ungroup %>%  
+        select (-yr) %>% 
+        group_by(ob_typ, ob_name) %>% 
+        summarise_all(mean) %>% 
+        ungroup %>%
+        select(-c(ob_typ)) %>% 
+        rename(name = ob_name)
+      s <- c('%-17s', rep('%14s', 18))
+      if(id == 0){
+        write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+                    quote = FALSE)
+        write.table(paste(sprintf(s, names(ri)), collapse = ' '), f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, 
+                    col.names = FALSE, quote = FALSE)
+        df_to_txt(write_path, fname, ri, s)
+      } else{
+        df_to_txt(write_path, fname, ri, s)
+      }
+    } else {
+      ri <- ri[, !(colnames(ri) == "DATE")]
+      fname <- paste0(i, ".rec")
+      f_path <- paste0(write_path, "/", fname)
+      f_rec_path <- paste0(write_path, "/", "recall.rec")
+      f_con_path <- paste0(write_path, "/", "recall.con")
+      s <- c(rep('%8s', 2), rep('%9s', 3), rep('%10s', 19))
+      write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
                   quote = FALSE)
+      write.table(dim(ri)[1], f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+      write.table(paste(sprintf(s, names(ri)), collapse = ' '), f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, 
+                  col.names = FALSE, quote = FALSE)
+      df_to_txt(write_path, fname, ri, s)
+      print(paste0(fname, " file was successfully written."))
+    }
+    
+    
+    if(id == 0){
+      if(constant){
+        write.table(paste0("exco.exc", text_l), f_rec_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                    col.names = FALSE, quote = FALSE)
+        write.table(paste(sprintf(c('%-23s', rep('%15s', 5)), c("name", "om", "pest", "path", "hmet", "salt")), collapse = ' '), f_rec_path, 
+                    append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        
+        write.table(paste0("exco.con", text_l), f_con_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                    col.names = FALSE, quote = FALSE)
+        write.table(paste(sprintf(c(rep('%10s', 17)), c('id', 'name', 'gis_id', 'area', 'lat', 'lon', 'elev', 'exco', 'wst', 'cst', 
+                                                        'ovfl', 'rule', 'out_tot', 'obj_typ', 'obj_id', 'hyd_typ', 'frac')), 
+                          collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+                    quote = FALSE)
+      } else {
+        write.table(paste0("recall.rec", text_l), f_rec_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                    col.names = FALSE, quote = FALSE)
+        write.table(paste(sprintf(c(rep('%10s', 4)), c("id", "name", "rec_typ", "file")), collapse = ' '), f_rec_path, 
+                    append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        write.table(paste0("recall.con", text_l), f_con_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
+                    col.names = FALSE, quote = FALSE)
+        write.table(paste(sprintf(c(rep('%10s', 17)), c('id', 'name', 'gis_id', 'area', 'lat', 'lon', 'elev', 'rec', 'wst', 'cst', 
+                                                        'ovfl', 'rule', 'out_tot', 'obj_typ', 'obj_id', 'hyd_typ', 'frac')), 
+                          collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
+                    quote = FALSE)
+      }
+      
       cha_table <- read_tbl("chandeg.con", project_path) 
       if(!is.character(cha_shape_path)){
         warning("No channel shapefile provided. Channel IDs will be assigned based on nearest center point in 'chandeg.con'.")
@@ -1673,17 +1719,28 @@ prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path =
       }
     } 
     id <- id + 1
-    write.table(paste(sprintf(c(rep('%10s', 4)), c(id, i, t$rec_typ, fname)), collapse = ' '), f_rec_path, append = TRUE, 
-                sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    if(constant){
+      write.table(paste(sprintf(c('%-23s', rep('%15s', 5)), c(rep(ri$name, 2), rep("null", 4))), collapse = ' '), f_rec_path, append = TRUE, 
+                  sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    } else {
+      write.table(paste(sprintf(c(rep('%10s', 4)), c(id, i, t$rec_typ, fname)), collapse = ' '), f_rec_path, append = TRUE, 
+                  sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    }
     write.table(paste(sprintf(c(rep('%10s', 17)), c(id, i, cha_table[id, "gis_id"][[1]], "0.00001", pt_lst$st[pt_lst$st$name == i, "Lat"][[1]], 
                                                     pt_lst$st[pt_lst$st$name == i, "Long"][[1]], cha_table[id, "elev"][[1]], id, 
                                                     "null", cha_table[id, "cst"][[1]], cha_table[id, "ovfl"][[1]],
                                                     cha_table[id, "rule"][[1]], 1, "sdc", 
                                                     cha_table[id, "id"][[1]], "tot", 1)), 
                       collapse = ' '), f_con_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    
   }
-  print(paste0("recall.rec", " file was successfully written."))
-  print(paste0("recall.con", " file was successfully written."))
+  if(constant){
+    print(paste0("exco.exc", " file was successfully written."))
+    print(paste0("exco.con", " file was successfully written."))
+  } else {
+    print(paste0("recall.rec", " file was successfully written."))
+    print(paste0("recall.con", " file was successfully written."))
+  }
   
   ## Updating object.cnt file
   f_obj_path <- paste0(write_path, "/", "object.cnt")
@@ -1693,7 +1750,11 @@ prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path =
               to = paste0(f_obj_path, ".bak"), overwrite = TRUE)
   }
   object.cnt <- read_tbl("object.cnt.bak", project_path)  
-  object.cnt$rec <- id
+  if(constant){
+    object.cnt$exco <- id
+  } else {
+    object.cnt$rec <- id
+  }
   object.cnt$obj <- sum(object.cnt[c(5:ncol(object.cnt))])
   write.table(paste0("object.cnt", text_l), f_obj_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, 
               col.names = FALSE, quote = FALSE)
@@ -1705,12 +1766,31 @@ prepare_ps <- function(pt_lst, project_path, write_path = NULL, cha_shape_path =
   
   ## Updating file.cio file
   file_cio <- readLines(paste0(project_path, "/", "file.cio"))
-  if(!grepl("recall.rec", file_cio[11], fixed = TRUE)){
-    file_cio[11] <- "recall            recall.rec        "
+  cio_update_needed <- FALSE
+  if(constant){
+    if(!grepl("exco.exc", file_cio[10], fixed = TRUE)){
+      file_cio[10] <- "exco              exco.exc          exco_om.exc       null              null              null              null  "
+      cio_update_needed <- TRUE
+    }
+    if(!grepl("exco.con", file_cio[5], fixed = TRUE)){
+      substr(file_cio[5], start = 181, stop = 188) <- "exco.con"
+      cio_update_needed <- TRUE
+    }
+  } else {
+    if(!grepl("recall.rec", file_cio[11], fixed = TRUE)){
+      file_cio[11] <- "recall            recall.rec        "
+      cio_update_needed <- TRUE
+    }
+    if(!grepl("recall.con", file_cio[5], fixed = TRUE)){
+      substr(file_cio[5], start = 163, stop = 172) <- "recall.con"
+      cio_update_needed <- TRUE
+    }
+  }
+  if(cio_update_needed){
     writeLines(file_cio, paste0(project_path, "/", "file.cio"))
     print(paste0("file.cio", " file was successfully updated."))
   }
-  
   print(paste0("Point source files for model have been successfully prepared and written in ", write_path, " folder."))
 }
+
 
