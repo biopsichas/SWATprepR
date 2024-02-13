@@ -1,3 +1,7 @@
+# SWATprepR 1.0.2
+* `prepare_ps()` function was updated to include the option to write constant value point source data for SWAT+ model. Bug was solved connected with *'object.cnt'* file. 
+* `load_swat_weather()` function was updated to include the option to read weather data with different type of naming.
+
 # SWATprepR 1.0.1
 
 * `sol_to_usersoil()` function was added to read and convert `soils.sol` file to `usersoil` R object.

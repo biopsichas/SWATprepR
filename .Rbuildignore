@@ -2,7 +2,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^templates$
-^output$
+^output*
 ^LICENSE\.md$
 ^test*
 ^README\.Rmd$

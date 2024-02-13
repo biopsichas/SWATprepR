@@ -14,7 +14,7 @@ where point sources discharge to a single channel."><meta property="og:image" co
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,13 @@ where point sources discharge to a single channel.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_ps</span><span class="op">(</span><span class="va">pt_lst</span>, <span class="va">project_path</span>, write_path <span class="op">=</span> <span class="cn">NULL</span>, cha_shape_path <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_ps</span><span class="op">(</span></span>
+<span>  <span class="va">pt_lst</span>,</span>
+<span>  <span class="va">project_path</span>,</span>
+<span>  constant <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  write_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cha_shape_path <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,6 +92,11 @@ using 'xlsx' template file.</p></dd>
 
 <dt>project_path</dt>
 <dd><p>Character, path to the SWAT+ project folder (example "my_model").</p></dd>
+
+
+<dt>constant</dt>
+<dd><p>(optional) Logical, if TRUE, point source data will be constant in model.
+Default <code>constant = FALSE</code>.</p></dd>
 
 
 <dt>write_path</dt>
