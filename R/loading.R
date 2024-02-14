@@ -91,6 +91,17 @@ load_template <- function(template_path, epsg_code = 4326){
     warning("Your template doesn't have data sheets to read.")
     r <- NA
   }
+  for(n in names(r)){
+    for(v in names(r[[n]])){
+      df <- r[[n]][[v]]
+      if(length(df[,1][[1]][duplicated(df[,1][[1]])])>0){
+        dates_text <- paste(unique(df[,1][[1]][duplicated(df[,1][[1]])]), collapse = ", ")
+        warning(paste0("Station:", n, ", Variable:" , v, " covers period of " , 
+                       head(df[,1], 1)[[1]], " to ", tail(df[,1], 1)[[1]], 
+        ". However, it has dublicated values at ", dates_text,", which migth create problems with some functions of this package. Please remove dublicated inputs and reload template."))
+      }
+    }
+  }
   print("Loading of data is finished.")
   return(list(stations = st, data = r))
 }
