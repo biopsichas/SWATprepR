@@ -381,7 +381,7 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' @param period_ends (optional) Character, date string (example '2020-12-31'). 
 #' Default \code{period_ends = NA}, stands for all available in data.
 #' @importFrom purrr map
-#' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains
+#' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains arrange
 #' @importFrom sf st_as_sf
 #' @importFrom lubridate year
 #' @importFrom utils read.delim
@@ -456,7 +456,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   ##Printing heading line
   write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   ##Loop to each station
-  for (id in df1$ID){
+  for (id in sort(df1$ID)){
     ##Filtering
     s1 <- df1[df1$ID == id,]
     s2 <- subset(df2[df2$ID == id,], select = -ID)
@@ -487,7 +487,8 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
                                 hmd = paste0("sta_", tolower(d$RELHUM), ".hmd"),
                                 wnd = paste0("sta_", tolower(d$WNDSPD), ".wnd"),
                                 wnd_dir = "null",
-                                atmo_dep = "atmodep.cli")
+                                atmo_dep = "atmodep.cli") %>% 
+    arrange(wgn)
   ##Spacing
   st_hd <- c('%-26s', '%6s', rep('%25s', 7))
   write.table(paste(sprintf(st_hd, names(weather_sta_cli)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -509,7 +510,8 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     rename(lat = LAT, lon = LONG, elev = ELEVATION, nbyr = RAIN_YRS) %>% 
     mutate(tstep = 0) %>% 
     select(ID, nbyr, tstep, lat, lon, elev) %>% 
-    mutate(ID = tolower(ID))
+    mutate(ID = tolower(ID)) %>% 
+    arrange(ID)
   ##Loop to write for each variable
   for(cli in names(weather_sta_cli[c(3:7)])){
     ##Writing reference file (where all variable files are listed)
@@ -517,9 +519,9 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
     text_l <-  paste0(fname,": ", p_lst[[cli]][[2]], " file names - file written by SWATprepR R package ", Sys.time())
     write.table(text_l, paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     write.table("filename", paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    write.table(weather_sta_cli[cli], paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(data.frame(sort(unique(weather_sta_cli[cli][[1]]))), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
     ##For each station
-    for(id in unique(d[[p_lst[[cli]][[1]][[1]]]])){
+    for(id in sort(unique(d[[p_lst[[cli]][[1]][[1]]]]))){
       s2 <- subset(df1_cli[df1_cli$ID == tolower(id),], select = -ID)
       fname <- paste0("sta_", tolower(id), ".", cli)
       ##Heading line
