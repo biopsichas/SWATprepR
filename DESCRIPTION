@@ -1,8 +1,8 @@
 Type: Package
 Package: SWATprepR
 Title: SWAT+ input data preparation tool
-Version: 1.0.2
-Date: 2024-02-13
+Version: 1.0.3
+Date: 2024-02-27
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))
@@ -14,6 +14,7 @@ BugReports: https://github.com/biopsichas/SWATprepR/issues
 Imports:
     comprehenr,
     DBI,
+    diffr,
     dplyr,
     elevatr,
     ggplot2,

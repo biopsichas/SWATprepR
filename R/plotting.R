@@ -477,6 +477,7 @@ plot_weather_compare <- function(meteo_lst1, meteo_lst2, par, period = "day", fn
 #' @importFrom dplyr %>% filter select mutate bind_rows
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot geom_bar facet_wrap ggtitle aes theme_minimal labs
+#' @importFrom lubridate interval int_overlaps
 #' @return ggplot figure of bar plots.
 #' @export
 #'
@@ -499,15 +500,40 @@ plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type
   stopifnot(is.character(type1))
   stopifnot(is.character(type2))
   stopifnot(is.character(title))
-  ##Filter second based on min and max dates of first list
+  ##Find mix max dates for the first dataset
   min_date <- as.POSIXct(get_dates(meteo_lst1)$min_date, "%Y-%m-%d", tz = "UTC")
   max_date <- as.POSIXct(get_dates(meteo_lst1)$max_date, "%Y-%m-%d", tz = "UTC")
-  for (id in names(meteo_lst2$data)){
-    for (p in names(meteo_lst2$data[[id]])){
-      meteo_lst2$data[[id]][[p]] <- meteo_lst2$data[[id]][[p]] %>% 
-        filter(DATE >= min_date & DATE <= max_date)
+  ##Find mix max dates for the second dataset
+  min_date2 <- as.POSIXct(get_dates(meteo_lst2)$min_date, "%Y-%m-%d", tz = "UTC")
+  max_date2 <- as.POSIXct(get_dates(meteo_lst2)$max_date, "%Y-%m-%d", tz = "UTC")
+  
+  ##Checking if dates overlap
+  if(int_overlaps(interval(min_date, max_date), interval(min_date2, max_date2))){
+    ##Checking if dates are the same
+    if(interval(min_date, max_date) == interval(min_date2, max_date2)){
+      message("Date interval for ", type1, " and ", type2, " are the same.")
+    } else {
+      message(paste0("Date interval for ", type1, " and ", type2, " are not the same."))
+      ##Filtering data to the same date range
+      for (id in names(meteo_lst$data)){
+        for (p in names(meteo_lst$data[[id]])){
+          meteo_lst$data[[id]][[p]] <- meteo_lst$data[[id]][[p]] %>%
+            filter(DATE >= min_date2 & DATE <= max_date2)
+        }
+      }
+      for (id in names(meteo_lst2$data)){
+        for (p in names(meteo_lst2$data[[id]])){
+          meteo_lst2$data[[id]][[p]] <- meteo_lst2$data[[id]][[p]] %>%
+            filter(DATE >= min_date & DATE <= max_date)
+        }
+      }
+      message("Date range unified to same interval ", max(c(min_date, min_date2)), " - ", min(c(max_date, max_date2)))
     }
+  } else {
+    warning(paste0("No overlapping dates between ", type1, " and ", type2, ". 
+                   Plotting will be done for non-overlaping dates."))
   }
+  
   ##In case no variable, fill with same variable from the closest station
   meteo_lst1 <- fill_with_closest(meteo_lst1)
   meteo_lst2 <- fill_with_closest(meteo_lst2)

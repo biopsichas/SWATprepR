@@ -1,6 +1,61 @@
 
 # Miscellaneous --------------------------------------------------------------------
 
+#' Find Differences Between Files in Two Setups
+#'
+#' This function scans two folders and identifies files that exist only in one 
+#' setup or files with differences between setups.
+#'
+#' @param path1 Path to the first setup.
+#' @param path2 Path to the second setup.
+#' @param name1 Character for name for the first setup (default is \code{name1 = Setup 1}).
+#' @param name2 Character for name for the second setup (default is \code{name2 = Setup 2}).
+#' @param remove_pattern Regex pattern for files to be removed. Default is \code{remove_pattern = NULL}, 
+#' which means pattern removes file types: txt, zip, fin, out, exe, bak, mgts, 
+#' farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp.
+#' @return A list containing differences between files if found, otherwise a message indicating no differences.
+#' @importFrom dplyr symdiff
+#' @importFrom diffr diffr
+#' @export
+
+find_dif <- function(path1, path2, name1 = "Setup 1", name2 = "Setup2", remove_pattern = NULL){
+  ## Default remove pattern
+  if(is.null(remove_pattern)){
+    remove_pattern <- ".*.txt|.*.zip|.*.fin|.*.out|.*.exe|.*.bak|.*.mgts|.*.farm|.*.sqlite|.*.swf|.*.sch|.*.hmd|.*.wnd|.*.pcp|.*.slr|.*.tmp"
+  }
+  
+  ## Scan folders
+  v_new <- setdiff(list.files(path1), list.files(path1, pattern = remove_pattern))
+  v_old <- setdiff(list.files(path2), list.files(path2, pattern = remove_pattern))
+  
+  ## Different files (doesn't exist in old or new setup)
+  v_diff <- symdiff(v_new, v_old)
+  
+  ## Find if there are any different files
+  if(length(v_diff) > 0) message("File/s " , paste0(v_diff, collapse = ", "), " exists only in one of setups!!!")
+  
+  ## Common files to be used in the loop
+  v_files <- v_new[v_new %in% v_old]
+  
+  ## Loop over files
+  #List to save differences
+  l <- list()
+  for (f in v_files){
+    file1 <- paste0(path1, "/", f)
+    file2 <- paste0(path2, "/", f)
+    if(any(readLines(file1)[-1] != readLines(file2)[-1])){
+      message(paste0("Difference in file ", f))
+      l[[f]] <- diffr(file1, file2, before = name1, after = name2)
+    }
+  }
+  if(length(l) == 0){
+    message("No differences found")
+  } else {
+    message("Differences found in ", length(l), " files")
+    return(l)
+  }
+}
+
 #' Function to put option remove hide or show all lines in chart and this function also print chart.
 #'
 #' @param graph plotly graph object
@@ -42,8 +97,8 @@ hide_show <- function(graph){
 
 get_dates <- function(meteo_lst){
   meteo_lst <- meteo_lst$data
-  min_date <- as.POSIXct(as.Date(now()), "%Y-%m-%d", tz = "UTC")
-  max_date <- as.POSIXct("1900-01-01", "%Y-%m-%d", tz = "UTC")
+  min_date <- min(meteo_lst[[1]][[1]]$DATE)
+  max_date <- max(meteo_lst[[1]][[1]]$DATE)
   for (n in names(meteo_lst)){
     for(p in names(meteo_lst[[n]])){
       if(min_date >= min(meteo_lst[[n]][[p]]$DATE)){

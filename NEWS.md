@@ -1,3 +1,8 @@
+# SWATprepR 1.0.3
+* Warning for `load_template()`, if there are duplicates in the template file.
+* Sorting in weather files using `prepare_climate()`. Needed for SWAT+ model to find weather files correctly.
+* Added function `find_dif()` to compare files of two setups and find differences. 
+
 # SWATprepR 1.0.2
 * `prepare_ps()` function was updated to include the option to write constant value point source data for SWAT+ model. Bug was solved connected with *'object.cnt'* file. 
 * `load_swat_weather()` function was updated to include the option to read weather data with different type of naming.

@@ -19,6 +19,7 @@
 #' @importFrom readxl read_xlsx excel_sheets
 #' @importFrom tidyr drop_na
 #' @importFrom lubridate yday month day year
+#' @importFrom utils head tail  
 #' @export 
 #'
 #' @examples
@@ -414,6 +415,7 @@ load_swat_weather <- function(input_folder){
   
   diff_t <- Sys.time() - start_t
   print(paste0("Data loading succesfully finished in ", round(as.numeric(diff_t), 2), " ", units(diff_t), "."))
+  gc()
   return(list(stations = st_info, data = cc))
 }
 

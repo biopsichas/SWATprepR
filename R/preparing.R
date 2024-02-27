@@ -486,7 +486,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
                                 slr = paste0("sta_", tolower(d$SLR), ".slr"),
                                 hmd = paste0("sta_", tolower(d$RELHUM), ".hmd"),
                                 wnd = paste0("sta_", tolower(d$WNDSPD), ".wnd"),
-                                wnd_dir = "null",
+                                pet = "null",
                                 atmo_dep = "atmodep.cli") %>% 
     arrange(wgn)
   ##Spacing
@@ -502,7 +502,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
                 "hmd" = list("RELHUM", "Relative humidity"), 
                 "tmp" = list(c("TMP_MAX", "TMP_MIN"), "Temperature"), 
                 "wnd" = list("WNDSPD", "Wind speed"), 
-                "wnd_dir" = list("WND_DIR", "Wind direction"), 
+                "pet" = list("PET", "PET"), 
                 "atmo_dep" = list("ATMO_DEP", "Atmospheric deposition"))
   ##Preparing general info for station
   df1_cli <- df1 %>% 
@@ -611,6 +611,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   unlink(paste(f_dir), recursive = TRUE)
   ##Done
   print(paste0("Climate data were successfully written in ", write_path))
+  gc()
 }
 
 # Preparing soils -----------------------------------------------
@@ -1233,7 +1234,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
                 "TMP_MAX" = c("tmp", "Temperature"), 
                 "TMP_MIN" =  c("tmp", "Temperature"), 
                 "WNDSPD" = c("wnd", "Wind speed"), 
-                "WND_DIR" = c("wnd_dir", "Wind direction"), 
+                "PET" = c("pet", "PET"), 
                 "ATMO_DEP" = c("atmo_dep", "Atmospheric deposition"))
   ##Filling data missing at stations with closest station data
   if (fill_missing){
@@ -1253,7 +1254,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   weather_file <- data.frame(id=integer(), filename=character(), type=character(), lat=numeric(), lon=numeric())
   weather_sta_cli <- data.frame(id=integer(), name=character(), wgn_id=integer(), 
                                 pcp=character(), tmp=character(), slr = character(), hmd = character(),
-                                wnd = character(), wnd_dir = character(), atmo_dep = character(),
+                                wnd = character(), pet = character(), atmo_dep = character(),
                                 lat=numeric(), lon=numeric())
   ##Setting up counters for ids
   id <- 1
@@ -1343,7 +1344,12 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
     dbWriteTable(db, 'weather_file', weather_file, append = TRUE)
   },
   error = function(e) {
-    stop("Your database could not be updated. This is probably due to that it already have or had weather data written in before. Please use .sqlite database in which weather data were not written before!!!")
+    stop("Your database could not be updated. This is probably due to that it 
+         already have or had weather data written in before. Please use .sqlite 
+         database in which weather data were not written before. You can also use 
+         prepare_climate() function to update model input text files. In this case 
+         .sqlite database will not be updated, but all weather related inputs will
+         written in model input text files.")
   })
   dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli', weather_wgn_cli, append = TRUE)
