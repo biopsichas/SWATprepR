@@ -1,6 +1,68 @@
 
 # Miscellaneous --------------------------------------------------------------------
 
+#' Read information about model setup from SWAT files
+#'
+#' This function reads setup information from SWAT files in the specified project path.
+#'
+#' @param project_path The path to the project directory containing SWAT setup files.
+#' 
+#' @return A data frame containing setup information extracted from SWAT files.
+#' @importFrom dplyr select filter starts_with rename mutate
+#' @importFrom tibble rownames_to_column
+#' @examples
+#' \dontrun{
+#' df <- setup_info("/path/to/project")
+#' write.csv(df, "write_path/table.csv", row.names = FALSE, quote = FALSE)
+#' }
+#' @export
+
+setup_info <- function(project_path){
+  df <- read_tbl("object.cnt", project_path)
+  plant_nb <- suppressWarnings(read_tbl("plant.ini", project_path)) %>% 
+    select(pcom_name) %>% 
+    filter(!grepl("_comm|orcd",pcom_name)) %>% 
+    unique %>% 
+    nrow
+  wetlant_nb <- df_plant <- read_tbl("wetland.wet", project_path) %>% 
+    nrow
+  
+  colnames(df) <- c("Name of the watershed", 
+                    "Land area of the watershed in ha",
+                    "Total area of the watershed in ha",
+                    "Total number of spatial objects in the simulation",
+                    "Number of HRUs in the simulation",
+                    "Number of HRU-ltes in the simulation",
+                    "Number of routing units in the simulation",
+                    "Number of gwflow river cells",
+                    "Number of aquifers in the simulation",
+                    "Unused1",
+                    "Number of reservoirs in the simulation",
+                    "Number of recalls (point sources/inlets) in the simulation",
+                    "Number of export coefficients in the simulation",
+                    "Number of delivery ratios in the simulation",
+                    "Unused2",
+                    "Unused3",
+                    "Number of outlets in the simulation",
+                    "Number of SWAT-DEG channels in the simulation",
+                    "Unused4",
+                    "Unused5",
+                    "Unused6")
+  df <- select(df, -starts_with("Unused")) %>% 
+    select(-starts_with("Land"))
+  
+  df <- data.frame(t(df[,-1])) %>% 
+    tibble::rownames_to_column("Parameter")%>% 
+    rename(Value = 2) %>% 
+    filter(Value > 0) %>% 
+    mutate(Value = as.integer(Value))
+  
+  df[nrow(df) + 1,] = c("Number of crops in rotation", plant_nb)
+  df[nrow(df) + 1,] = c("Number of wetlands", wetlant_nb)
+  
+  return(df)
+}
+
 #' Find Differences Between Files in Two Setups
 #'
 #' This function scans two folders and identifies files that exist only in one 
