@@ -1,3 +1,6 @@
+# SWATprepR 1.0.4
+* Added helper functions to examine setup: `setup_info()`and model's output water balance components: `wbalance_table()`.
+
 # SWATprepR 1.0.3
 * Warning for `load_template()`, if there are duplicates in the template file.
 * Sorting in weather files using `prepare_climate()`. Needed for SWAT+ model to find weather files correctly.

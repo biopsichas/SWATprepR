@@ -1,6 +1,66 @@
 
 # Miscellaneous --------------------------------------------------------------------
 
+#' Prepare water balance table
+#' 
+#' This function reads data from 'basin_wb_aa.txt' and 'basin_aqu_aa.txt' 
+#' SWAT+ model output files and prepares various water balance parameters table.
+#' 
+#' @param project_path The path to the directory containing SWAT+ output files.
+#' @return A data frame containing water balance parameters
+#' @importFrom dplyr select bind_rows rename
+#' @export
+#' @examples
+#' \dontrun{
+#' df <- wbalance_table("path/to/project")
+#' write.csv(df, "water_balance.csv", row.names = FALSE, quote = FALSE)
+#' }
+
+wbalance_table <- function(project_path){
+  
+  # Read data from files
+  basin_wb_aa   <- read_tbl('basin_wb_aa.txt', project_path, 4)
+  basin_aqu_aa  <- read_tbl('basin_aqu_aa.txt',  project_path, 4) 
+  
+  # Compute extract parameters
+  wb_aa  <- round(unlist(basin_wb_aa[,c(8:12, 14:18, 20:23, 27:32, 34:39, 43)]), 2) 
+  aqu_aa <- round(unlist(basin_aqu_aa[,c(8:10, 12:13, 22:24)]), 2) 
+  
+  ## Calculate the water balance parameters
+  if (aqu_aa['flo_cha'] == 0 & aqu_aa['flo_res'] == 0 & aqu_aa['flo'] > 0) {
+    aqu_flo <- aqu_aa['flo']
+  } else {
+    aqu_flo <- aqu_aa['flo_cha'] + aqu_aa['flo_res']
+  }
+  
+  surq <- wb_aa['surq_cha'] + wb_aa['surq_res']
+  
+  base <- wb_aa['latq_cha'] + wb_aa['latq_res'] +
+    aqu_flo + wb_aa['qtile']
+  
+  wyld <- surq + base
+  
+  ratios <- round(c(wb_aa['et'] / wb_aa['precip'], wyld / wb_aa['precip'],
+                    surq / wyld, base / wyld, surq, base, wyld), 2)
+  
+  ratios <- as.data.frame(ratios) %>% 
+    rename(Value = 1)
+  row.names(ratios ) <- c('et / precip: ', 'wyld / precip:', 'surq / wyld:', 'base / wyld: ',
+                          paste0('surq = surq_cha + surq_res:'),
+                          paste0('base = latq_cha + latq_res + flo_cha  + flo_res  + qtile'),
+                          paste0('wyld = surq + base:'))
+  
+  ## Combine into one dataframe
+  df <- bind_rows(as.data.frame(wb_aa)%>% rename(Value = 1), 
+                  as.data.frame(aqu_aa) %>% rename(Value = 1), 
+                  ratios)
+  df$Parameter <- rownames(df)
+  rownames(df) <- NULL
+  df <- select(df, Parameter, Value)
+  
+  return(df)
+}
+
 #' Read information about model setup from SWAT files
 #'
 #' This function reads setup information from SWAT files in the specified project path.
