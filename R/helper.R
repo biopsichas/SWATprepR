@@ -8,7 +8,7 @@
 #' 
 #' @param project_path The path to the directory containing SWAT+ output files.
 #' @return A data frame containing water balance parameters
-#' @importFrom dplyr select bind_rows rename
+#' @importFrom dplyr select bind_rows rename filter
 #' @export
 #' @examples
 #' \dontrun{
@@ -47,7 +47,7 @@ wbalance_table <- function(project_path){
     rename(Value = 1)
   row.names(ratios ) <- c('et / precip: ', 'wyld / precip:', 'surq / wyld:', 'base / wyld: ',
                           paste0('surq = surq_cha + surq_res:'),
-                          paste0('base = latq_cha + latq_res + flo_cha  + flo_res  + qtile'),
+                          paste0('base = latq_cha + latq_res + qtile'),
                           paste0('wyld = surq + base:'))
   
   ## Combine into one dataframe
@@ -56,7 +56,8 @@ wbalance_table <- function(project_path){
                   ratios)
   df$Parameter <- rownames(df)
   rownames(df) <- NULL
-  df <- select(df, Parameter, Value)
+  df <- select(df, Parameter, Value) %>% 
+    filter(!Parameter %in% c('flo_cha', 'flo_res', 'flo_ls')) %>%
   
   return(df)
 }
