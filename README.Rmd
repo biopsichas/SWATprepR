@@ -28,7 +28,7 @@ library(badger)
 `r badge_repostatus("active")`
 `r badge_code_size("biopsichas/SWATprepR")`
 `r badge_license("MIT")`
-`r badge_doi("https://doi.org/10.5281/zenodo.10167075", "yellow")`
+`r badge_doi("https://doi.org/10.1186/s12302-024-00873-1", "yellow")`
 
 The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 
@@ -47,10 +47,13 @@ Detailed information about packages, workflow steps, input data, SWAT+ parameter
 You can install the development version of SWATprepR from [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that running [`get_usersoil_table()`](reference/get_usersoil_table.html) function the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be installed. 
 
 ``` r
+# If the package 'remotes' is not installed run first:
+install.packages("remotes")
+
 # The installation of `SWATprepR`.
-devtools::install_github("biopsichas/SWATprepR")
+remotes::install_github("biopsichas/SWATprepR")
 # The `euptf2` package has to be installed to utilize `get_usersoil_table()` function.
-devtools::install_github("tkdweber/euptf2")
+remotes::install_github("tkdweber/euptf2")
 ```
 
 ## Data

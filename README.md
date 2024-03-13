@@ -12,7 +12,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![](https://img.shields.io/github/languages/code-size/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
-[![](https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.10167075-yellow.svg)](https://doi.org/https://doi.org/10.5281/zenodo.10167075)
+[![](https://img.shields.io/badge/doi-https://doi.org/10.1186/s12302--024--00873--1-yellow.svg)](https://doi.org/https://doi.org/10.1186/s12302-024-00873-1)
 
 The goal of `SWATprepR` is to help with the [SWAT+
 model](https://swat.tamu.edu/software/plus/) input data preparation.
@@ -49,10 +49,13 @@ function the `euptf2` [package](https://github.com/tkdweber/euptf2) has
 to be installed.
 
 ``` r
+# If the package 'remotes' is not installed run first:
+install.packages("remotes")
+
 # The installation of `SWATprepR`.
-devtools::install_github("biopsichas/SWATprepR")
+remotes::install_github("biopsichas/SWATprepR")
 # The `euptf2` package has to be installed to utilize `get_usersoil_table()` function.
-devtools::install_github("tkdweber/euptf2")
+remotes::install_github("tkdweber/euptf2")
 ```
 
 ## Data
