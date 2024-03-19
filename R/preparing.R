@@ -1363,23 +1363,28 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   return(print(paste("Weather data was successfuly added to", gsub(".*/","",db_path))))
 }
 
-#' Update SWAT+ SQLite database with atmospheric deposition data
+#' Update SWAT+ project with atmospheric deposition data
 #'
-#' This function updates an SWAT+ SQLite database with atmospheric deposition data.
+#' This function updates a SWAT+ SQLite database and/or writes the `atmodep.cli`
+#' file for a given dataframe containing atmospheric deposition data. 
 #'
-#' @param df A data frame containing columns "DATE," "NH4_RF," "NO3_RF," 
-#' "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}} function.
-#' @param db_path A character string representing the path to the SQLite 
-#' database (e.g., "./output/project.sqlite").
-#' @param t_ext (optional) A string indicating the type of time aggregation: 'year' for 
-#' yearly averages, 'month' for monthly averages, and 'annual' for the average 
-#' of the entire period. Default default \code{t_ext = "year"}. 
+#' @param df A data frame containing columns "DATE," "NH4_RF," "NO3_RF,"
+#'   "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}}
+#'   function.
+#' @param db_path (optional) A character string representing the path to the
+#'   SQLite database (e.g., "./output/project.sqlite"). If left blank,
+#'   `write_path` must be provided instead.
+#' @param write_path (optional) A character string path where `atmodep.cli`
+#'   will be written to. If left blank, `db_path` will be used instead.
+#' @param t_ext (optional) A string indicating the type of time aggregation:
+#'   'year' for yearly averages, 'month' for monthly averages, and 'annual' for
+#'   the average of the entire period. Default default \code{t_ext = "year"}.
 #' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
 #' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
-#' @return Writes data to 'atmodep.cli' file and updates the SWAT+ SQLite database 
-#' with codes and connections to atmospheric deposition data.
-#' @export 
+#' @return Writes data to 'atmodep.cli' file and can update the SWAT+ SQLite
+#'   database with codes and connections to atmospheric deposition data.
+#' @export
 #' @examples
 #' \dontrun{
 #'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
@@ -1389,16 +1394,33 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
 #' }
 #' @seealso \code{\link{get_atmo_dep}}
 #' @keywords writing
+#' @author Svajunas Plunge (svajunas.plunge@gmail.com)
+#' @author Moritz Shore (moritzshore@gmail.com) 
 
-add_atmo_dep <- function(df, db_path, t_ext = "year"){
-  ##Path to the folder to write weather files (same as sql db)
-  write_path <- sub("[^/]+$", "", db_path)
-  f_name <- "atmodep.cli"
+add_atmo_dep <- function(df, db_path = NULL, write_path = NULL, t_ext = "year") {
+  
+  if(is.null(db_path) && is.null(write_path)){
+    stop("please provide db_path or write_path, or both!")
+  }
+  
   ##Rounding input data
   df <- mutate_if(df, is.numeric, ~round(.,3))
   d <- as.data.frame(t(df))
-  ##Setting file name and initial parameters to write
-  f_path <- paste0(write_path, f_name)
+  f_name <- "atmodep.cli"
+  
+  # if db_path is left empty, then we will not update the SQL
+  update_sql = (is.null(db_path) == FALSE)
+  
+  # if no write_path is provided, then write in the same directory as
+  # the SQL db. Otherwise, write_path will be left as it was passed.
+  if (is.null(write_path) && update_sql) {
+    write_path <- sub("[^/]+$", "", db_path)
+    f_path <- paste0(write_path, f_name)
+  }else{
+    # add the "/" if the write_path is provided. 
+    f_path <- paste0(write_path, "/", f_name)
+  }
+  ## initial parameters to write
   mo_init <- 0 
   yr_init <- as.numeric(substr(d[1,1], 1, 4))
   num_aa <- dim(d)[2]
@@ -1431,23 +1453,29 @@ add_atmo_dep <- function(df, db_path, t_ext = "year"){
   suppressWarnings(write.table(df, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
   write.table(f_name, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(d, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
-  ##Info from writing
-  print(paste("Atmospheric deposition data were written into ", f_path))
+
   
   ##Adding info to database tables
-  db <- dbConnect(RSQLite::SQLite(), db_path)
-  weather_sta_cli <- dbReadTable(db, 'weather_sta_cli')
-  codes_bsn <- dbReadTable(db, 'codes_bsn')
-  weather_sta_cli$atmo_dep <- f_name
-  codes_bsn$atmo_dep <- atmo_dep
-  dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, overwrite = TRUE)
-  dbWriteTable(db, 'codes_bsn', codes_bsn, overwrite = TRUE)
-  ##Table for atmo_cli 
-  df <- data.frame(id = 1, filename = f_name, timestep = ts, mo_init = mo_init, 
-                   yr_init = yr_init, num_aa = num_aa)
-  dbWriteTable(db, 'atmo_cli', df, overwrite = TRUE)
-  dbDisconnect(db)
-  return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
+  if(update_sql){
+    ##Info from writing
+    print(paste("Atmospheric deposition data were written into ", f_path))
+    db <- dbConnect(RSQLite::SQLite(), db_path)
+    weather_sta_cli <- dbReadTable(db, 'weather_sta_cli')
+    codes_bsn <- dbReadTable(db, 'codes_bsn')
+    weather_sta_cli$atmo_dep <- f_name
+    codes_bsn$atmo_dep <- atmo_dep
+    dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, overwrite = TRUE)
+    dbWriteTable(db, 'codes_bsn', codes_bsn, overwrite = TRUE)
+    ##Table for atmo_cli 
+    df <- data.frame(id = 1, filename = f_name, timestep = ts, mo_init = mo_init, 
+                     yr_init = yr_init, num_aa = num_aa)
+    dbWriteTable(db, 'atmo_cli', df, overwrite = TRUE)
+    dbDisconnect(db)
+    return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
+  }else{
+    # if we are not updating SQL, then return this info here. 
+    return(print(paste("Atmospheric deposition data were written into ", f_path,"(SQL database was not updated)")))
+  }
 }
 
 # Land use and management -----------------------------------------------
