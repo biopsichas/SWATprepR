@@ -1234,7 +1234,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
                 "TMP_MAX" = c("tmp", "Temperature"), 
                 "TMP_MIN" =  c("tmp", "Temperature"), 
                 "WNDSPD" = c("wnd", "Wind speed"), 
-                "PET" = c("pet", "PET"), 
+                "WND_DIR" = c("wnd_dir", "Wind direction"),  
                 "ATMO_DEP" = c("atmo_dep", "Atmospheric deposition"))
   ##Filling data missing at stations with closest station data
   if (fill_missing){
@@ -1254,7 +1254,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   weather_file <- data.frame(id=integer(), filename=character(), type=character(), lat=numeric(), lon=numeric())
   weather_sta_cli <- data.frame(id=integer(), name=character(), wgn_id=integer(), 
                                 pcp=character(), tmp=character(), slr = character(), hmd = character(),
-                                wnd = character(), pet = character(), atmo_dep = character(),
+                                wnd = character(), wnd_dir = character(), atmo_dep = character(),
                                 lat=numeric(), lon=numeric())
   ##Setting up counters for ids
   id <- 1
