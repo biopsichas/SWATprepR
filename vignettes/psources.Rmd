@@ -14,7 +14,7 @@ Point sources are generally municipal or industrial wastewater treatment plants 
 
 ## Loading
 
-Data prepared according to the provided template (*'pnt_data.xlsx'*) can be directly loaded using the same package function,  [load_template](../reference/load_template.html). This function loads the data into a list with two dataframes. The first one contains basic point source information (name and coordinates), while the second one contains parameter data (date, flow, sediments, etc.) about the point sources. The data must be structured with headings and units as outlined in [the SWAT+ documentation](https://swatplus.gitbook.io/swat+-documentation/introduction/point-sources-and-inlets/filename.rec). The function requires only the path to the completed point source template and, if different from 4326, the EPSG code for accurately setting point coordinates.
+Data prepared according to the provided template (*'pnt_data.xlsx'*) can be directly loaded using the same package function,  [load_template](../reference/load_template.html). This function loads the data into a list with two dataframes. The first one contains basic point source information (name and coordinates), while the second one contains parameter data (date, flow, sediments, etc.) about the point sources. The data must be structured with headings and units as outlined in [the SWAT+ documentation](https://swatplus.gitbook.io/swat+-documentation/introduction/point-sources-and-inlets/filename.rec). The unit for **flow** is $m3/day$, sediment is $t/day$ and for **nutrients** it is $kg/day$. The function requires only the path to the completed point source template and, if different from `4326`, the EPSG code for accurately setting point coordinates.
 
 ```{r ps, message = FALSE, warning = FALSE}
 library(SWATprepR)
@@ -41,7 +41,7 @@ Additionally, the data could be examined in a time series plot using a simple gg
 ```{r ps_data, message = FALSE, warning = FALSE}
 ggplot(pnt_data$data[c("ob_name", "yr", "flo")], aes(yr, flo, colour = ob_name))+
   geom_line()+
-  labs(x = "Year", y = "Flow m3/year", color='Point source')+
+  labs(x = "Year", y = "Flow m3/day", color='Point source')+
   theme_bw()
 ```
 

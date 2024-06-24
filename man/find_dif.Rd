@@ -23,7 +23,8 @@ find_dif(
 
 \item{remove_pattern}{Regex pattern for files to be removed. Default is \code{remove_pattern = NULL},
 which means pattern removes file types: txt, zip, fin, out, exe, bak, mgts,
-farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp.}
+farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp. Example for excluding only txt files  \code{remove_pattern <- '.*.txt'}.
+Other can be added using | operator.}
 }
 \value{
 A list containing differences between files if found, otherwise a message indicating no differences.

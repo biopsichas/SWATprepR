@@ -1365,22 +1365,16 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
 
 #' Update SWAT+ project with atmospheric deposition data
 #'
-#' This function updates a SWAT+ SQLite database and/or writes the `atmodep.cli`
+#' This function updates a SWAT+ model text files and writes the `atmodep.cli`
 #' file for a given dataframe containing atmospheric deposition data. 
 #'
 #' @param df A data frame containing columns "DATE," "NH4_RF," "NO3_RF,"
 #'   "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}}
 #'   function.
-#' @param db_path (optional) A character string representing the path to the
-#'   SQLite database (e.g., "./output/project.sqlite"). If left blank,
-#'   `write_path` must be provided instead.
-#' @param write_path (optional) A character string path where `atmodep.cli`
-#'   will be written to. If left blank, `db_path` will be used instead.
+#' @param write_path Character, path to the SWAT+ txtinout folder (example "my_model").
 #' @param t_ext (optional) A string indicating the type of time aggregation:
 #'   'year' for yearly averages, 'month' for monthly averages, and 'annual' for
 #'   the average of the entire period. Default default \code{t_ext = "year"}.
-#' @importFrom DBI dbConnect dbWriteTable dbDisconnect dbReadTable
-#' @importFrom RSQLite SQLite
 #' @importFrom utils write.table
 #' @return Writes data to 'atmodep.cli' file and can update the SWAT+ SQLite
 #'   database with codes and connections to atmospheric deposition data.
@@ -1389,37 +1383,25 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
 #' \dontrun{
 #'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #'   df <- get_atmo_dep(basin_path)
-#'   db_path <- "./output/test/project.sqlite"
-#'   add_atmo_dep(df, db_path)
+#'   project_path <- "./output/test"
+#'   add_atmo_dep(df, project_path)
 #' }
 #' @seealso \code{\link{get_atmo_dep}}
 #' @keywords writing
 #' @author Svajunas Plunge (svajunas.plunge@gmail.com)
 #' @author Moritz Shore (moritzshore@gmail.com) 
 
-add_atmo_dep <- function(df, db_path = NULL, write_path = NULL, t_ext = "year") {
-  
-  if(is.null(db_path) && is.null(write_path)){
-    stop("please provide db_path or write_path, or both!")
-  }
-  
+add_atmo_dep <- function(df, write_path, t_ext = "year") {
+  ## Cleaning up the project folder
+  files_to_remove <- c(paste0(write_path, "/", "atmodep.cli"), paste0(write_path, "/weather-sta.cli.bak"), paste0(write_path, "/codes.bsn.bak"))
+  for(f in files_to_remove) if (file.exists(f)) file.remove(f)
   ##Rounding input data
   df <- mutate_if(df, is.numeric, ~round(.,3))
   d <- as.data.frame(t(df))
+  ##Setting the paths
   f_name <- "atmodep.cli"
-  
-  # if db_path is left empty, then we will not update the SQL
-  update_sql = (is.null(db_path) == FALSE)
-  
-  # if no write_path is provided, then write in the same directory as
-  # the SQL db. Otherwise, write_path will be left as it was passed.
-  if (is.null(write_path) && update_sql) {
-    write_path <- sub("[^/]+$", "", db_path)
-    f_path <- paste0(write_path, f_name)
-  }else{
-    # add the "/" if the write_path is provided. 
-    f_path <- paste0(write_path, "/", f_name)
-  }
+  f_path <- paste0(write_path, "/", f_name)
+
   ## initial parameters to write
   mo_init <- 0 
   yr_init <- as.numeric(substr(d[1,1], 1, 4))
@@ -1448,34 +1430,62 @@ add_atmo_dep <- function(df, db_path = NULL, write_path = NULL, t_ext = "year") 
                    YR_INIT = yr_init, NUM_AA = num_aa)
   ##Adding parameter names in the end
   d$par <- rownames(d)
-  ##Writing file
+  ##Writing atmodep.cli file
   write.table(paste0("'atmodep.cli' file was written by SWATprepR R package ", Sys.time()), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   suppressWarnings(write.table(df, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = TRUE, quote = FALSE))
   write.table(f_name, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(d, f_path, append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
+  ##Updating the weather-sta.cli file
+  fname <- "weather-sta.cli"
+  f_path <- paste0(write_path, "/", fname)
   
-  ##Adding info to database tables
-  if(update_sql){
-    ##Info from writing
-    print(paste("Atmospheric deposition data were written into ", f_path))
-    db <- dbConnect(RSQLite::SQLite(), db_path)
-    weather_sta_cli <- dbReadTable(db, 'weather_sta_cli')
-    codes_bsn <- dbReadTable(db, 'codes_bsn')
-    weather_sta_cli$atmo_dep <- f_name
-    codes_bsn$atmo_dep <- atmo_dep
-    dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, overwrite = TRUE)
-    dbWriteTable(db, 'codes_bsn', codes_bsn, overwrite = TRUE)
-    ##Table for atmo_cli 
-    df <- data.frame(id = 1, filename = f_name, timestep = ts, mo_init = mo_init, 
-                     yr_init = yr_init, num_aa = num_aa)
-    dbWriteTable(db, 'atmo_cli', df, overwrite = TRUE)
-    dbDisconnect(db)
-    return(print(paste("Atmospheric deposition data was successfuly added to", gsub(".*/","",db_path))))
-  }else{
-    # if we are not updating SQL, then return this info here. 
-    return(print(paste("Atmospheric deposition data were written into ", f_path,"(SQL database was not updated)")))
+  if(!file.exists(f_path)){
+    stop(paste0("File ", fname, " does not exist in the ", write_path, " directory!!!"))
+  } else {
+    file.copy(f_path, paste0(f_path, ".bak"))
   }
+  
+  weather_sta_cli <- read_tbl(paste0(fname, ".bak"), write_path)
+  weather_sta_cli$atmo_dep <- 'atmodep.cli'
+  st_hd <- c('%-22s', '%12s', rep('%27s', 7))
+  hd_txt <-  paste0(": written by SWATprepR R package on ", Sys.time(), " for SWAT+ rev.60.5.4")
+  ## Writting the file
+  write.table(paste0(fname, hd_txt), paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(paste(sprintf(st_hd, names(weather_sta_cli)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  df_to_txt(write_path, fname, weather_sta_cli, st_hd)
+  
+  print(paste0(fname, " file was successfully updated."))
+  
+  ##Updating the weather-sta.cli file
+  fname <- "codes.bsn"
+  f_path <- paste0(write_path, "/", fname)
+  
+  if(!file.exists(f_path)){
+    stop(paste0("File ", fname, " does not exist in the ", write_path, " directory!!!"))
+  } else {
+    file.copy(f_path, paste0(f_path, ".bak"))
+  }
+  
+  file.copy(f_path, paste0(f_path, ".bak"))
+  codes_bsn <- read_tbl(paste0(fname, ".bak"), write_path)
+  codes_bsn$atmo_dep <- atmo_dep
+  st_hd <- c(rep('%18s', 2), rep('%10s', 22))
+  
+  write.table(paste0(fname, hd_txt), paste0(write_path, "/", fname), append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  write.table(paste(sprintf(st_hd, names(codes_bsn)), collapse = ' '), paste0(write_path, "/", fname), append = TRUE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  df_to_txt(write_path, fname, codes_bsn, st_hd)
+  print(paste0(fname, " file was successfully updated."))
+  
+  
+  file_cio <- readLines(paste0(write_path, "/", "file.cio"))
+  ## Updating file.cio file
+  if(!grepl("atmodep.cli", file_cio[4], fixed = TRUE)){
+    substr(file_cio[4], start = 163, stop = 173) <- "atmodep.cli"
+    writeLines(file_cio, paste0(write_path, "/", "file.cio"))
+    print(paste0("file.cio", " file was successfully updated."))
+  } 
+  return(print(paste("Atmospheric deposition data were written into ", write_path, " directory.")))
 }
 
 # Land use and management -----------------------------------------------

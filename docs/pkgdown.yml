@@ -1,4 +1,4 @@
-pandoc: 3.1.1
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
@@ -9,5 +9,5 @@ articles:
   climate: climate.html
   weather: weather.html
   psources: psources.html
-last_built: 2024-03-13T10:10Z
+last_built: 2024-06-24T18:30Z
 

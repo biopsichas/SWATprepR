@@ -51,9 +51,9 @@ knitr::include_graphics('fig_dep.png')
 
 ## SWAT+ input
 
-Atmospheric deposition data into SWAT+ model can be included via *'atmodep.cli'* file. For this [add_atmo_dep](../reference/add_atmo_dep.html) function was designed. It could write yearly, monthly or whole modeled period averages. Function requires only [get_atmo_dep](../reference/get_atmo_dep.html) function output for yearly or monthly data. SWAT+ model setup `.sqlite` database has to be updated too. Thus, this function updates also required tables. In case other than average yearly atmospheric deposition data are used, *t_ext* function parameter should be provided. Please read more in [add_atmo_dep](../reference/add_atmo_dep.html).
+Atmospheric deposition data into SWAT+ model can be included via *'atmodep.cli'* file. For this [add_atmo_dep](../reference/add_atmo_dep.html) function was designed. It could write yearly, monthly or whole modeled period averages. Function requires only [get_atmo_dep](../reference/get_atmo_dep.html) function output for yearly or monthly data. SWAT+ model setup text input files will be updated. In case other than average yearly atmospheric deposition data are used, *t_ext* function parameter should be provided. Please read more in [add_atmo_dep](../reference/add_atmo_dep.html).
 
 ```{r atmo_write, eval=FALSE, message = FALSE, warning = FALSE}
-db_path <- "./output/test/project.sqlite"
-add_atmo_dep(df, db_path)
+project_path <- "./output/test"
+add_atmo_dep(df, project_path)
 ```

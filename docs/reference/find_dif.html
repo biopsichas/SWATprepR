@@ -12,7 +12,7 @@ setup or files with differences between setups."><meta property="og:image" conte
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,8 @@ setup or files with differences between setups.</p>
 <dt>remove_pattern</dt>
 <dd><p>Regex pattern for files to be removed. Default is <code>remove_pattern = NULL</code>,
 which means pattern removes file types: txt, zip, fin, out, exe, bak, mgts,
-farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp.</p></dd>
+farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp. Example for excluding only txt files  <code>remove_pattern &lt;- '.*.txt'</code>.
+Other can be added using | operator.</p></dd>
 
 </dl></div>
     <div class="section level2">

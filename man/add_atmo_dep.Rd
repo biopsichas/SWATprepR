@@ -4,38 +4,33 @@
 \alias{add_atmo_dep}
 \title{Update SWAT+ project with atmospheric deposition data}
 \usage{
-add_atmo_dep(df, db_path = NULL, write_path = NULL, t_ext = "year")
+add_atmo_dep(df, write_path, t_ext = "year")
 }
 \arguments{
 \item{df}{A data frame containing columns "DATE," "NH4_RF," "NO3_RF,"
 "NH4_DRY," and "NO3_DRY" obtained from the \code{\link{get_atmo_dep}}
 function.}
 
-\item{db_path}{(optional) A character string representing the path to the
-SQLite database (e.g., "./output/project.sqlite"). If left blank,
-\code{write_path} must be provided instead.}
-
-\item{write_path}{(optional) A character string path where \code{atmodep.cli}
-will be written to. If left blank, \code{db_path} will be used instead.}
+\item{write_path}{Character, path to the SWAT+ txtinout folder (example "my_model").}
 
 \item{t_ext}{(optional) A string indicating the type of time aggregation:
 'year' for yearly averages, 'month' for monthly averages, and 'annual' for
 the average of the entire period. Default default \code{t_ext = "year"}.}
 }
 \value{
-Writes data to 'atmodep.cli' file and/or updates the SWAT+ SQLite
+Writes data to 'atmodep.cli' file and can update the SWAT+ SQLite
 database with codes and connections to atmospheric deposition data.
 }
 \description{
-This function updates a SWAT+ SQLite database and/or writes the \code{atmodep.cli}
+This function updates a SWAT+ model text files and writes the \code{atmodep.cli}
 file for a given dataframe containing atmospheric deposition data.
 }
 \examples{
 \dontrun{
   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
   df <- get_atmo_dep(basin_path)
-  db_path <- "./output/test/project.sqlite"
-  add_atmo_dep(df, db_path)
+  project_path <- "./output/test"
+  add_atmo_dep(df, project_path)
 }
 }
 \seealso{

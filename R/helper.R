@@ -135,7 +135,8 @@ setup_info <- function(project_path){
 #' @param name2 Character for name for the second setup (default is \code{name2 = Setup 2}).
 #' @param remove_pattern Regex pattern for files to be removed. Default is \code{remove_pattern = NULL}, 
 #' which means pattern removes file types: txt, zip, fin, out, exe, bak, mgts, 
-#' farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp.
+#' farm, sqlite, swf, sch, hmd, wnd, pcp, slr, tmp. Example for excluding only txt files  \code{remove_pattern <- '.*.txt'}. 
+#' Other can be added using | operator.   
 #' @return A list containing differences between files if found, otherwise a message indicating no differences.
 #' @importFrom dplyr symdiff
 #' @importFrom diffr diffr

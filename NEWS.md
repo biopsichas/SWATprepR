@@ -1,3 +1,6 @@
+# SWATprepR 1.0.5
+* Small bug fixes and updated `add_atmo_dep()`. Now this function writes directly into SWAT+ model text files. SQL database option removed.  
+
 # SWATprepR 1.0.4
 * Added helper functions to examine setup: `setup_info()`and model's output water balance components: `wbalance_table()`.
 
