@@ -1,7 +1,7 @@
 ---
 title: "Atmospheric deposition"
 output: html_document
-bibliography: REFERENCES.bib
+bibliography: ref.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -23,6 +23,12 @@ Nitrogen atmospheric could be obtained from local sources. However, if local dat
 - *DDEP_RDN_m2Grid* - dry deposition of reduced nitrogen per m2 grid ($mgN/m^2$); 
 - *WDEP_RDN* - wet deposition of reduced nitrogen ($mgN/m^2$).
 - *WDEP_PREC* - precipitation ($mm$).
+
+
+```{r emep,  echo=FALSE, out.width='100%', fig.align = 'center', fig.cap="EMEP grid and deposition data coverage"}
+knitr::include_graphics('figs/fig_emep.png')
+```
+
 
 These parameters can be used to prepare following SWAT+ parameters required for [*'atmo.cli'* input file](https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli):
 
@@ -46,7 +52,7 @@ ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), aes(x = 
 ```
 
 ```{r fig-atmo, echo=FALSE, out.width='100%', fig.align = 'center'}
-knitr::include_graphics('fig_dep.png')
+knitr::include_graphics('figs/fig_dep.png')
 ```
 
 ## SWAT+ input

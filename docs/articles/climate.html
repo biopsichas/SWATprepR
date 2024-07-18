@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,13 +48,18 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
+    <h6 class="dropdown-header" data-toc-skip>Meteo</h6>
     <a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a>
-    <a class="dropdown-item" href="../articles/land_use.html">Land use</a>
-    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
-    <a class="dropdown-item" href="../articles/climate.html">Climate projections</a>
     <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
+    <a class="dropdown-item" href="../articles/climate.html">Climate projections</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Land &amp; Soil</h6>
+    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
+    <a class="dropdown-item" href="../articles/lu.html">Land use</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Other</h6>
     <a class="dropdown-item" href="../articles/psources.html">Point sources</a>
+    <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
   </div>
 </li>
 <li class="nav-item">
@@ -160,7 +165,7 @@ grid cell touching basin boundary touches. Virtual stations coordinates
 are defined as center of grid cell centers. Then, for each of these
 virtual stations, data are extracted and saved in the nested list
 format.</p>
-<p><img src="fig_basin.png" width="70%" height="70%" style="display: block; margin: auto;"></p>
+<p><img src="figs/fig_basin.png" width="70%" height="70%" style="display: block; margin: auto;"></p>
 <p><a href="../reference/load_netcdf_weather.html">load_netcdf_weather</a>
 function could also extract data for specific stations. In this case
 nested lists with dataframes should be provided (common format used in
@@ -223,7 +228,7 @@ can help compare climate data to measurement data by plotting both in
 the same figure.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_weather.html">plot_weather</a></span><span class="op">(</span><span class="va">climate_lst</span>, <span class="st">"TMP_MAX"</span>, <span class="st">"year"</span>, <span class="st">"max"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fig_temp.png" width="70%" height="70%" style="display: block; margin: auto;"></p>
+<p><img src="figs/fig_temp.png" width="70%" height="70%" style="display: block; margin: auto;"></p>
 <p>Another <a href="../reference/plot_wgn_comparison.html">plot_wgn_comparison</a>
 function might be useful to get statistical comparison of climate model
 data with monitoring data used to drive the model in
@@ -236,7 +241,7 @@ comparison is only for same time period data.</p>
 <span><span class="va">met_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_template.html">load_template</a></span><span class="op">(</span><span class="va">temp_path</span>, <span class="fl">4326</span><span class="op">)</span></span>
 <span><span class="co">##And plotting comparison of statistical values with climate data</span></span>
 <span><span class="fu"><a href="../reference/plot_wgn_comparison.html">plot_wgn_comparison</a></span><span class="op">(</span><span class="va">climate_lst</span>, <span class="va">met_lst</span>, , <span class="st">"ID20"</span>, <span class="st">"ID2"</span>, <span class="st">"Climate rcp26m1"</span>, <span class="st">"Monitoring data"</span>, <span class="st">"comparison"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fig_wng.png" width="100%" height="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs/fig_wng.png" width="100%" height="100%" style="display: block; margin: auto;"></p>
 <p>Other functions from <a href="../articles/weather.html">Weather data
 section</a> are also applicable. This allows to update SWAT+
 <em>.sqlite</em> <a href="https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function" class="external-link">database</a>

@@ -1,7 +1,7 @@
 ---
 title: "Land use"
 output: html_document
-bibliography: REFERENCES.bib
+bibliography: ref.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -126,7 +126,7 @@ st_write(catchment, paste0(output_path, "catchment.shp"), append = F)
 Running [Google Earth Engine-based](https://code.earthengine.google.com/) script prepared by @meszaros2022 generates *.tif* raster file with bands for each year land use/crop types (represented by numeric codes). One year example of classification results are provided below. 
 
 ```{r fig-lu, echo=FALSE, out.width='80%', fig.align = 'center'}
-knitr::include_graphics('fig_lu.png')
+knitr::include_graphics('figs/fig_lu.png')
 ```
 
 For this *.tif* file [extract_rotation](../reference/extract_rotation.html) function can be applied to extract all crop rotation information. This information is delivered in a format directly usable by [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) input data preparation scripts, which are applied to generate SWAT+ management crop [rotation schedules](https://swatplus.gitbook.io/docs/user/editor/inputs/land-use-management#management-schedules). In our example complex rotations for period 2015-2022 were extracted for each field from remote sensing classification results. Results were saved in a new shape file. Attribute table example is printed below.

@@ -3,6 +3,7 @@
 title: "Introduction to SWATprepR"
 <!-- output: rmarkdown::html_vignette -->
 output: github_document
+bibliography: vignettes/ref.bib
 vignette: >
   %\VignetteIndexEntry{Introduction to SWATprepR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -30,28 +31,22 @@ library(badger)
 `r badge_license("MIT")`
 `r badge_doi("https://doi.org/10.1186/s12302-024-00873-1", "yellow")`
 
-The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. There are mostly functions, which were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow along side the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
+The goal of `SWATprepR` is to help with the [SWAT+ model](https://swat.tamu.edu/software/plus/) input data preparation. A detailed overview is presented in the article by @plunge2024b. Most functions were developed for the implementation of modeling tasks in the [OPTAIN project](https://www.optain.eu/). These tools are intended to fill the gaps in the SWAT+ workflow alongside the main tools developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467). Therefore, we highly recommend trying and using these tools:
 
-- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[For access please inquire at *christoph.schuerz@ufz.de*.] - R tool for building SWAT+ setups;
-- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)[^1] -
-  R tool for building SWAT+ setups; 
-- [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
-  preparing management schedules for SWAT model;
-- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of
-  functions in R and routines for SWAT model calibration and model
-  diagnostics;
-- [SWATrunR](https://chrisschuerz.github.io/SWATrunR/) - R tool for running 
-SWAT models for different parameters and scenarios.
-- [SWATtunR](https://biopsichas.github.io/SWATtunR/) - R tool for soft & hard calibration, validation of SWAT+ models
-- [SWATmeasR](https://nc.ufz.de/s/KA9Cr2bbtALGMHr?path=%2FWPs%20%26%20Tasks%2FWP4%2FTask%204.4%2FTools%20to%20share)^[For access please inquire at *christoph.schuerz@ufz.de*.] - R tool for implementing Natural/Small Water Retention Measures (NSWRMs) in the SWAT+ models and running scenarios.
+- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)^[For access please inquire at *christoph.schuerz@ufz.de*.] - R tool for building SWAT+ setups.
+- [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for preparing management schedules for the SWAT model.
+- [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of functions in R and routines for SWAT model diagnostics. The package is presented in the article by @plunge2024a.
+- [SWATrunR](https://chrisschuerz.github.io/SWATrunR/) - R tool for running SWAT models for different parameters and scenarios.
+- [SWATtunR](https://biopsichas.github.io/SWATtunR/) - R tool for soft & hard calibration, validation of SWAT+ models.
+- [SWATmeasR](https://git.ufz.de/schuerz/swatmeasr) - R tool for implementing Natural/Small Water Retention Measures (NSWRMs) in the SWAT+ models and running scenarios.
 
 <img src="man/figures/swativerse_update.png" title="SWAT packages for R" alt="swativerse logo" width="80%" style="display: block; margin: auto;" />
 
-Detailed information about packages, workflow steps, input data, SWAT+ parameters, model calibration, validation, etc., could be found in the [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395).
+Detailed information about packages, workflow steps, input data, SWAT+ parameters, model calibration, validation, etc., can be found in the [SWAT+ modeling protocol](https://doi.org/10.5281/zenodo.7463395) by @optain2022.
 
 ## Installation
 
-You can install the development version of SWATprepR from [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that running [`get_usersoil_table()`](reference/get_usersoil_table.html) function the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be installed. 
+You can install the development version of `SWATprepR` from [GitHub](https://github.com/biopsichas/SWATprepR). Please be aware that to run the `get_usersoil_table()` function, the `euptf2` [package](https://github.com/tkdweber/euptf2) has to be installed. More information about this package can be found in the article by @szabo2020.
 
 ``` r
 # If the package 'remotes' is not installed run first:
@@ -65,7 +60,7 @@ remotes::install_github("tkdweber/euptf2")
 
 ## Data
 
-All the data required to run and test package are installed with package in the extdata folder. Exact location on computer could be found running lines below. Please run it on your system to find it for you.   
+All the data required to run and test the package is installed with the package in the extdata folder. The exact location on your computer can be found by running the lines below. Please run these commands on your system to locate it.  
 
 ```{r data}
 library(SWATprepR)
@@ -75,12 +70,17 @@ print(temp_path)
 
 ## Templates
 
-In order to use *SWATprepR* package functions with your data you should prepare your data to be inline with templates we have provided in *extdata* folder. Such are:
+To use the `SWATprepR` package functions with your data, you should prepare your data to align with the templates provided in the *extdata* folder. These templates include:
 
 - **calibration_data.xlsx** - template for loading calibration (water flow and water quality variables) data.
 - **weather_data.xlsx** - template for loading weather variables.
-- **usersoils.csv** - example of loading soil parameters dataset. 
-- **pnt_data.xlsx** - template of point source dataset.
+- **usersoils.csv** - example of a soil parameters dataset.
+- **pnt_data.xlsx** - template for a point source dataset.
 - **GIS/** - folder with GIS layers needed to run some functions.
 
-Data prepared according to templates can be directly loaded into R and all the functions applied as described. 
+Data prepared according to these templates can be directly loaded into R, allowing you to apply all the functions as described.
+
+
+<br>
+
+## References

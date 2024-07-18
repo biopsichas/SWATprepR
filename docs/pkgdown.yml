@@ -4,10 +4,10 @@ pkgdown_sha: ~
 articles:
   calibration: calibration.html
   deposition: deposition.html
-  land_use: land_use.html
+  lu: lu.html
   soil: soil.html
   climate: climate.html
   weather: weather.html
   psources: psources.html
-last_built: 2024-06-24T18:30Z
+last_built: 2024-07-18T09:50Z
 

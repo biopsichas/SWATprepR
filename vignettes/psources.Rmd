@@ -1,7 +1,7 @@
 ---
 title: "Point sources"
 output: html_document
-bibliography: REFERENCES.bib
+bibliography: ref.bib
 ---
 
 ```{r setup, include=FALSE}

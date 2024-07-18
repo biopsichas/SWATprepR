@@ -46,7 +46,7 @@ climate_lst <- load_netcdf_weather(cordex_path, basin_path)
 The function creates virtual stations for each `NetCDF` grid cell touching basin boundary touches. Virtual stations coordinates are defined as center of grid cell centers. Then, for each of these virtual stations, data are extracted and saved in the nested list format. 
 
 ```{r fig-basin, echo=FALSE, out.width='70%', out.height ='70%', fig.align = 'center'}
-knitr::include_graphics('fig_basin.png')
+knitr::include_graphics('figs/fig_basin.png')
 ```
 
 [load_netcdf_weather](../reference/load_netcdf_weather.html) function could also extract data for specific stations. In this case nested lists with dataframes should be provided (common format used in this package that could be prepared by [load_template](../reference/load_template.html) function). 
@@ -87,7 +87,7 @@ plot_weather(climate_lst, "TMP_MAX", "year", "max")
 ```
 
 ```{r fig-temp, echo=FALSE, out.width='70%', out.height ='70%', fig.align = 'center'}
-knitr::include_graphics('fig_temp.png')
+knitr::include_graphics('figs/fig_temp.png')
 ```
 
 Another [plot_wgn_comparison](../reference/plot_wgn_comparison.html) function might be useful to get statistical comparison of climate model data with monitoring data used to drive the model in calibration/validation periods. The function automatically filters climate model data for available monitoring data time interval. Thus comparison is only for same time period data.  
@@ -101,7 +101,7 @@ plot_wgn_comparison(climate_lst, met_lst, , "ID20", "ID2", "Climate rcp26m1", "M
 ```
 
 ```{r fig-wng, echo=FALSE, out.width='100%', out.height ='100%', fig.align = 'center'}
-knitr::include_graphics('fig_wng.png')
+knitr::include_graphics('figs/fig_wng.png')
 ```
 
 Other functions from [Weather data section](../articles/weather.html) are also applicable. This allows to update SWAT+ *.sqlite* [database](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) with climate data, prepare [weather generator](https://biopsichas.github.io/SWATprepR/articles/weather.html#wgn-input-function) parameters, etc.

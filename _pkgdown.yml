@@ -2,3 +2,20 @@ url: ~
 template:
   bootstrap: 5
 
+articles:
+- title: Meteo
+  navbar: Meteo
+  contents:
+  - deposition
+  - weather
+  - climate
+- title: Land & Soil
+  navbar: Land & Soil
+  contents:
+  - soil
+  - lu
+- title: Other
+  navbar: Other
+  contents:
+  - psources
+  - calibration

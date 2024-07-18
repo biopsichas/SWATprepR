@@ -34,7 +34,7 @@ The first thing after loading data is plotting it to assess its quality.
 
 ### Timeseries
 
-There are several ways package could be used to plot loaded calibration data. Data for multiple stations could be interectively plotted using [plot_cal_data](../reference/plot_cal_data.html) function. This function should be used on several stations with relatively few data points to screen for data coverage and potential problems.
+There are several ways package could be used to plot loaded calibration data. Data for multiple stations could be interactively plotted using [plot_cal_data](../reference/plot_cal_data.html) function. This function should be used on several stations with relatively few data points to screen for data coverage and potential problems.
 
 ```{r plot_cal_mult, message = FALSE, warning = FALSE}
 plot_cal_data(cal_data$data, c("3","10"))
