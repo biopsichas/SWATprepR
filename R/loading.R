@@ -434,7 +434,7 @@ load_swat_weather <- function(input_folder){
 #'  extraction. Default \code{start_year = 1990}.
 #' @param end_year Integer representing the ending year for data extraction. 
 #' Default \code{end_year = 2022}.
-#' @importFrom sf st_transform st_read st_bbox
+#' @importFrom sf st_transform st_read st_bbox st_crs
 #' @importFrom RNetCDF open.nc var.get.nc
 #' @importFrom dplyr bind_rows
 #' @return A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and 
@@ -470,7 +470,13 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
   url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2023_Reporting/EMEP01_rv5.0_"
   ##Getting borders of the catchment
-  basin <-st_transform(st_read(catchment_boundary_path, quiet = TRUE), 4326)
+  basin <- st_read(basin_path, quiet = TRUE)
+  if(is.na(st_crs(basin))){
+    stop("Basin boundary file does not have CRS. Please provide a file with CRS (inclued in *.prj file).")
+  } else {
+    basin <-st_transform(basin, 4326)
+  }
+
   bb <- st_bbox(basin)
   ##Setting dataframe for results
   df <- data.frame(YR = integer(), MO = integer(), DAY = integer(), 
