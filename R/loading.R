@@ -382,6 +382,18 @@ load_swat_weather <- function(input_folder){
           }
           ll[[vv]][[vv]] <- ifelse(ll[[vv]][[vv]] < 0.2, 0, ll[[vv]][[vv]])
         }
+        if(vv == "RELHUM" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1)){
+          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1. Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "WNDSPD" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 104)){
+          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1000)){
+          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1000 W/m2 (maximum received at the Earth's surface). Please check, correct your input data and reload template!!!")) 
+        }
+        if(p == "PCP" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) >  1825)){
+          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check, correct your input data and reload template!!!")) 
+        }
         c <- c(c, ll)
         ##Splitting temperatire min and max
       } else if (length(vv) == 2){
@@ -389,6 +401,12 @@ load_swat_weather <- function(input_folder){
           ll1 <- list(ll[[1]][c("DATE", n)])
           names(ll1) <- n
           c <- c(c, ll1)
+          if(n == "TMP_MAX" && (min(ll1[[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]], na.rm = TRUE) > 70.7)){
+            warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check, correct your input data and reload template!!!")) 
+          }
+          if(n == "TMP_MIN" && (min(ll1[[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]], na.rm = TRUE) > 70.7)){
+            warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check, correct your input data and reload template!!!")) 
+          }
         }
       }
     }
