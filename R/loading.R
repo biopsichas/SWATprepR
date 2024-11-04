@@ -385,13 +385,13 @@ load_swat_weather <- function(input_folder){
         if(vv == "RELHUM" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1. Please check, correct your input data and reload template!!!")) 
         }
-        if(p == "WNDSPD" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 104)){
+        if(vv == "WNDSPD" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 104)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check, correct your input data and reload template!!!")) 
         }
-        if(p == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1000)){
+        if(vv == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1000)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1000 W/m2 (maximum received at the Earth's surface). Please check, correct your input data and reload template!!!")) 
         }
-        if(p == "PCP" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) >  1825)){
+        if(vv == "PCP" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) >  1825)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check, correct your input data and reload template!!!")) 
         }
         c <- c(c, ll)
