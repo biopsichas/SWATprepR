@@ -77,8 +77,8 @@ load_template <- function(template_path, epsg_code = 4326){
         if(p == "WNDSPD" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 104)){
           warning(paste0(p, " variable values at station ", id, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check, correct your input data and reload template!!!")) 
         }
-        if(p == "SLR" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 1000)){
-          warning(paste0(p, " variable values at station ", id, " should be between 0 and 1000 W/m2 (maximum received at the Earth's surface). Please check, correct your input data and reload template!!!")) 
+        if(p == "SLR" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) > 86.4)){
+          warning(paste0(p, " variable values at station ", id, " should be between 0 and 86.4 MJ/m2/day (maximum received at the Earth's surface, equals to 1000 W/m2). Please check, correct your input data and reload template!!!")) 
         }
         if(p == "PCP" && (min(df[[p]], na.rm = TRUE) < 0 | max(df[[p]], na.rm = TRUE) >  1825)){
           warning(paste0(p, " variable values at station ", id, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check, correct your input data and reload template!!!")) 
@@ -388,8 +388,8 @@ load_swat_weather <- function(input_folder){
         if(vv == "WNDSPD" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 104)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check and correct your input data!!!")) 
         }
-        if(vv == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1000)){
-          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1000 W/m2 (maximum received at the Earth's surface). Please check and correct your input data!!!")) 
+        if(vv == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 86.4)){
+          warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 86.4 MJ/m2/day (maximum received at the Earth's surface, equals to 1000 W/m2). Please check and correct your input data!!!")) 
         }
         if(vv == "PCP" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) >  1825)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check and correct your input data!!!")) 
