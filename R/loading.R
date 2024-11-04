@@ -401,10 +401,10 @@ load_swat_weather <- function(input_folder){
           ll1 <- list(ll[[1]][c("DATE", n)])
           names(ll1) <- n
           c <- c(c, ll1)
-          if(n == "TMP_MAX" && (min(ll1[[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]], na.rm = TRUE) > 70.7)){
+          if(n == "TMP_MAX" && (min(ll1[[n]][[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]][[n]], na.rm = TRUE) > 70.7)){
             warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check and correct your input data!!!")) 
           }
-          if(n == "TMP_MIN" && (min(ll1[[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]], na.rm = TRUE) > 70.7)){
+          if(n == "TMP_MIN" && (min(ll1[[n]][[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]][[n]], na.rm = TRUE) > 70.7)){
             warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check and correct your input data!!!")) 
           }
         }
