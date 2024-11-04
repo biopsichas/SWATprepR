@@ -448,10 +448,10 @@ load_swat_weather <- function(input_folder){
 #' @examples
 #' \dontrun{
 #'   # Specify the path to the basin boundary shape file
-#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+#'   catchment_boundary_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
 #'   
 #'   # Get atmospheric deposition data for the catchment
-#'   df <- get_atmo_dep(basin_path)
+#'   df <- get_atmo_dep(catchment_boundary_path)
 #'   
 #'   # Plot results
 #'   ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), 
@@ -470,7 +470,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
   url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2023_Reporting/EMEP01_rv5.0_"
   ##Getting borders of the catchment
-  basin <- st_read(basin_path, quiet = TRUE)
+  basin <- st_read(catchment_boundary_path, quiet = TRUE)
   if(is.na(st_crs(basin))){
     stop("Basin boundary file does not have CRS. Please provide a file with CRS (inclued in *.prj file).")
   } else {
@@ -589,13 +589,13 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' @examples
 #' \dontrun{
 #'   # Specify the path to the catchment boundary file
-#'   basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
+#'   catchment_boundary_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
 #'   
 #'   # Specify the path to the CORDEX-BC data
 #'   data_path <- "climate/CORDEX-BC"
 #'   
 #'   # Extract and organize climate data
-#'   result <- load_netcdf_weather(data_path, basin_path)
+#'   result <- load_netcdf_weather(data_path, catchment_boundary_path)
 #' }
 #' @keywords loading
 
