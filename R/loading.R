@@ -382,16 +382,17 @@ load_swat_weather <- function(input_folder){
           }
           ll[[vv]][[vv]] <- ifelse(ll[[vv]][[vv]] < 0.2, 0, ll[[vv]][[vv]])
         }
-        if(vv == "RELHUM" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 1)){
+        ll_check <- ll[[vv]][[vv]][ll[[vv]][[vv]] != -99] ## Eliminating -99 values from check
+        if(vv == "RELHUM" && (min(ll_check, na.rm = TRUE) < 0 | max(ll_check, na.rm = TRUE) > 1)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1. Please check and correct your input data!!!")) 
         }
-        if(vv == "WNDSPD" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 104)){
+        if(vv == "WNDSPD" && (min(ll_check, na.rm = TRUE) < 0 | max(ll_check, na.rm = TRUE) > 104)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 104 m/s (the highest recorded natural surface wind velocity). Please check and correct your input data!!!")) 
         }
-        if(vv == "SLR" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) > 86.4)){
+        if(vv == "SLR" && (min(ll_check, na.rm = TRUE) < 0 | max(ll_check, na.rm = TRUE) > 86.4)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 86.4 MJ/m2/day (maximum received at the Earth's surface, equals to 1000 W/m2). Please check and correct your input data!!!")) 
         }
-        if(vv == "PCP" && (min(ll[[vv]][[vv]], na.rm = TRUE) < 0 | max(ll[[vv]][[vv]], na.rm = TRUE) >  1825)){
+        if(vv == "PCP" && (min(ll_check, na.rm = TRUE) < 0 | max(ll_check, na.rm = TRUE) >  1825)){
           warning(paste0(vv, " variable values at station ", id1, " should be between 0 and 1825 mm/d (maximum 1-day recorded rainfall). Please check and correct your input data!!!")) 
         }
         c <- c(c, ll)
@@ -401,10 +402,11 @@ load_swat_weather <- function(input_folder){
           ll1 <- list(ll[[1]][c("DATE", n)])
           names(ll1) <- n
           c <- c(c, ll1)
-          if(n == "TMP_MAX" && (min(ll1[[n]][[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]][[n]], na.rm = TRUE) > 70.7)){
+          ll_check <- ll1[[n]][[n]][ll1[[n]][[n]] != -99] ## Eliminating -99 values from check
+          if(n == "TMP_MAX" && (min(ll_check, na.rm = TRUE) < -89.2 | max(ll_check, na.rm = TRUE) > 70.7)){
             warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check and correct your input data!!!")) 
           }
-          if(n == "TMP_MIN" && (min(ll1[[n]][[n]], na.rm = TRUE) < -89.2 | max(ll1[[n]][[n]], na.rm = TRUE) > 70.7)){
+          if(n == "TMP_MIN" && (min(ll_check, na.rm = TRUE) < -89.2 | max(ll_check, na.rm = TRUE) > 70.7)){
             warning(paste0(n, " variable values at station ", id1, " should be between -89.2 and 70.7 C (the lowest and highest recorded on Earth). Please check and correct your input data!!!")) 
           }
         }
