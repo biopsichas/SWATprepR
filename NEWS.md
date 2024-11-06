@@ -1,3 +1,8 @@
+# SWATprepR 1.0.7
+* Bug fix in `prepare_wgn()`, corrected issue where `-99` values were included in calculations.
+* Value checks in `load_swat_weather()`, added validation for input values.
+* Bug fixes in `get_atmo_dep()`. Fixed variable naming issues and added a coordinate validation check.
+
 # SWATprepR 1.0.5
 * Small bug fixes and updated `add_atmo_dep()`. Now this function writes directly into SWAT+ model text files. SQL database option removed.  
 

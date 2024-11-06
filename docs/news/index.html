@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,12 @@
       <small>Source: <a href="https://github.com/biopsichas/SWATprepR/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.7" id="swatprepr-107">SWATprepR 1.0.7<a class="anchor" aria-label="anchor" href="#swatprepr-107"></a></h2>
+<ul><li>Bug fix in <code><a href="../reference/prepare_wgn.html">prepare_wgn()</a></code>, corrected issue where <code>-99</code> values were included in calculations.</li>
+<li>Value checks in <code><a href="../reference/load_swat_weather.html">load_swat_weather()</a></code>, added validation for input values.</li>
+<li>Bug fixes in <code><a href="../reference/get_atmo_dep.html">get_atmo_dep()</a></code>. Fixed variable naming issues and added a coordinate validation check.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.5" id="swatprepr-105">SWATprepR 1.0.5<a class="anchor" aria-label="anchor" href="#swatprepr-105"></a></h2>
 <ul><li>Small bug fixes and updated <code><a href="../reference/add_atmo_dep.html">add_atmo_dep()</a></code>. Now this function writes directly into SWAT+ model text files. SQL database option removed.</li>

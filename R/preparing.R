@@ -231,6 +231,8 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 #'   This parameter refers to data, which should be used instead if SLR variable 
 #'   is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest 
 #'   station with data will be used. Units: MJ/m2.
+#' @param NA_values (optional) Numeric value indicating values in the 
+#'   dataframe that should be considered as missing. Default is \code{-99}.
 #' @importFrom stats aggregate sd
 #' @importFrom sf st_coordinates st_transform st_crs st_drop_geometry
 #' @importFrom dplyr %>% rename mutate bind_rows select
@@ -257,7 +259,7 @@ interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_
 #' @keywords parameters
 #' @seealso \code{\link{load_template}}
 
-prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, RELHUM = NULL, WNDSPD = NULL, MAXHHR = NULL, SLR = NULL){
+prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, RELHUM = NULL, WNDSPD = NULL, MAXHHR = NULL, SLR = NULL, NA_values = -99){
   ##Extracting relevant parts
   data <- meteo_lst$data
   st_df <- meteo_lst$stations
@@ -326,6 +328,8 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     ##Transforming to dataframe
     df <- list_to_df(df) %>% 
       mutate(mon = month(DATE))
+    # Replace all -99 values with NA in the dataframe 'df'
+    df[df == NA_values] <- NA
     ##Writing number of year data available for PCP
     wgn_stat$RAIN_YRS <- nyears <- nyears(df, "PCP")
     ##Filling weather generator data
