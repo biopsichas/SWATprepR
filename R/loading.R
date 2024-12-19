@@ -295,11 +295,12 @@ load_swat_weather <- function(input_folder){
   if (any(is.na(unique(unlist(id))))){
     warning("All file names should contain 'id' or 'ID' text + number to identify station. 
             Numbers will be extracted from file names and used as station IDs.")
-    id <- paste0("ID", as.numeric(gsub("\\D", "", fs)))
+    id <- as.numeric(gsub("\\D", "", fs))
     if(any(is.na(id))){
       stop("Station IDs could not be extracted from file names. Probably some 
            stations have no numbers in their names. Please, check file names.")
     }
+    id <- paste0("ID", id)
   }
   ##Reading all files into list of lists
   rlist <- map(fs, ~vroom_lines(paste0(input_folder,"/",.x), skip = 2))
@@ -307,17 +308,25 @@ load_swat_weather <- function(input_folder){
   ##Preparing 
   ##Preparing station info dataframe
   st_info <- pmap(list(id, rlist, f_name), function(x, y, z){
-    l <- as.numeric(unlist(strsplit(y[1], " +")))
+    l <- as.numeric(unlist(strsplit(y[1], ifelse(grepl("\t", y[1]), "\t", " +"))))
     if(is.na(l[1])){i <- 1} else {i <- 0} ##in case there is gap (not number) in the station info line
     list("ID" = x, "Name" = z, "Elevation" = l[5+i], "Source" = s_info, "Long" = l[4+i], "Lat" =l[3+i])}) %>% 
     map_df(bind_rows) %>% 
     unique %>% 
     st_as_sf(coords = c("Long", "Lat"), crs = 4326, remove = F)
   
+  if(any(duplicated(st_info$ID))){
+    duplicates <- unique(st_info$ID[duplicated(st_info$ID)])
+    stop(paste0("Station IDs and they coordinates should be unique. Duplicates 
+                found: ", paste(duplicates, collapse = ", "), ". Please check 
+                SWAT weather files for the coordinates assigned 
+                to same ids. Please correct doublications before rerunning the function."))
+  }
+  
   ##Transforming data in main list of list 
   rlist <- rlist %>% 
     map(~.x[c(2:length(.x))]) %>% ##Dropping line with coordinate info
-    map(~strsplit(.x, " +")) %>% ##Splitting characters in lines by space
+    map(~strsplit(.x, ifelse(grepl("\t", .x[1]), "\t", " +"))) %>% ##Splitting characters in lines by space
     map(enframe) %>% ##Putting into dataframe
     map(~unnest(.x,value) %>%  ##Splitting column with nested lists into multiple columns
           group_by(name) %>%
