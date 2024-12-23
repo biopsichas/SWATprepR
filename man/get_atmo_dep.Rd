@@ -40,10 +40,10 @@ a specified catchment.
 \examples{
 \dontrun{
   # Specify the path to the basin boundary shape file
-  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
+  catchment_boundary_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR")
   
   # Get atmospheric deposition data for the catchment
-  df <- get_atmo_dep(basin_path)
+  df <- get_atmo_dep(catchment_boundary_path)
   
   # Plot results
   ggplot(pivot_longer(df, !DATE, names_to = "par", values_to = "values"), 

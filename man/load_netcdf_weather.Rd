@@ -40,13 +40,13 @@ it into a nested list.
 \examples{
 \dontrun{
   # Specify the path to the catchment boundary file
-  basin_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
+  catchment_boundary_path <- system.file("extdata", "GIS/basin.shp", package = "SWATprepR") 
   
   # Specify the path to the CORDEX-BC data
   data_path <- "climate/CORDEX-BC"
   
   # Extract and organize climate data
-  result <- load_netcdf_weather(data_path, basin_path)
+  result <- load_netcdf_weather(data_path, catchment_boundary_path)
 }
 }
 \keyword{loading}

@@ -380,10 +380,18 @@ load_swat_weather <- function(input_folder){
       mutate(ID = ID_up) %>% 
       select(-ID_up)
     id <- st_info$ID
-    warning("Following IDs were assigned to the files")
-    options(warning.length = 8170)
-    warning(map2(id, fs, ~paste0(.x, " ",.y, ", "))%>% unlist)
-    options(warning.length = 1000)
+    if(length(id) == length(rlist)){
+      warning("Following IDs were assigned to the files")
+      options(warning.length = 8170)
+      warning(map2(id, fs, ~paste0(.x, " ",.y, ", "))%>% unlist)
+      options(warning.length = 1000)
+    } else {
+      stop("The number of unique stations does not match the number of files. 
+           This issue is related to the naming of weather files. Each station 
+           should have a unique name including number assigned. For example, all files 
+           for a specific station could be named: st_id1.pcp, st_id1.slr, st_id1.hmd, etc. 
+           Please correct the file names and rerun the function.")
+    }
   }
   
   ##Transforming list into nested list of list LIST>ID>VARIABLE>DATAFRAME

@@ -1,3 +1,6 @@
+# SWATprepR 1.0.8
+* Improved `load_swat_weather()` function. Now it can read weather data with different types of naming, spacing and provides better error messages.
+
 # SWATprepR 1.0.7
 * Bug fix in `prepare_wgn()`, corrected issue where `-99` values were included in calculations.
 * Value checks in `load_swat_weather()`, added validation for input values.

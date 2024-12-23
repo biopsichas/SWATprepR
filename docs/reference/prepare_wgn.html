@@ -12,7 +12,7 @@ based on meteorological data."><meta property="og:image" content="/logo.png"><!-
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,8 @@ based on meteorological data.</p>
 <span>  RELHUM <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  WNDSPD <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  MAXHHR <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  SLR <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  SLR <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  NA_values <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -143,6 +144,11 @@ station with data will be used. Units: mm.</p></dd>
 This parameter refers to data, which should be used instead if SLR variable
 is missing for a station. Default <code>SLR = NULL</code>, indicating that data of the closest
 station with data will be used. Units: MJ/m2.</p></dd>
+
+
+<dt>NA_values</dt>
+<dd><p>(optional) Numeric value indicating values in the
+dataframe that should be considered as missing. Default is <code>-99</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

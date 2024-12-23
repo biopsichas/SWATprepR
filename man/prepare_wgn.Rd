@@ -12,7 +12,8 @@ prepare_wgn(
   RELHUM = NULL,
   WNDSPD = NULL,
   MAXHHR = NULL,
-  SLR = NULL
+  SLR = NULL,
+  NA_values = -99
 )
 }
 \arguments{
@@ -59,6 +60,9 @@ station with data will be used. Units: mm.}
 This parameter refers to data, which should be used instead if SLR variable
 is missing for a station. Default \code{SLR = NULL}, indicating that data of the closest
 station with data will be used. Units: MJ/m2.}
+
+\item{NA_values}{(optional) Numeric value indicating values in the
+dataframe that should be considered as missing. Default is \code{-99}.}
 }
 \value{
 List of two dataframes: wgn_st - WGN station data, wgn_data - WGN data.
