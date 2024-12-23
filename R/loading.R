@@ -311,16 +311,32 @@ load_swat_weather <- function(input_folder){
     l <- as.numeric(unlist(strsplit(y[1], ifelse(grepl("\t", y[1]), "\t", " +"))))
     if(is.na(l[1])){i <- 1} else {i <- 0} ##in case there is gap (not number) in the station info line
     list("ID" = x, "Name" = z, "Elevation" = l[5+i], "Source" = s_info, "Long" = l[4+i], "Lat" =l[3+i])}) %>% 
-    map_df(bind_rows) %>% 
-    unique %>% 
-    st_as_sf(coords = c("Long", "Lat"), crs = 4326, remove = F)
-  
+    map_df(bind_rows) 
+  if(any(is.na(st_info$Long) | is.na(st_info$Lat))) {
+    missing_coord <- fs[is.na(st_info$Long) | is.na(st_info$Lat)]
+    stop(paste("The following files have missing coordinates:",  missing_coord))
+  } else {
+    st_info <- unique(st_info) %>% 
+      st_as_sf(coords = c("Long", "Lat"), crs = 4326, remove = F)
+  }
+
   if(any(duplicated(st_info$ID))){
     duplicates <- unique(st_info$ID[duplicated(st_info$ID)])
-    stop(paste0("Station IDs and they coordinates should be unique. Duplicates 
-                found: ", paste(duplicates, collapse = ", "), ". Please check 
-                SWAT weather files for the coordinates assigned 
-                to same ids. Please correct doublications before rerunning the function."))
+    if(!(paste0(st_info[["ID"]], st_info[["Name"]]) %>% duplicated %>% any)){
+      warning("Station names (extracted from file names) are not aligned with the IDs. 
+              This means that files from the same station could have different
+              naming patterns. Therefore, names will be replaced with IDs.
+              If you don't want to replace names with IDs, please, correct names and 
+              rerun the function.")
+      st_info <- st_info %>% 
+        mutate(Name = ID) %>% 
+        distinct
+    } else {
+      stop(paste0("Station IDs and they coordinates should be unique. Duplicates 
+                  found: ", paste(duplicates, collapse = ", "), ". Please check 
+                  SWAT weather files for the coordinates assigned 
+                  to same ids. Please correct doublications before rerunning the function."))
+    }
   }
   
   ##Transforming data in main list of list 
