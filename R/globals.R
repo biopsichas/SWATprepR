@@ -10,5 +10,5 @@ utils::globalVariables(c("DATE", "geometry", "Station", "Values", "Variables",
                          "NLAYERS", "elevation", "nbyr", "tstep", "ANION_EXCL", "HYDGRP",
                          "LAYER_NB", "PAR_NAME", "PAR_VAL", "SOL_CRK", "SOL_PH", "SOL_Z",
                          "SOL_ZMX", "ID_up", "jday", "mo", "day_mo", "yr", "ob_typ", "ob_name",
-                         "pcom_name", "Value", "Parameter"))
+                         "pcom_name", "Value", "Parameter", "ss"))
 

@@ -139,7 +139,6 @@ setup_info <- function(project_path){
 #' Other can be added using | operator.   
 #' @return A list containing differences between files if found, otherwise a message indicating no differences.
 #' @importFrom dplyr symdiff
-#' @importFrom diffr diffr
 #' @export
 
 find_dif <- function(path1, path2, name1 = "Setup 1", name2 = "Setup2", remove_pattern = NULL){
@@ -169,7 +168,14 @@ find_dif <- function(path1, path2, name1 = "Setup 1", name2 = "Setup2", remove_p
     file2 <- paste0(path2, "/", f)
     if(any(readLines(file1)[-1] != readLines(file2)[-1])){
       message(paste0("Difference in file ", f))
-      l[[f]] <- diffr(file1, file2, before = name1, after = name2)
+      if (!requireNamespace("diffr", quietly = TRUE)) {
+        stop("diffr package is not installed. 'find_dif' function requires 
+                diffr package to show differences. Please install diffr package 
+                to see differences.")
+      } else {
+        l[[f]] <- diffr::diffr(file1, file2, before = name1, after = name2)
+      }
+      
     }
   }
   if(length(l) == 0){
@@ -1137,4 +1143,10 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
     })
   })
   return(meteo_lst)
+}
+
+# Short helpers ----------------------------------------------------------------
+
+`%||%` <- function(lhs, rhs) {
+  if (is.null(lhs)) rhs else lhs
 }

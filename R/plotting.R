@@ -13,10 +13,11 @@
 #' @param variables (Optional) Character vector specifying which parameters 
 #' should be included in the figure. Default \code{variables = NULL}, all available
 #' variables will be plotted.
-#' @importFrom dplyr filter mutate group_by %>% group_map
+#' @importFrom dplyr filter mutate group_by %>% group_map summarise bind_rows
 #' @importFrom ggplot2 ggplot aes facet_wrap geom_line geom_point
 #' @importFrom plotly plot_ly subplot ggplotly 
-#' @importFrom comprehenr to_vec
+#' @importFrom purrr map2 map
+#' @importFrom tibble tibble  
 #' @return Plotly object of an interactive figure.
 #' @export
 #'
@@ -29,31 +30,46 @@
 #' }
 #' @keywords plotting
 
-plot_cal_data <- function(df, stations, variables = NULL) {
-  if (is.null(variables)) variables = unique(df$Variables)
-  df = subset(df, Station %in% stations & Variables %in% variables)
+plot_cal_data <- function(df, stations = NULL, variables = NULL) {
+  ## Filter data
+  df <- filter(df, Station %in% (stations %||% unique(df$stations)) & Variables %in% (variables %||% unique(df$Variables)))
   if (nrow(df)==0) stop("Non existing station or variable")
-  df_gaps = data.frame (matrix(nrow = 0, ncol = length(colnames (df))))
-  colnames(df_gaps) = colnames (df)
+  # Preallocate df_gaps
+  df_gaps <- tibble(matrix(nrow = 0, ncol = ncol(df)), .name_repair = "minimal")
+  colnames(df_gaps) <- colnames(df)
   
-  for (i in 1:length(stations)) {
-    ss = df %>% 
-      subset (Station == stations[i]) %>% 
-      group_by(Variables) %>% 
-      summarise(max = max(DATE), min = min (DATE), 
-                d_amount = max(DATE)-min(DATE)+1)
-    
-    hh = data.frame (
-      DATE = to_vec(for (j in 1:length(ss$Variables))  as.character(seq(ss$min[j], ss$max[j], by="days"))) %>%
-        as.Date() %>%
-        as.POSIXlt(), 
-      Station = stations[i], 
-      Variables = rep (ss$Variables,ss$d_amount))
-    
-    df_gaps = rbind(df_gaps, hh)
-  }
+  # Initialize an empty list to store results
+  df_gaps_list <- list()
   
-  df = merge(df,df_gaps, by.x = c ("DATE", "Station", "Variables"), 
+  # Loop through each station
+  df_gaps_list <- map(unique(df$Station), function(station) {
+    
+    # Filter and summarize the data for the current station
+    ss <- df %>%
+      filter(Station == station) %>%
+      group_by(Variables) %>%
+      summarise(max_date = max(DATE),
+                min_date = min(DATE),
+                d_amount = as.numeric(max(DATE) - min(DATE)) + 1)
+    
+    # Create the date sequence for each variable and station
+    hh <- map2(ss$min_date, ss$max_date, ~ {
+      data.frame(
+        DATE = seq(.x, .y, by = "days") %>%
+          as.POSIXlt(),
+        Station = station,
+        Variables = rep(ss$Variables, length(seq(.x, .y, by = "days")))
+      )
+    }) %>%
+      bind_rows()  # Combine the list of data frames
+    
+    return(hh)
+  })
+  
+  # Combine all the results into a single data frame
+  df_gaps <- bind_rows(df_gaps_list)
+  
+  df <- merge(df,df_gaps, by.x = c ("DATE", "Station", "Variables"), 
              by.y = c("DATE",  "Station", "Variables"), all.x=T,all.y=T)
   
   if(length(stations) == 1){

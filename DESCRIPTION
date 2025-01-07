@@ -12,9 +12,7 @@ License: MIT + file LICENSE
 URL: https://github.com/biopsichas/SWATprepR
 BugReports: https://github.com/biopsichas/SWATprepR/issues
 Imports:
-    comprehenr,
     DBI,
-    diffr,
     dplyr,
     elevatr,
     ggplot2,
@@ -47,6 +45,7 @@ Depends:
     euptf2
 Suggests: 
     devtools,
+    diffr,
     knitr,
     rmarkdown,
     mapview,
