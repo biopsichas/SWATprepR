@@ -50,7 +50,7 @@ Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter ->
 This function interpolates weather data for a SWAT model and saves results
 into nested list format. The function uses Inverse Distance Weighting (IDW)
 interpolation method to fill gaps in weather data.
-This function uses \code{sp} and \code{gstat} packages for spatial operations. Please
+This function uses \code{sp}, \code{gstat} and \code{raster} packages for spatial operations. Please
 make sure that these packages are installed before using this function.
 }
 \examples{

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>/articles/land_use.html</loc>
+  </url>
+  <url>
+    <loc>/articles/NEWS.html</loc>
   </url>
   <url>
     <loc>/articles/calibration.html</loc>
@@ -16,13 +19,7 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/land_use.html</loc>
-  </url>
-  <url>
     <loc>/articles/lu.html</loc>
-  </url>
-  <url>
-    <loc>/articles/NEWS.html</loc>
   </url>
   <url>
     <loc>/articles/psources.html</loc>
@@ -34,16 +31,61 @@
     <loc>/articles/weather.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
     <loc>/news/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_many.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_monthly_one.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_NminTN.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_Nmin_NT.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_one.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_PminTP.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_Pmin_PT.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_fig.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_weather_fig_compare.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/shp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_atmo_cli.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_input_files.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_input_files_tmp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_ref_file.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_wgnmaker_files.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_climate_lst.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_swat_weather2.html</loc>
   </url>
   <url>
     <loc>/reference/add_atmo_dep.html</loc>
@@ -130,9 +172,6 @@
     <loc>/reference/load_climate.html</loc>
   </url>
   <url>
-    <loc>/reference/load_climate_lst.html</loc>
-  </url>
-  <url>
     <loc>/reference/load_netcdf_weather.html</loc>
   </url>
   <url>
@@ -140,9 +179,6 @@
   </url>
   <url>
     <loc>/reference/load_swat_weather.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swat_weather2.html</loc>
   </url>
   <url>
     <loc>/reference/load_template.html</loc>
@@ -181,31 +217,10 @@
     <loc>/reference/plot_fractions.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_many.html</loc>
-  </url>
-  <url>
     <loc>/reference/plot_map.html</loc>
   </url>
   <url>
     <loc>/reference/plot_monthly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_monthly_one.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_NminTN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_Nmin_NT.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_one.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_PminTP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_Pmin_PT.html</loc>
   </url>
   <url>
     <loc>/reference/plot_ts_fig.html</loc>
@@ -215,12 +230,6 @@
   </url>
   <url>
     <loc>/reference/plot_weather_compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather_fig.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_weather_fig_compare.html</loc>
   </url>
   <url>
     <loc>/reference/plot_wgn_comparison.html</loc>
@@ -235,16 +244,10 @@
     <loc>/reference/prepare_wgn.html</loc>
   </url>
   <url>
-    <loc>/reference/rch.html</loc>
-  </url>
-  <url>
     <loc>/reference/read_tbl.html</loc>
   </url>
   <url>
     <loc>/reference/setup_info.html</loc>
-  </url>
-  <url>
-    <loc>/reference/shp.html</loc>
   </url>
   <url>
     <loc>/reference/sol_to_usersoil.html</loc>
@@ -268,21 +271,18 @@
     <loc>/reference/wbalance_table.html</loc>
   </url>
   <url>
-    <loc>/reference/write_atmo_cli.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_input_files.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_input_files_tmp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_ref_file.html</loc>
-  </url>
-  <url>
     <loc>/reference/write_weather_template.html</loc>
   </url>
   <url>
-    <loc>/reference/write_wgnmaker_files.html</loc>
+    <loc>/404.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/authors.html</loc>
+  </url>
+  <url>
+    <loc>/index.html</loc>
   </url>
 </urlset>

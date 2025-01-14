@@ -28,6 +28,7 @@ An sf data.frame with land use amended with crop rotation information.
 \description{
 This function extracts crop rotation information from a raster file and
 amends the land use data accordingly.
+This function requires \code{raster} package to be installed.
 }
 \examples{
 \dontrun{
@@ -50,7 +51,7 @@ amends the land use data accordingly.
 }
 }
 \references{
-Mészáros, J., & Szabó, B. (2022). Script to derive and apply crop
+Meszaros, J., & Szabo, B. (2022). Script to derive and apply crop
 classification based on Sentinel 1 satellite radar images in Google Earth
 Engine platform. \url{https://doi.org/10.5281/zenodo.6700122}
 }

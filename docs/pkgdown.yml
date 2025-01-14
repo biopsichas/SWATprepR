@@ -1,13 +1,13 @@
-pandoc: '3.2'
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   calibration: calibration.html
-  climate: climate.html
-  deposition: deposition.html
   lu: lu.html
-  psources: psources.html
   soil: soil.html
+  climate: climate.html
   weather: weather.html
-last_built: 2025-01-14T10:59Z
+  psources: psources.html
+  deposition: deposition.html
+last_built: 2025-01-14T18:08Z
 

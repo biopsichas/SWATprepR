@@ -49,6 +49,8 @@ plot_cal_data <- function(df, stations, variables = NULL) {
       Variables = rep(ss$Variables, ss$d_amount)
     )
     
+    class(hh$DATE) <- c("POSIXct", "POSIXt")
+    
     df_gaps = rbind(df_gaps, hh)
   }
   
