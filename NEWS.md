@@ -1,3 +1,6 @@
+# SWATprepR 1.0.9
+* Key libraries (`diffr`, `elevatr`, `euptf2`, `ggpmisc`, `gstat`, `leafpop`, `openxlsx`, `RNetCDF`, `sp`, and `stars`) moved from `Imports` to `Suggests`, ensuring they are installed and loaded only when specific functionalities are invoked.
+
 # SWATprepR 1.0.8
 * Improved `load_swat_weather()` function. Now it can read weather data with different types of naming, spacing and provides better error messages.
 

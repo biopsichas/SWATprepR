@@ -127,7 +127,8 @@ setup_info <- function(project_path){
 #' Find Differences Between Files in Two Setups
 #'
 #' This function scans two folders and identifies files that exist only in one 
-#' setup or files with differences between setups.
+#' setup or files with differences between setups. The function requires the 
+#' `diffr` package to be installed.
 #'
 #' @param path1 Path to the first setup.
 #' @param path2 Path to the second setup.
@@ -172,10 +173,8 @@ find_dif <- function(path1, path2, name1 = "Setup 1", name2 = "Setup2", remove_p
         stop("diffr package is not installed. 'find_dif' function requires 
                 diffr package to show differences. Please install diffr package 
                 to see differences.")
-      } else {
-        l[[f]] <- diffr::diffr(file1, file2, before = name1, after = name2)
       }
-      
+      l[[f]] <- diffr::diffr(file1, file2, before = name1, after = name2)
     }
   }
   if(length(l) == 0){
@@ -360,7 +359,6 @@ find_time_step <- function(d_after, d_before){
 #' @param grid_spacing Grid spacing. Depending on coordinate system could be in meters, or degrees.
 #' @param wkt_str projection string
 #' @importFrom sf st_crs
-#' @importFrom sp coordinates<- proj4string<- gridded<- fullgrid<- CRS
 #' @return Grid needed for the interpolation. 
 #' @keywords internal
 #'
@@ -373,10 +371,10 @@ get_grid <- function(b, grid_spacing, wkt_str){
   x.range <- c(b[1]*0.999,b[3]*1.001)
   y.range <- c(b[2]*0.999,b[4]*1.001)
   grd <- expand.grid(x = seq(from = x.range[1], to = x.range[2], by = grid_spacing), y = seq(from = y.range[1], to = y.range[2], by = grid_spacing)) 
-  coordinates(grd) <- c("x", "y")
-  gridded(grd)     <- TRUE
-  fullgrid(grd)    <- TRUE
-  suppressWarnings(proj4string(grd) <-  CRS(SRS_string = wkt_str))
+  sp::coordinates(grd) <- c("x", "y")
+  sp::gridded(grd)     <- TRUE
+  sp::fullgrid(grd)    <- TRUE
+  suppressWarnings(sp::proj4string(grd) <-  sp::CRS(SRS_string = wkt_str))
   return(grd)
 }
 
@@ -388,7 +386,6 @@ get_grid <- function(b, grid_spacing, wkt_str){
 #' @param grd Grid for interpolation.
 #' @param i integer representing day number.
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
-#' @importFrom gstat idw
 #' @importFrom raster raster extract
 #' @return SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
 #' @keywords internal
@@ -643,13 +640,14 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = 
   print(paste0("Updated weather stations in ", fname, " file."))
 }
 
-#' Write weather meteo_lst into template .xlsx file
+#' Write weather meteo_lst into template .xlsx file. 
+#' 
+#' The function requires the `openxlsx` package to be installed.
 #'
 #' @param meteo_lst nested list of lists with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @param write_path (optional) character path to folder where results should be written (default "").
 #' @param f_name (optional) character name of the file (default 'weather_data.xlsx'). 
-#' @importFrom openxlsx saveWorkbook createWorkbook writeData addWorksheet
 #' @importFrom sf st_drop_geometry
 #' @importFrom dplyr %>% select full_join arrange mutate
 #' @return .xlsx file written in template format, which could de read by \code{\link{load_template}} function.
@@ -660,13 +658,18 @@ update_wst_txt <- function(fname, write_path, wst_sf, spacing, folder_to_save = 
 #' }
 
 write_weather_template <- function(meteo_lst, write_path = "", f_name = "weather_data.xlsx"){
+  ## Checking if openxlsx is installed
+  if(!requireNamespace("openxlsx", quietly = TRUE)){
+    stop("openxlsx package is not installed. 'write_weather_template' function requires 
+                openxlsx package to write data into .xlsx file. Please install openxlsx package")
+  }
   ##Removing existing file if in path
   f <- paste0(write_path, f_name)
   ##Writing station info
   getOption("openxlsx.dateFormat", "YYYY-MM-DD")
-  wb <- createWorkbook()
-  addWorksheet(wb, "Stations")
-  writeData(wb, "Stations", as.data.frame(meteo_lst$stations %>% 
+  wb <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(wb, "Stations")
+  openxlsx::writeData(wb, "Stations", as.data.frame(meteo_lst$stations %>% 
                                             st_drop_geometry %>%
                                             select(ID, Name, Elevation, Source, Long, Lat)))
   ##Writing data
@@ -682,12 +685,12 @@ write_weather_template <- function(meteo_lst, write_path = "", f_name = "weather
           full_join(dt[[n]][[par]], by = "DATE")
       }
     }
-    addWorksheet(wb, n)
-    writeData(wb, n, as.data.frame(df %>% 
+    openxlsx::addWorksheet(wb, n)
+    openxlsx::writeData(wb, n, as.data.frame(df %>% 
                                      mutate(DATE = as.Date(DATE)) %>%
                                      arrange(DATE)))
   }
-  saveWorkbook(wb, f, overwrite = TRUE)
+  openxlsx::saveWorkbook(wb, f, overwrite = TRUE)
   return(paste0("Writing was successful. Your file is in ", f))
 }
 

@@ -184,7 +184,8 @@ plot_monthly <- function(df, station,
 #' Plot Regression and Fractions for Each Month
 #'
 #' This function generates two sets of plots for monthly regression and fractions
-#' between nutrient parts and the total.
+#' between nutrient parts and the total. The function requires the `ggpmisc` 
+#' library to be installed.
 #'
 #' @param df Dataframe with formatted data (requires "Station", "DATE", 
 #' "Variables", and "Values" columns). Data can be loaded with 
@@ -200,7 +201,6 @@ plot_monthly <- function(df, station,
 #' @importFrom lubridate month
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth facet_wrap theme_bw theme
 #' element_text geom_boxplot xlab ylab after_stat
-#' @importFrom ggpmisc stat_poly_eq
 #' @return A list of two ggplot objects: "regression" for monthly regression 
 #' plots and "fraction" for monthly fraction values.
 #' @export
@@ -232,11 +232,14 @@ plot_fractions <- function(df, station, total_var, min_vars){
     select(-all_of(c(total_var, min_vars))) %>% 
     arrange(Month)
   
-  
+  ## Checking, if ggpmisc library is installed
+  if (!requireNamespace("ggpmisc", quietly = TRUE)) {
+    stop("Please install 'ggpmisc' package to use this function")
+  }
   ##Making regression plots
   plot_reg <- ggplot(df, aes(x = Min, y = Tot)) +
     geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
-    stat_poly_eq(formula = y~x, 
+    ggpmisc::stat_poly_eq(formula = y~x, 
                  aes(label = paste(ggplot2::after_stat(eq.label),ggplot2::after_stat(rr.label), sep = "~~~")), 
                  parse = TRUE, 
                  size = 2.4) +         
@@ -262,7 +265,8 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' Prepare Interactive Map of Monitoring Points
 #'
 #' This function generates an interactive map with monitoring points, 
-#' allowing users to click on points to view data.
+#' allowing users to click on points to view data. The function requires 
+#' the `leafpop` package to be installed.
 #'
 #' @param df Dataframe with formatted data (requires "Station", "DATE", 
 #' "Variables", and "Values" columns). Data can be loaded with 
@@ -273,7 +277,6 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' @param shp sf dataframe for basin (requires "name" and "geometry" columns).
 #' @importFrom leaflet leaflet addProviderTiles addPolygons addPolylines addMarkers  
 #' addLayersControl layersControlOptions
-#' @importFrom leafpop addPopupGraphs
 #' @return Leaflet object of an interactive map with monitoring data displayed 
 #' when points are clicked.
 #' @export
@@ -293,6 +296,10 @@ plot_fractions <- function(df, station, total_var, min_vars){
 #' @keywords plotting
 
 plot_map <- function(df, df_station, rch, shp){
+  ## Checking, if leafpop library is installed
+  if (!requireNamespace("leafpop", quietly = TRUE)) {
+    stop("Please install 'leafpop' package to use this function")
+  }
   if (st_crs(rch)$input == "EPSG:4326" & 
       st_crs(shp)$input == "EPSG:4326" & 
       st_crs(df_station)$input == "EPSG:4326"){
@@ -312,7 +319,7 @@ plot_map <- function(df, df_station, rch, shp){
         layerId=~ID,
         label = ~as.character(paste("Station ID:", ID)),
         group = 'Stations') %>%
-      addPopupGraphs(p_all, group = 'Stations', width = 600, height = 400) %>%
+      leafpop::addPopupGraphs(p_all, group = 'Stations', width = 600, height = 400) %>%
       addLayersControl(baseGroups = c("OSM", "Imagery", "Topography"),
                        overlayGroups = c("Basin", "Reaches", "Stations"),
                        position = "bottomleft",

@@ -54,8 +54,6 @@ install.packages("remotes")
 
 # The installation of `SWATprepR`.
 remotes::install_github("biopsichas/SWATprepR")
-# The `euptf2` package has to be installed to utilize `get_usersoil_table()` function.
-remotes::install_github("tkdweber/euptf2")
 ```
 
 ## Data

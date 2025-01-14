@@ -9,7 +9,6 @@
 #' @importFrom dplyr left_join select everything %>%
 #' @importFrom tibble rownames_to_column
 #' @importFrom sf st_crs st_set_geometry
-#' @importFrom sp coordinates<- proj4string<- CRS
 #' @importFrom stringr str_to_title
 #' @return SpatialPointsDataFrame with columns as days and rows as stations.
 #' @keywords internal
@@ -18,32 +17,33 @@
 #' ##get_data_to_interpolate (meteo_lst, "PCP")
 
 get_data_to_interpolate <- function(meteo_lst, par){
-  ##Getting building continuous dataframe with min, max dates
+  ## Getting building continuous dataframe with min, max dates
   df <- data.frame(DATE = seq(as.POSIXct(get_dates(meteo_lst)$min_date, "%Y-%m-%d", tz = "UTC"),
                               as.POSIXct(get_dates(meteo_lst)$max_date, "%Y-%m-%d", tz = "UTC"), by = "day"))
   stations <- meteo_lst$stations
   meteo_lst <- meteo_lst$data
-  ##Extracting data for selected parameter from meteo_lst
+  ## Extracting data for selected parameter from meteo_lst
   for (n in names(meteo_lst)){
     if(par %in% names(meteo_lst[[n]])){
       df <- left_join(df, meteo_lst[[n]][[par]] %>%
                         `colnames<-`(c("DATE", n)), by = "DATE")
     }
   }
-  ##ID to names of stations
+  ## ID to names of stations
   id_station <- stations %>% 
     st_set_geometry(NULL) %>% 
     mutate(Name = paste0(str_to_title(Name), " (", Source, ")")) %>% 
     select(ID, Name, Lat, Long)
-  ##Transforming extracted data
+  
+  ## Transforming extracted data
   df <- as.data.frame(t(df[-1])) %>% 
     rownames_to_column(var = "ID") %>% 
     left_join(id_station[-2], by = "ID") %>% 
     select(Lat, Long, everything(), -ID)
   ## Converting df data to sp
-  coordinates(df) <-  ~Long + Lat
+  sp::coordinates(df) <-  ~Long + Lat
   ##Adding crs
-  suppressWarnings(proj4string(df) <-  CRS(SRS_string = st_crs(stations)$input))
+  suppressWarnings(sp::proj4string(df) <-  sp::CRS(SRS_string = st_crs(stations)$input))
   return(df)
 }
 
@@ -57,7 +57,6 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @param dem_data_path path to DEM raster data in same projection as weather station.
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
 #' (optional, default value is 2).
-#' @importFrom sp coordinates<- proj4string<- CRS over
 #' @importFrom methods as
 #' @importFrom raster extract raster
 #' @importFrom sf st_crs st_transform read_sf
@@ -74,24 +73,26 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' }
 
 get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_exponent){
-  ##Preparing data for interpolation and grid
+  ## Preparing data for interpolation and grid
   df <- get_data_to_interpolate(meteo_lst, par)
-  ##Loading data
+  
+  ## Loading data
   DEM <- raster(dem_data_path)
-  ##Defining coordinate system
+  
+  ## Defining coordinate system
   m_proj <- st_crs(meteo_lst$stations)$input
   if (m_proj != st_crs(shp)$input){
     shp <- st_transform(shp, m_proj)
   }
   ##Dealing with coordinates
-  suppressWarnings(proj4string(DEM) <-  CRS(SRS_string = m_proj))
+  suppressWarnings(sp::proj4string(DEM) <-  sp::CRS(SRS_string = m_proj))
   ##Converting into sp
   grd_p <- as(grd, "SpatialPoints")
   shp_sp <- as(shp, 'Spatial')
   ##Just to be sure they are exact
   slot(grd_p, "proj4string") <- slot(shp_sp, "proj4string")
   ##extracting points from the grid for the catchment and saving results
-  meteo_pts <- as(grd_p[!is.na(over(grd_p, shp_sp)[1]),], "SpatialPointsDataFrame")
+  meteo_pts <- as(grd_p[!is.na(sp::over(grd_p, shp_sp)[1]),], "SpatialPointsDataFrame")
   meteo_pts@data <- data.frame(DEM = raster::extract(DEM, meteo_pts))
   ##Adding DEM values
   nb <- dim(df)[[2]]
@@ -106,7 +107,10 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' Interpolate Weather Data 
 #'
 #' This function interpolates weather data for a SWAT model and saves results 
-#' into nested list format
+#' into nested list format. The function uses Inverse Distance Weighting (IDW)
+#' interpolation method to fill gaps in weather data.
+#' This function uses `sp` and `gstat` packages for spatial operations. Please 
+#' make sure that these packages are installed before using this function.
 #'
 #' @param meteo_lst A nested list with dataframes. 
 #'   Nested structure: \code{meteo_lst -> data -> Station ID -> Parameter -> 
@@ -151,6 +155,10 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 
 interpolate <- function(meteo_lst, catchment_boundary_path, dem_data_path, grid_spacing, 
                         p_vector = c("PCP", "SLR", "RELHUM", "WNDSPD", "TMP_MAX", "TMP_MIN"), idw_exponent = 2){
+  ## Require sp library
+  if (!requireNamespace("sp", quietly = TRUE)) {
+    stop("The 'sp' package is required for this function. Please install 'sp' to proceed.")
+  }
   ##List to save interpolation results for examining
   results <- list()
   p_lst <- list("PCP" = "pcp", "SLR" = "solar", "RELHUM" = "rh", "TMP_MAX" = "tmp", 
@@ -623,7 +631,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
 #' Prepare user soil table for SWAT model
 #'
 #' This function prepares a user soil table for the SWAT model based on the 
-#' provided CSV file.
+#' provided CSV file. The function requires the `euptf2` package to be installed.
 #'
 #' @param csv_path Character path to the CSV file (e.g., "usersoil_lrew.csv"). 
 #'   The file should be comma-separated with minimum columns of:
@@ -834,11 +842,8 @@ get_usersoil_table <- function(csv_path, hsg = FALSE, keep_values = FALSE, nb_ly
 #' Function to fill soil parameters
 #'
 #' @param soilp dataframe with SNAM,	NLAYERS	columns and SOL_Z, CLAY, SILT, SAND,	OC columns for each available soil layer.
-#' @importFrom euptf2 euptfFun 
 #' @importFrom readxl read_excel
 #' @importFrom dplyr rename_at vars
-#' @importFrom tidyselect all_of
-#' @importFrom Rdpack reprompt
 #' @return dataframe with fully formatted and filled table of soil parameters for SWAT model.
 #' @keywords internal
 #'

@@ -488,7 +488,6 @@ load_swat_weather <- function(input_folder){
 #' @param end_year Integer representing the ending year for data extraction. 
 #' Default \code{end_year = 2022}.
 #' @importFrom sf st_transform st_read st_bbox st_crs
-#' @importFrom RNetCDF open.nc var.get.nc
 #' @importFrom dplyr bind_rows
 #' @return A dataframe with columns "DATE", "NH4_RF", "NO3_RF", "NH4_DRY", and 
 #' "NO3_DRY". 
@@ -520,6 +519,10 @@ load_swat_weather <- function(input_folder){
 #' Please read about SWAT+ atmospheric input data on \url{https://swatplus.gitbook.io/io-docs/introduction/climate/atmo.cli}.
 
 get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1990, end_year = 2022){
+  ## Ckeck if RNetCDF is installed
+  if(!requireNamespace("RNetCDF", quietly = TRUE)){
+    stop("RNetCDF package is not installed. Please install it before using this function.")
+  }
   ##Part url link to emep data (more info found here https://www.emep.int/mscw/mscw_moddata.html)
   url_prt <- "https://thredds.met.no/thredds/dodsC/data/EMEP/2023_Reporting/EMEP01_rv5.0_"
   ##Getting borders of the catchment
@@ -546,9 +549,9 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     ##Assembling URL for each year
     url <- paste0(url_prt, t_ext, ".", u, "met_", ifelse(u == 2022, 2021, u), "emis", uu)
     ##Opening file and getting indexes for data.
-    r <- open.nc(url)
-    lon <- var.get.nc(r, "lon")
-    lat <- var.get.nc(r, "lat")
+    r <- RNetCDF::open.nc(url)
+    lon <- RNetCDF::var.get.nc(r, "lon")
+    lat <- RNetCDF::var.get.nc(r, "lat")
     ilon <- which(lon>bb[1] & lon<bb[3])
     ilat <- which(lat>bb[2] & lat<bb[4])
     ##For small catchments (data grid size is 50X50 km2). Smaller than EMEP model grid.
@@ -560,11 +563,11 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
     }
     ##Reading parameters and converting to right units and averaging them over extracted grid.
     if(t_ext == "year"){
-      prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat]
-      dry_oxn <- mean(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]/100) 
-      wet_oxn <- mean(var.get.nc(r, "WDEP_OXN")[ilon, ilat]/prec)
-      dry_rdn <- mean(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]/100)
-      wet_rdn <- mean(var.get.nc(r, "WDEP_RDN")[ilon, ilat]/prec)
+      prec <- RNetCDF::var.get.nc(r, "WDEP_PREC")[ilon, ilat]
+      dry_oxn <- mean(RNetCDF::var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat]/100) 
+      wet_oxn <- mean(RNetCDF::var.get.nc(r, "WDEP_OXN")[ilon, ilat]/prec)
+      dry_rdn <- mean(RNetCDF::var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat]/100)
+      wet_rdn <- mean(RNetCDF::var.get.nc(r, "WDEP_RDN")[ilon, ilat]/prec)
 
       # SWAT+ input and output units are in pure nitrogen, documentation is confusing
       # In case conversion is needed, use the following:
@@ -576,12 +579,12 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
       ##Saving results
       df[nrow(df)+1,] <- c(u, 1, 1, wet_rdn, wet_oxn, dry_rdn, dry_oxn)
     } else if(t_ext %in% c("month")){
-      prec <- var.get.nc(r, "WDEP_PREC")[ilon, ilat,]
+      prec <- RNetCDF::var.get.nc(r, "WDEP_PREC")[ilon, ilat,]
       di <- length(dim(prec)) ##Dimension of extracted array
-      dry_oxn <- apply(var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]*4.4268/100, di, mean)
-      wet_oxn <- apply(var.get.nc(r, "WDEP_OXN")[ilon, ilat,]*4.4268/prec, di, mean)
-      dry_rdn <- apply(var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]*1.2878/100, di, mean)
-      wet_rdn <- apply(var.get.nc(r, "WDEP_RDN")[ilon, ilat,]*1.2878/prec, di, mean)
+      dry_oxn <- apply(RNetCDF::var.get.nc(r, "DDEP_OXN_m2Grid")[ilon, ilat,]*4.4268/100, di, mean)
+      wet_oxn <- apply(RNetCDF::var.get.nc(r, "WDEP_OXN")[ilon, ilat,]*4.4268/prec, di, mean)
+      dry_rdn <- apply(RNetCDF::var.get.nc(r, "DDEP_RDN_m2Grid")[ilon, ilat,]*1.2878/100, di, mean)
+      wet_rdn <- apply(RNetCDF::var.get.nc(r, "WDEP_RDN")[ilon, ilat,]*1.2878/prec, di, mean)
       ##Saving results
       if(t_ext == "month"){
         df<- bind_rows(df, data.frame(YR = u, MO = seq(1, length(dry_oxn)), DAY = 1, 
@@ -609,7 +612,7 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' Extract Climate Data from CORDEX NetCDF into Nested List
 #'
 #' This function extracts climate data from the CORDEX-BC dataset and organizes 
-#' it into a nested list.
+#' it into a nested list. The function requires the `elevatr` package to be installed.
 #'
 #' @param dir_path Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
 #' NetCDF data to be recognized by the function should be saved with these specific file names:
@@ -625,7 +628,6 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #'   boundary file (e.g., "GIS/basin.shp"). If a list, use the nested list with 
 #'   dataframes. The nested structure is same as prepared by 
 #'   using \code{\link{load_template}} or \code{\link{load_swat_weather}} functions.
-#' @importFrom elevatr get_elev_point
 #' @importFrom sf st_read st_transform st_as_sf st_crs st_overlaps st_centroid
 #' @importFrom raster brick rasterToPolygons extract
 #' @importFrom dplyr select rename mutate 
@@ -684,9 +686,13 @@ load_netcdf_weather <- function(dir_path, location){
     grid_vec$touch_basin <- unlist(touch_basin)
     grid_vec <- grid_vec[grid_vec$touch_basin == 1,]
     suppressWarnings({grid_centroid <- st_centroid(grid_vec)})
+    ## Check if elevatr library is installed
+    if(!requireNamespace("elevatr", quietly = TRUE)){
+      stop("elevatr package is required for this function. Please install it and rerun the function.")
+    } 
     st <- grid_centroid %>% 
       select() %>% 
-      get_elev_point(src = "aws") %>% 
+      elevatr::get_elev_point(src = "aws") %>% 
       rename(Elevation = elevation) %>% 
       mutate(ID = paste0("ID",rownames(.)),
              Name = paste0("ID",rownames(.)),

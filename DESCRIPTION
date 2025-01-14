@@ -1,8 +1,8 @@
 Type: Package
 Package: SWATprepR
 Title: SWAT+ input data preparation tool
-Version: 1.0.8
-Date: 2024-12-23
+Version: 1.0.9
+Date: 2025-01-14
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
              role = c("aut", "cre")))
@@ -14,46 +14,43 @@ BugReports: https://github.com/biopsichas/SWATprepR/issues
 Imports:
     DBI,
     dplyr,
-    elevatr,
     ggplot2,
-    ggpmisc,
-    gstat,
     leaflet,
-    leafpop,
     lubridate,
     methods,
-    openxlsx,
     plotly,
     purrr,
     raster,
     RColorBrewer,
-    Rdpack,
     readr,
     readxl,
-    RNetCDF,
     RSQLite,
     sf,
-    sp,
     stringr,
     tibble,
     tidyr,
-    tidyselect,
     utils,
     vroom,
     zoo
-Depends:
-    euptf2
 Suggests: 
     devtools,
     diffr,
+    elevatr,
+    euptf2,
+    ggpmisc,
+    gstat,
     knitr,
-    rmarkdown,
+    leafpop,
     mapview,
-    stars, 
-    tidyverse,
+    openxlsx,
+    rmarkdown,
+    RNetCDF,
+    sp,
+    stars,
+    tidyverse
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
