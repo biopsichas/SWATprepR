@@ -26,7 +26,8 @@ plots and "fraction" for monthly fraction values.
 }
 \description{
 This function generates two sets of plots for monthly regression and fractions
-between nutrient parts and the total.
+between nutrient parts and the total. The function requires the \code{ggpmisc}
+library to be installed.
 }
 \examples{
 \dontrun{

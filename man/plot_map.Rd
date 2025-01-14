@@ -24,7 +24,8 @@ when points are clicked.
 }
 \description{
 This function generates an interactive map with monitoring points,
-allowing users to click on points to view data.
+allowing users to click on points to view data. The function requires
+the \code{leafpop} package to be installed.
 }
 \examples{
 \dontrun{

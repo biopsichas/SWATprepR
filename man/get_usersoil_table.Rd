@@ -56,7 +56,7 @@ for the SWAT model.
 }
 \description{
 This function prepares a user soil table for the SWAT model based on the
-provided CSV file.
+provided CSV file. The function requires the \code{euptf2} package to be installed.
 }
 \examples{
 \dontrun{

@@ -31,5 +31,6 @@ A list containing differences between files if found, otherwise a message indica
 }
 \description{
 This function scans two folders and identifies files that exist only in one
-setup or files with differences between setups.
+setup or files with differences between setups. The function requires the
+\code{diffr} package to be installed.
 }

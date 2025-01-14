@@ -4,7 +4,7 @@
 \alias{plot_cal_data}
 \title{Plot Calibration Data}
 \usage{
-plot_cal_data(df, stations = NULL, variables = NULL)
+plot_cal_data(df, stations, variables = NULL)
 }
 \arguments{
 \item{df}{Dataframe with formatted data (requires "Station", "DATE", "

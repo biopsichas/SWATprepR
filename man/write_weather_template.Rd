@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper.R
 \name{write_weather_template}
 \alias{write_weather_template}
-\title{Write weather meteo_lst into template .xlsx file}
+\title{Write weather meteo_lst into template .xlsx file.}
 \usage{
 write_weather_template(
   meteo_lst,
@@ -22,7 +22,7 @@ Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE
 .xlsx file written in template format, which could de read by \code{\link{load_template}} function.
 }
 \description{
-Write weather meteo_lst into template .xlsx file
+The function requires the \code{openxlsx} package to be installed.
 }
 \examples{
 \dontrun{

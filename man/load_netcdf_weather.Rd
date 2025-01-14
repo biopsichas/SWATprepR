@@ -35,7 +35,7 @@ other package functions (e.g., \code{plot_weather(result$rcp26$"1", "PCP", "mont
 }
 \description{
 This function extracts climate data from the CORDEX-BC dataset and organizes
-it into a nested list.
+it into a nested list. The function requires the \code{elevatr} package to be installed.
 }
 \examples{
 \dontrun{
