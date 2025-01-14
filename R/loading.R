@@ -612,7 +612,8 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' Extract Climate Data from CORDEX NetCDF into Nested List
 #'
 #' This function extracts climate data from the CORDEX-BC dataset and organizes 
-#' it into a nested list. The function requires the `elevatr` package to be installed.
+#' it into a nested list. The function requires the `elevatr` and `raster` 
+#' packages to be installed.
 #'
 #' @param dir_path Character, path to the CORDEX-BC folder (e.g., "climate/CORDEX-BC").
 #' NetCDF data to be recognized by the function should be saved with these specific file names:
@@ -629,7 +630,6 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #'   dataframes. The nested structure is same as prepared by 
 #'   using \code{\link{load_template}} or \code{\link{load_swat_weather}} functions.
 #' @importFrom sf st_read st_transform st_as_sf st_crs st_overlaps st_centroid
-#' @importFrom raster brick rasterToPolygons extract
 #' @importFrom dplyr select rename mutate 
 #' @importFrom tidyr drop_na
 #' @importFrom purrr map
@@ -655,6 +655,9 @@ get_atmo_dep <- function(catchment_boundary_path, t_ext = "year", start_year = 1
 #' @keywords loading
 
 load_netcdf_weather <- function(dir_path, location){
+  if(!requireNamespace("raster", quietly = TRUE)){
+    stop("raster package is required for this function. Please install it and rerun the function.")
+  } 
   ##Checking inputs
   if(!is.character(dir_path)){
     stop("Your input to function parameter 'dir_path' is not character!!! Please correct this.")
@@ -674,7 +677,7 @@ load_netcdf_weather <- function(dir_path, location){
     basin <- st_read(location, quiet = TRUE) %>% 
       st_transform(4326)
     ##Grid vector created
-    grid_vec <- st_as_sf(rasterToPolygons(brick(paste0(dir_path, "/", fs[[1]]))[[1]]), crs = st_crs(4326))
+    grid_vec <- st_as_sf(raster::rasterToPolygons(raster::brick(paste0(dir_path, "/", fs[[1]]))[[1]]), crs = st_crs(4326))
     ##Finding overlap with basin
     suppressMessages(suppressWarnings({touch_basin <- st_overlaps(grid_vec, basin)}))
     touch_basin[lengths(touch_basin) == 0] <- 0
@@ -727,7 +730,7 @@ load_netcdf_weather <- function(dir_path, location){
       } 
       
       fdir <- unlist(strsplit(f, "/"))
-      nc <- brick(paste0(dir_path, "/", f))
+      nc <- raster::brick(paste0(dir_path, "/", f))
       ##Extract values for stations and create data.frame
       ex_m <- raster::extract(nc, st)
       df <- cbind.data.frame(nc@z[[1]],t(ex_m)[1:(ncol(ex_m)),])

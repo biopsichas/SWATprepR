@@ -386,7 +386,6 @@ get_grid <- function(b, grid_spacing, wkt_str){
 #' @param grd Grid for interpolation.
 #' @param i integer representing day number.
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
-#' @importFrom raster raster extract
 #' @return SpatialPointsDataFrame with virtual stations and interpolated data in data dataframe
 #' @keywords internal
 #'
@@ -402,7 +401,7 @@ get_interpolation <- function(sp_df, st, grd, i, idw_exponent){
     }
     colnames(sp_df@data) <- "v"
     idw <- gstat::idw(v ~ 1, sp_df, newdata=grd, idp=idw_exponent, debug.level = 0)
-    r <- raster(idw)
+    r <- raster::raster(idw)
     r <- raster::extract(r, st)
     st@data[as.character(i)] <- r
   } else {

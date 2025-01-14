@@ -58,7 +58,6 @@ get_data_to_interpolate <- function(meteo_lst, par){
 #' @param idw_exponent numeric value for exponent parameter to be used in interpolation. 
 #' (optional, default value is 2).
 #' @importFrom methods as
-#' @importFrom raster extract raster
 #' @importFrom sf st_crs st_transform read_sf
 #' @importFrom methods slot slot<-
 #' @return SpatialPointsDataFrame with interpolated data.
@@ -77,7 +76,7 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
   df <- get_data_to_interpolate(meteo_lst, par)
   
   ## Loading data
-  DEM <- raster(dem_data_path)
+  DEM <- raster::raster(dem_data_path)
   
   ## Defining coordinate system
   m_proj <- st_crs(meteo_lst$stations)$input
@@ -109,7 +108,7 @@ get_interpolated_data <- function(meteo_lst, grd, par, shp, dem_data_path, idw_e
 #' This function interpolates weather data for a SWAT model and saves results 
 #' into nested list format. The function uses Inverse Distance Weighting (IDW)
 #' interpolation method to fill gaps in weather data.
-#' This function uses `sp` and `gstat` packages for spatial operations. Please 
+#' This function uses `sp`, `gstat` and `raster` packages for spatial operations. Please 
 #' make sure that these packages are installed before using this function.
 #'
 #' @param meteo_lst A nested list with dataframes. 
@@ -1563,7 +1562,8 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 #' Extract rotation information from raster file
 #'
 #' This function extracts crop rotation information from a raster file and 
-#' amends the land use data accordingly.
+#' amends the land use data accordingly. 
+#' This function requires `raster` package to be installed. 
 #'
 #' @param df An sf data.frame with land use. Columns "id" and "type" should be 
 #' present. 
@@ -1574,7 +1574,7 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 #' column for text.
 #' @param lu_constant (optional) A vector of strings with land uses to be kept constant in 
 #' land use (e.g., water, urban areas). Default \code{lu_constant = c()}.
-#' @importFrom raster raster nbands extract
+
 #' @importFrom dplyr left_join mutate_at all_of mutate select vars starts_with
 #' @importFrom sf st_point_on_surface st_transform st_drop_geometry st_crs
 #' @return An sf data.frame with land use amended with crop rotation information.
@@ -1599,21 +1599,25 @@ get_lu_points <- function(df, year, lookup, lu_constant = c(),  nb_pts = 100, co
 #'   lu_constant)
 #' }
 #' @references 
-#' Mészáros, J., & Szabó, B. (2022). Script to derive and apply crop 
+#' Meszaros, J., & Szabo, B. (2022). Script to derive and apply crop 
 #' classification based on Sentinel 1 satellite radar images in Google Earth 
 #' Engine platform. \url{https://doi.org/10.5281/zenodo.6700122}
 #' @keywords remote-sensing
 
 extract_rotation <- function(df, start_year, tif_name, r_path, lookup, lu_constant = c()){
-  r <- raster(paste0(r_path, tif_name), band = 1)
-  bn <- nbands(r)
+  ##Check in raster library is installed 
+  if(!requireNamespace("raster", quietly = TRUE)){
+    stop("This function requires 'raster' package to be installed.")
+  }
+  r <- raster::raster(paste0(r_path, tif_name), band = 1)
+  bn <- raster::nbands(r)
   ##Centroids for each field in land use data created
   suppressWarnings(centroid <- df["id"] %>% 
                      st_point_on_surface() %>% 
                      st_transform(st_crs(r)))
   c <- c()
   for (i in seq(1:bn)){
-    if(i>1){r <- raster(paste0(r_path, tif_name), band = i)}
+    if(i>1){r <- raster::raster(paste0(r_path, tif_name), band = i)}
     n <- paste0("y_", start_year)
     centroid[n] <- raster::extract(r, centroid)
     print(paste0("Finished working on year ", start_year))
