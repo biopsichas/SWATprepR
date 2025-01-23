@@ -1152,3 +1152,18 @@ fill_with_closest <- function(meteo_lst, par_fill = c("TMP_MAX", "TMP_MIN","PCP"
 `%||%` <- function(lhs, rhs) {
   if (is.null(lhs)) rhs else lhs
 }
+
+# A helper function for safe NetCDF variable retrieval
+rvar_get <- function(nc_file, var_name) {
+  tryCatch(
+    {
+      # Attempt to retrieve the variable
+      var_data <- RNetCDF::var.get.nc(nc_file, var_name)
+      return(var_data)
+    },
+    error = function(e) {
+      message("Error retrieving variable '", var_name, "': ", e$message)
+      return(NA)  # Return NA on error
+    }
+  )
+}

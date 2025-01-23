@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-1.0.9-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-1.0.10-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable
@@ -73,17 +73,9 @@ system to locate it.
 
 ``` r
 library(SWATprepR)
-#> The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
-#> which was just loaded, will retire in October 2023.
-#> Please refer to R-spatial evolution reports for details, especially
-#> https://r-spatial.org/r/2023/05/15/evolution4.html.
-#> It may be desirable to make the sf package available;
-#> package maintainers should consider adding sf to Suggests:.
-#> The sp package is now running under evolution status 2
-#>      (status 2 uses the sf package in place of rgdal)
 temp_path <- system.file("extdata", package = "SWATprepR")
 print(temp_path)
-#> [1] "C:/Users/Svajunas/AppData/Local/Programs/R/R-4.3.1/library/SWATprepR/extdata"
+#> [1] "C:/Users/laptop/AppData/Local/R/win-library/4.2/SWATprepR/extdata"
 ```
 
 ## Templates
