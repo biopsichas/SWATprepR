@@ -3,7 +3,7 @@ Introduction to SWATprepR
 
 # SWATprepR
 
-[![](https://img.shields.io/badge/devel%20version-1.0.10-gold.svg)](https://github.com/biopsichas/SWATprepR)
+[![](https://img.shields.io/badge/devel%20version-1.0.11-gold.svg)](https://github.com/biopsichas/SWATprepR)
 [![](https://img.shields.io/github/last-commit/biopsichas/SWATprepR.svg)](https://github.com/biopsichas/SWATprepR/commits/green)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active - The project has reached a stable, usable

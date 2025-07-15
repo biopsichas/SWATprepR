@@ -4,7 +4,13 @@
 \alias{prepare_climate}
 \title{Prepare or Update Climate Data Text Input Files in SWAT+ Model}
 \usage{
-prepare_climate(meteo_lst, write_path, period_starts = NA, period_ends = NA)
+prepare_climate(
+  meteo_lst,
+  write_path,
+  period_starts = NA,
+  period_ends = NA,
+  clean_files = TRUE
+)
 }
 \arguments{
 \item{meteo_lst}{Nested list with dataframes.
@@ -23,6 +29,9 @@ Default \code{period_starts = NA}, stands for all available in data.}
 
 \item{period_ends}{(optional) Character, date string (example '2020-12-31').
 Default \code{period_ends = NA}, stands for all available in data.}
+
+\item{clean_files}{Logical, if TRUE, will remove all existing weather files
+in model setup folder before writing new ones. Default \code{clean_files = TRUE}.}
 }
 \value{
 Fills or updates multiple weather-related text files in the SWAT+ model.

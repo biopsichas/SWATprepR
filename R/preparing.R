@@ -391,6 +391,8 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' Default \code{period_starts = NA}, stands for all available in data.
 #' @param period_ends (optional) Character, date string (example '2020-12-31'). 
 #' Default \code{period_ends = NA}, stands for all available in data.
+#' @param clean_files Logical, if TRUE, will remove all existing weather files 
+#' in model setup folder before writing new ones. Default \code{clean_files = TRUE}.
 #' @importFrom purrr map
 #' @importFrom dplyr filter %>% mutate select mutate_if mutate_at mutate_all rename full_join contains arrange
 #' @importFrom sf st_as_sf
@@ -407,7 +409,8 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
 #' @seealso \code{\link{load_template}}
 #' @keywords writing
 
-prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_ends = NA){
+prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_ends = NA,
+                            clean_files = TRUE){
   ##Checking input
   if(!is.list(meteo_lst)){
     stop("Make sure your meteo_lst input is list of lists described in function description!!!")
@@ -438,6 +441,14 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   }
   if(period_starts>=period_ends){
     stop("Make sure your 'period_starts' parameter is earier date than 'period_ends'!!!")
+  }
+  if(clean_files){
+    # Check if there are any weather files
+    cli_files <- list.files(path = paste0(write_path, "/"), pattern = "\\.(cli|tmp|wnd|pcp|slr|hmd)$", full.names = TRUE)
+    if(length(cli_files) != 0){
+      file.remove(cli_files)
+      warning("Existing weather files in the specified path have been deleted.")
+    }
   }
 
   ##Heading in weather files

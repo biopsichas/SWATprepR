@@ -12,7 +12,7 @@ model based on the provided meteo_lst."><meta property="og:image" content="/logo
     
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,13 @@ model based on the provided meteo_lst.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_climate</span><span class="op">(</span><span class="va">meteo_lst</span>, <span class="va">write_path</span>, period_starts <span class="op">=</span> <span class="cn">NA</span>, period_ends <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_climate</span><span class="op">(</span></span>
+<span>  <span class="va">meteo_lst</span>,</span>
+<span>  <span class="va">write_path</span>,</span>
+<span>  period_starts <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  period_ends <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  clean_files <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -99,6 +105,11 @@ Default <code>period_starts = NA</code>, stands for all available in data.</p></
 <dt>period_ends</dt>
 <dd><p>(optional) Character, date string (example '2020-12-31').
 Default <code>period_ends = NA</code>, stands for all available in data.</p></dd>
+
+
+<dt>clean_files</dt>
+<dd><p>Logical, if TRUE, will remove all existing weather files
+in model setup folder before writing new ones. Default <code>clean_files = TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

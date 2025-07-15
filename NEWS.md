@@ -1,3 +1,7 @@
+# SWATprepR 1.0.11
+
+-   Updated `prepare_climate()` function to clean the existing weather files before writing new data. This ensures that the files are not duplicated and only contain the latest data.
+
 # SWATprep 1.0.10
 
 -   Updated `get_atmo_dep()` to support new server links.
