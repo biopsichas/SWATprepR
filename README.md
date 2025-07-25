@@ -23,8 +23,8 @@ intended to fill the gaps in the SWAT+ workflow alongside the main tools
 developed by [Christoph Schuerz](https://www.ufz.de/index.php?en=49467).
 Therefore, we highly recommend trying and using these tools:
 
-- [SWATbuildR](https://git.ufz.de/optain/wp4-integrated-assessment/swat/bildr_script)[^1] -
-  R tool for building SWAT+ setups.
+- [SWATbuildR](https://github.com/chrisschuerz/SWATbuildR) - R tool for
+  building SWAT+ setups.
 - [SWATfarmR](http://chrisschuerz.github.io/SWATfarmR/) - R tool for
   preparing management schedules for the SWAT model.
 - [SWATdoctR](https://git.ufz.de/schuerz/swatdoctr) - A collection of
@@ -141,5 +141,3 @@ with communicated uncertainties in the predicted variables
 </div>
 
 </div>
-
-[^1]: For access please inquire at *<christoph.schuerz@ufz.de>*.
