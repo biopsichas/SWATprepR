@@ -6,7 +6,7 @@
 #' @param meteo_lst nested list with dataframes. 
 #' Nested structure meteo_lst -> data -> Station ID -> Parameter -> Dataframe (DATE, PARAMETER).
 #' @param par is weather variable to extract (i.e. "PCP", "SLR", etc)
-#' @importFrom dplyr left_join select everything %>%
+#' @importFrom dplyr left_join select everything %>% mutate across na_if
 #' @importFrom tibble rownames_to_column
 #' @importFrom sf st_crs st_set_geometry
 #' @importFrom stringr str_to_title
@@ -35,6 +35,8 @@ get_data_to_interpolate <- function(meteo_lst, par){
     mutate(Name = paste0(str_to_title(Name), " (", Source, ")")) %>% 
     select(ID, Name, Lat, Long)
   
+  ## Replacing -99 with NA
+  df <- mutate(df, across(-all_of("DATE"), ~na_if(., -99)))
   ## Transforming extracted data
   df <- as.data.frame(t(df[-1])) %>% 
     rownames_to_column(var = "ID") %>% 
@@ -445,6 +447,8 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   if(clean_files){
     # Check if there are any weather files
     cli_files <- list.files(path = paste0(write_path, "/"), pattern = "\\.(cli|tmp|wnd|pcp|slr|hmd)$", full.names = TRUE)
+    ## Exclude atmodep.cli from deletion
+    cli_files <- cli_files[!grepl("atmodep\\.cli$", cli_files)]
     if(length(cli_files) != 0){
       file.remove(cli_files)
       warning("Existing weather files in the specified path have been deleted.")

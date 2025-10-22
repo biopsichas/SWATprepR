@@ -5,82 +5,65 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="SWATprepR">
 <title>Atmospheric deposition • SWATprepR</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Atmospheric deposition">
-<meta property="og:description" content="SWATprepR">
-<meta property="og:image" content="/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Atmospheric deposition">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">SWATprepR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.12</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <h6 class="dropdown-header" data-toc-skip>Meteo</h6>
-    <a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a>
-    <a class="dropdown-item" href="../articles/weather.html">Weather data</a>
-    <a class="dropdown-item" href="../articles/climate.html">Climate projections</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Land &amp; Soil</h6>
-    <a class="dropdown-item" href="../articles/soil.html">Soil parameters</a>
-    <a class="dropdown-item" href="../articles/lu.html">Land use</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other</h6>
-    <a class="dropdown-item" href="../articles/psources.html">Point sources</a>
-    <a class="dropdown-item" href="../articles/calibration.html">Calibration data</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Meteo</h6></li>
+    <li><a class="dropdown-item" href="../articles/deposition.html">Atmospheric deposition</a></li>
+    <li><a class="dropdown-item" href="../articles/weather.html">Weather data</a></li>
+    <li><a class="dropdown-item" href="../articles/climate.html">Climate projections</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Land &amp; Soil</h6></li>
+    <li><a class="dropdown-item" href="../articles/soil.html">Soil parameters</a></li>
+    <li><a class="dropdown-item" href="../articles/lu.html">Land use</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Other</h6></li>
+    <li><a class="dropdown-item" href="../articles/psources.html">Point sources</a></li>
+    <li><a class="dropdown-item" href="../articles/calibration.html">Calibration data</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/biopsichas/SWATprepR/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/biopsichas/SWATprepR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -114,12 +97,14 @@ catchment.</p>
 nitrogen deposition (NH4 and NO3), but not phosphorous deposition. Both
 wet and dry deposition is taken into account. Wet deposition is
 absorption of compounds by rain and snow as they fall and is expressed
-in <span class="math inline">\(mg/l\)</span>, whereas dry deposition is
-direct adsorption of compounds to water and land surfaces, expressed in
-<span class="math inline">\(kg/ha/year\)</span>. SWAT+ allows constant,
-annual or monthly input data on atmospheric deposition. The choice is
-controlled by <em>atmo</em> parameter in the <em>‘codes.bsn’</em>
-file.</p>
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>/</mi><mi>l</mi></mrow><annotation encoding="application/x-tex">mg/l</annotation></semantics></math>,
+whereas dry deposition is direct adsorption of compounds to water and
+land surfaces, expressed in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mi>g</mi><mi>/</mi><mi>h</mi><mi>a</mi><mi>/</mi><mi>y</mi><mi>e</mi><mi>a</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">kg/ha/year</annotation></semantics></math>.
+SWAT+ allows constant, annual or monthly input data on atmospheric
+deposition. The choice is controlled by <em>atmo</em> parameter in the
+<em>‘codes.bsn’</em> file.</p>
 </div>
 <div class="section level2">
 <h2 id="emep-data">EMEP data<a class="anchor" aria-label="anchor" href="#emep-data"></a>
@@ -128,24 +113,30 @@ file.</p>
 if local data in not available or not all parameters available,
 deposition data can be extracted from European Monitoring and Evaluation
 Programme (EMEP) provided <a href="https://www.emep.int/mscw/mscw_moddata.html" class="external-link">MSC-W model data
-files</a>. The EMEP portal provides gridded 0.1<span class="math inline">\(^{\circ}\)</span> resolution <em>netCDF</em> data
-over Europe. MSC-W model <a href="https://www.emep.int/grid/lonlatgrid.pdf" class="external-link">grid covers
+files</a>. The EMEP portal provides gridded
+0.1<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mo>∘</mo></msup><annotation encoding="application/x-tex">^{\circ}</annotation></semantics></math>
+resolution <em>netCDF</em> data over Europe. MSC-W model <a href="https://www.emep.int/grid/lonlatgrid.pdf" class="external-link">grid covers
 territory</a> between -30 to 90 longitude and 30 to 82 latitude with
 50x50 km<sup>2</sup> grid cell. The parameters, which are needed for
 SWAT+ model are:</p>
 <ul>
 <li>
 <em>DDEP_OXN_m2GridDry</em> - deposition of oxidized nitrogen per m2
-grid (<span class="math inline">\(mgN/m^2\)</span>);</li>
+grid
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>N</mi><mi>/</mi><msup><mi>m</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">mgN/m^2</annotation></semantics></math>);</li>
 <li>
-<em>WDEP_OXN</em> - wet deposition of oxidized nitrogen (<span class="math inline">\(mgN/m^2\)</span>);</li>
+<em>WDEP_OXN</em> - wet deposition of oxidized nitrogen
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>N</mi><mi>/</mi><msup><mi>m</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">mgN/m^2</annotation></semantics></math>);</li>
 <li>
 <em>DDEP_RDN_m2Grid</em> - dry deposition of reduced nitrogen per m2
-grid (<span class="math inline">\(mgN/m^2\)</span>);</li>
+grid
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>N</mi><mi>/</mi><msup><mi>m</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">mgN/m^2</annotation></semantics></math>);</li>
 <li>
-<em>WDEP_RDN</em> - wet deposition of reduced nitrogen (<span class="math inline">\(mgN/m^2\)</span>).</li>
+<em>WDEP_RDN</em> - wet deposition of reduced nitrogen
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>N</mi><mi>/</mi><msup><mi>m</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">mgN/m^2</annotation></semantics></math>).</li>
 <li>
-<em>WDEP_PREC</em> - precipitation (<span class="math inline">\(mm\)</span>).</li>
+<em>WDEP_PREC</em> - precipitation
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">mm</annotation></semantics></math>).</li>
 </ul>
 <div class="figure" style="text-align: center">
 <img src="figs/fig_emep.png" alt="EMEP grid and deposition data coverage" width="100%"><p class="caption">
@@ -157,13 +148,17 @@ required for <a href="https://swatplus.gitbook.io/io-docs/introduction/climate/a
 input file</a>:</p>
 <ul>
 <li>
-<em>NH4_RF</em> - ammonia nitrogen in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
+<em>NH4_RF</em> - ammonia nitrogen in rainfall
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>/</mi><mi>l</mi></mrow><annotation encoding="application/x-tex">mg/l</annotation></semantics></math>);</li>
 <li>
-<em>NO3_RF</em> - nitrate nitrogen in rainfall (<span class="math inline">\(mg/l\)</span>);</li>
+<em>NO3_RF</em> - nitrate nitrogen in rainfall
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>g</mi><mi>/</mi><mi>l</mi></mrow><annotation encoding="application/x-tex">mg/l</annotation></semantics></math>);</li>
 <li>
-<em>NH4_DRY</em> - ammonia nitrogen dry deposition (<span class="math inline">\(kg/ha/yr\)</span>);</li>
+<em>NH4_DRY</em> - ammonia nitrogen dry deposition
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mi>g</mi><mi>/</mi><mi>h</mi><mi>a</mi><mi>/</mi><mi>y</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">kg/ha/yr</annotation></semantics></math>);</li>
 <li>
-<em>NO3_DRY</em> - nitrate nitrogen dry deposition (<span class="math inline">\(kg/ha/yr\)</span>).</li>
+<em>NO3_DRY</em> - nitrate nitrogen dry deposition
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mi>g</mi><mi>/</mi><mi>h</mi><mi>a</mi><mi>/</mi><mi>y</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">kg/ha/yr</annotation></semantics></math>).</li>
 </ul>
 <p>EMEP provides access to yearly, monthly, daily and hourly data. Data
 for a selected catchment with required time step could be extracted
@@ -216,28 +211,26 @@ Proceedings No. 153</span>.”</span>
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Svajunas Plunge.</p>
+  <p>Developed by Svajunas Plunge.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

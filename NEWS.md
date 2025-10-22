@@ -1,3 +1,8 @@
+# SWATprepR 1.0.12
+
+-  Updated `prepare_climate()` function to fix an issue with atmospheric deposition data being deleted from weather files.
+-  Updated `interpolate()` function to improve handling of missing data points during spatial interpolation.
+
 # SWATprepR 1.0.11
 
 -   Updated `prepare_climate()` function to clean the existing weather files before writing new data. This ensures that the files are not duplicated and only contain the latest data.

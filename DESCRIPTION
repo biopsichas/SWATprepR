@@ -1,16 +1,19 @@
-Type: Package
 Package: SWATprepR
+Type: Package
 Title: SWAT+ input data preparation tool
-Version: 1.0.11
-Date: 2025-07-14
+Version: 1.0.12
+Date: 2025-10-22
 Author: c(person("Svajunas", "Plunge",
              email = "svajunas.plunge@gmail.com",
-             role = c("aut", "cre")))
+             role = c("aut", "cre"),
+             comment = c(ORCID = '0000-0001-8897-3349')))
 Maintainer: Svajunas Plunge <svajunas.plunge@gmail.com>
 Description: Tool to help with SWAT+ model users with input data preparation. 
 License: MIT + file LICENSE
 URL: https://github.com/biopsichas/SWATprepR
 BugReports: https://github.com/biopsichas/SWATprepR/issues
+Depends:
+    R (>= 4.2.0)
 Imports:
     DBI,
     dplyr,
@@ -53,4 +56,4 @@ VignetteBuilder:
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

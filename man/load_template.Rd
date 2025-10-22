@@ -36,7 +36,7 @@ temp_path <- system.file("extdata", "calibration_data.xlsx", package = "SWATprep
 cal_data <- load_template(temp_path)
 
 ## 3) Example of template for point source:
-temp_path <- system.file("extdata", "pnt_data.xls", package = "SWATprepR")
+temp_path <- system.file("extdata", "pnt_data.xlsx", package = "SWATprepR")
 pnt_data <- load_template(temp_path)
 }
 }
