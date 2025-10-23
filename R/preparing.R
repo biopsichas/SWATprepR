@@ -26,6 +26,7 @@ get_data_to_interpolate <- function(meteo_lst, par){
   for (n in names(meteo_lst)){
     if(par %in% names(meteo_lst[[n]])){
       df <- left_join(df, meteo_lst[[n]][[par]] %>%
+                        mutate(DATE = as.POSIXct(DATE)) %>% 
                         `colnames<-`(c("DATE", n)), by = "DATE")
     }
   }
