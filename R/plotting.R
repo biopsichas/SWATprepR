@@ -523,9 +523,9 @@ plot_wgn_comparison <- function(meteo_lst1, meteo_lst2, station1, station2, type
     } else {
       message(paste0("Date interval for ", type1, " and ", type2, " are not the same."))
       ##Filtering data to the same date range
-      for (id in names(meteo_lst$data)){
-        for (p in names(meteo_lst$data[[id]])){
-          meteo_lst$data[[id]][[p]] <- meteo_lst$data[[id]][[p]] %>%
+      for (id in names(meteo_lst1$data)){
+        for (p in names(meteo_lst1$data[[id]])){
+          meteo_lst1$data[[id]][[p]] <- meteo_lst1$data[[id]][[p]] %>%
             filter(DATE >= min_date2 & DATE <= max_date2)
         }
       }
