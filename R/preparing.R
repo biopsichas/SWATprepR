@@ -460,16 +460,13 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   hd_txt <-  paste0(": written by SWATprepR R package on ", Sys.time(), " for SWAT+ rev.60.5.4")
 
   ##Filtering list to a defined period
-  # Ensure period_starts and period_ends are POSIXct with proper times
-  if (inherits(period_starts, "Date")) {
-    period_starts <- as.POSIXct(paste(period_starts, "00:00:00"), tz = "UTC")
-  }
-  if (inherits(period_ends, "Date")) {
-    period_ends <- as.POSIXct(paste(period_ends, "23:59:59"), tz = "UTC")
-  }
-  
   # If DATE is Date, convert it to POSIXct for comparison
-  if (inherits(meteo_lst$data[[1]]$DATE, "Date")) {
+  if (!inherits(meteo_lst$data[[1]]$DATE, "Date")) {
+    # Ensure period_starts and period_ends are POSIXct with proper times
+    period_starts <- as.POSIXct(paste(period_starts, "00:00:00"), tz = "UTC")
+    period_ends <- as.POSIXct(paste(period_ends, "23:59:59"), tz = "UTC")
+    
+    ## Just to make sure all dates are in POSIXct format
     meteo_lst$data <- purrr::map(meteo_lst$data, \(df) {
       df$DATE <- as.POSIXct(df$DATE, tz = "UTC")
       df
@@ -477,8 +474,7 @@ prepare_climate <- function(meteo_lst, write_path, period_starts = NA, period_en
   }
   
   # Then filter
-  meteo_lst$data <- purrr::map(meteo_lst$data, \(df)
-                               dplyr::filter(df, DATE >= period_starts & DATE <= period_ends))
+  meteo_lst$data <- map(meteo_lst$data, ~map(., ~filter(., DATE >= period_starts & DATE <= period_ends)))
 
   ##Preparing wgn parameters
   wgn <- prepare_wgn(meteo_lst)
