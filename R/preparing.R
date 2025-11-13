@@ -1715,8 +1715,11 @@ prepare_ps <- function(pt_lst, project_path, constant = FALSE, write_path = NULL
   id <- 0
   for(i in unique(pt_lst$data$ob_name)){
     ri <- pt_lst$data[pt_lst$data$ob_name == i,]
-    t <- find_time_step(ri[2, "DATE"], ri[1, "DATE"])
-    ri$ob_typ <- paste0(ri$ob_typ, "_", t$typ)
+    # if constant, then time steps do not apply?
+    if(!constant){
+      t <- find_time_step(ri[2, "DATE"], ri[1, "DATE"])
+      ri$ob_typ <- paste0(ri$ob_typ, "_", t$typ)
+    }
     text_l <- paste0(": file was written by SWATprepR R package ", Sys.time())
     if(constant){
       f_rec_path <- paste0(write_path, "/", "exco.exc")
