@@ -1,3 +1,8 @@
+# SWATprepR 1.0.13
+
+-  Bug fix in `prepare_ps()` to better handle constant file preparation. 
+-  Bug fix in `prepare_climate()` to improve handling POSIXct date formats.
+
 # SWATprepR 1.0.12
 
 -  Updated `prepare_climate()` function to fix an issue with atmospheric deposition data being deleted from weather files.

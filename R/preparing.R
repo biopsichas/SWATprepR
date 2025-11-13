@@ -1715,7 +1715,7 @@ prepare_ps <- function(pt_lst, project_path, constant = FALSE, write_path = NULL
   id <- 0
   for(i in unique(pt_lst$data$ob_name)){
     ri <- pt_lst$data[pt_lst$data$ob_name == i,]
-    # if constant, then time steps do not apply?
+    # if constant, then time steps do not 
     if(!constant){
       t <- find_time_step(ri[2, "DATE"], ri[1, "DATE"])
       ri$ob_typ <- paste0(ri$ob_typ, "_", t$typ)
@@ -1726,16 +1726,13 @@ prepare_ps <- function(pt_lst, project_path, constant = FALSE, write_path = NULL
       f_con_path <- paste0(write_path, "/", "exco.con")
       fname <- "exco_om.exc"
       f_path <- paste0(write_path, "/", fname)
-      ri <- ri %>% select(-c(jday , mo, day_mo, DATE)) %>% 
-        group_by(yr, ob_typ, ob_name) %>% 
-        summarise_all(sum) %>% 
-        ungroup %>%  
-        select (-yr) %>% 
-        group_by(ob_typ, ob_name) %>% 
-        summarise_all(mean) %>% 
-        ungroup %>%
-        select(-c(ob_typ)) %>% 
-        rename(name = ob_name)
+      ri <- ri %>%
+        select(-c(jday, mo, day_mo, DATE, ob_typ)) %>%
+        group_by(ob_name, yr) %>%
+        summarise(across(everything(), sum), .groups = "drop_last") %>%
+        select(-yr) %>%
+        summarise(across(everything(), mean), .groups = "drop") %>%
+        rename(name = ob_name) 
       s <- c('%-17s', rep('%14s', 18))
       if(id == 0){
         write.table(paste0(fname, text_l), f_path, append = FALSE, sep = "\t", dec = ".", row.names = FALSE, col.names = FALSE, 
