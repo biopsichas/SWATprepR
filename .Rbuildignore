@@ -11,3 +11,4 @@
 ^pkgdown$
 ^vignettes$
 .pdf
+^README\.html$

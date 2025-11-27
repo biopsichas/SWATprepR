@@ -38,7 +38,6 @@ There are several ways package could be used to plot loaded calibration data. Da
 
 ```{r plot_cal_mult, message = FALSE, warning = FALSE}
 plot_cal_data(cal_data$data, c("3","10"))
-debug(plot_cal_data)
 ```
 
 For data rich monitoring station [plot_cal_data](../reference/plot_cal_data.html) function should be used only with single station selected. Such plotting allows better visualization. 
