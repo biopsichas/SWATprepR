@@ -1287,7 +1287,7 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
   weather_file <- data.frame(id=integer(), filename=character(), type=character(), lat=numeric(), lon=numeric())
   weather_sta_cli <- data.frame(id=integer(), name=character(), wgn_id=integer(), 
                                 pcp=character(), tmp=character(), slr = character(), hmd = character(),
-                                wnd = character(), wnd_dir = character(), atmo_dep = character(),
+                                wnd = character(), wnd_dir = character(), pet = character(), atmo_dep = character(),
                                 lat=numeric(), lon=numeric())
   ##Setting up counters for ids
   id <- 1
@@ -1384,7 +1384,13 @@ add_weather <- function(db_path, meteo_lst, wgn_lst, fill_missing = TRUE){
          .sqlite database will not be updated, but all weather related inputs will
          written in model input text files.")
   })
-  dbWriteTable(db, 'weather_sta_cli', weather_sta_cli, append = TRUE)
+  
+  # these are the existing column names in the DB
+  dbReadTable(db, "weather_sta_cli") %>% colnames() -> sta_cli_colnames
+  # this filters the "to add" dataframe to only contain columns that are actually in the DB.
+  weather_sta_cli %>% dplyr::select(dplyr::any_of(sta_cli_colnames)) -> weather_sta_cli_sel
+  
+  dbWriteTable(db, 'weather_sta_cli', weather_sta_cli_sel, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli', weather_wgn_cli, append = TRUE)
   dbWriteTable(db, 'weather_wgn_cli_mon', weather_wgn_cli_mon, append = TRUE)
   dbDisconnect(db)
