@@ -343,24 +343,24 @@ prepare_wgn <- function(meteo_lst, TMP_MAX = NULL, TMP_MIN = NULL, PCP = NULL, R
     ##Writing number of year data available for PCP
     wgn_stat$RAIN_YRS <- nyears <- nyears(df, "PCP")
     ##Filling weather generator data
-    wgn_mon$tmp_max_ave <- aggregate(TMP_MAX~mon, df, mean)[,2]
-    wgn_mon$tmp_min_ave <- aggregate(TMP_MIN~mon, df, mean)[,2]
-    wgn_mon$tmp_max_sd <- aggregate(TMP_MAX~mon, df, sd)[,2]
-    wgn_mon$tmp_min_sd <- aggregate(TMP_MIN~mon, df, sd)[,2]
-    wgn_mon$pcp_ave <- aggregate(PCP~mon, df, mean)[,2]
+    wgn_mon$tmp_max_ave <- aggregate(TMP_MAX~mon, df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$tmp_min_ave <- aggregate(TMP_MIN~mon, df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$tmp_max_sd  <- aggregate(TMP_MAX~mon, df, sd,         na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$tmp_min_sd  <- aggregate(TMP_MIN~mon, df, sd,         na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$pcp_ave     <- aggregate(PCP~mon,     df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
     if (missing_maxhhr){
-      wgn_mon$pcp_hhr <- aggregate(PCP~mon, df, my.pcpmhhr)[,2]
+      wgn_mon$pcp_hhr   <- aggregate(PCP~mon,     df, my.pcpmhhr, na.rm=TRUE, na.action=na.pass)[,2]  
     } else {
-      wgn_mon$pcp_hhr <- aggregate(MAXHHR~mon, df, max)[,2]
+      wgn_mon$pcp_hhr   <- aggregate(MAXHHR~mon,  df, max,        na.rm=TRUE, na.action=na.pass)[,2]
     }
-    wgn_mon$pcp_days <- aggregate(PCP~mon, df, my.pcpd, nyears)[,2]
-    wgn_mon$pcp_sd <- aggregate(PCP~mon, df, sd)[,2]
-    wgn_mon$pcp_skew <- aggregate(PCP~mon, df, my.skew)[,2]
-    wgn_mon$wet_dry <- aggregate(PCP~mon, df, my.pwd)[,2]
-    wgn_mon$wet_wet <- aggregate(PCP~mon, df, my.pww)[,2]
-    wgn_mon$slr_ave <- aggregate(SLR~mon, df, mean)[,2]
-    wgn_mon$dew_ave <- aggregate(RELHUM~mon, df, mean)[,2]
-    wgn_mon$wnd_ave <- aggregate(WNDSPD~mon, df, mean)[,2]
+    wgn_mon$pcp_days    <- aggregate(PCP~mon,     df, my.pcpd, nyears, na.rm=TRUE, na.action=na.pass)[,2] 
+    wgn_mon$pcp_sd      <- aggregate(PCP~mon,     df, sd,         na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$pcp_skew    <- aggregate(PCP~mon,     df, my.skew,    na.rm=TRUE, na.action=na.pass)[,2] 
+    wgn_mon$wet_dry     <- aggregate(PCP~mon,     df, my.pwd,     na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$wet_wet     <- aggregate(PCP~mon,     df, my.pww,     na.rm=TRUE, na.action=na.pass)[,2]  
+    wgn_mon$slr_ave     <- aggregate(SLR~mon,     df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$dew_ave     <- aggregate(RELHUM~mon,  df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
+    wgn_mon$wnd_ave     <- aggregate(WNDSPD~mon,  df, mean,       na.rm=TRUE, na.action=na.pass)[,2]
     wgn_mon$wgn_id <- parse_number(stations[j])
     ##Saving results
     if(!is.null(res_wgn_mon)){
